@@ -1,0 +1,60 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+
+    <title>Current Inventory</title>
+  </head>
+
+<body class="bg-light">
+  <div class="container">
+    <h1>Products</h1>
+    <div>
+      <a href="{% url 'add_product' %}" class="btn btn-danger">Add Product</a>
+    </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">ID</th>
+            <th scope="col">Picture</th>
+            <th scope="col">Actual Count</th>
+            <th scope="col">Reserved</th>
+            <th scope="col">To Be Received</th>
+            <th scope="col">Categories</th>
+            <th scope="col">Consignee</th>
+            <th scope="col">   </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in product %} 
+          {% if i.Picture %}
+          <tr>  
+            <td class = "iname">{{i.Name}}</td>
+            <td class = "iid">{{i.EAS_Product_ID}}</td>    
+            <td class = "ipicture"> <img src="{{i.Picture.url}}" width="50"></td> 
+            <td class = "iact_inv_cnt">{{i.Actual_Inventory_Count}}</td>
+            <td class = "irsrvd_cnt">{{i.Reserved_Inventory_Count}}</td>
+            <td class = "ito_be_rcvd_cnt">{{i.To_Be_Received_Inventory_Count}}</td>    
+            <td class = "icategories">{{i.Category}}</td>    
+            <td class = "iconsignee">{{i.Consignee}}</td>  
+            <td> 
+              <button type="button" class="btn btn-primary">View</button>
+            </td>             
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+              <!-- <div class="justify-content-center">
+                <button type="submit" class="btn btn-info" id="cls">Add Item</button>
+              </div> -->
+      
+  </body>
+
+{% endblock %}

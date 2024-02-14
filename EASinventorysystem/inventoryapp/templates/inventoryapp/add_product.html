@@ -1,0 +1,51 @@
+    {% extends 'inventoryapp/base.html' %}
+    {% load static %}
+
+    {% block content %}
+    <h1>Create Item<h1>
+    <br><br>
+    <form method="POST" action="{% url 'add_product' %}"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <label for="id_EAS_Product_ID">EAS Product ID:</label>
+            <input type="text" name="eas_id" maxlength="32" required id="id_EAS_Product_ID">
+        </div>
+        
+        <div>
+            <label for="id_Name">Name:</label>
+            <input type="text" name="product_name"  maxlength="64" required id="id_Name">
+        </div>
+
+        <div>
+            <label for="id_Name">SKU:</label>
+            <input type="text" name="product_sku"  maxlength="64" required id="id_Name">
+        </div>
+        
+        <div>
+            <label for="id_Picture">Picture:</label>
+            <input type="file" name="product_picture" accept="image/*" required id="id_Picture">
+        </div>
+        
+        <div>
+            <label for="id_Price">Price:</label>
+            <input type="number" name="product_price" step="0.01" required id="id_Price">
+        </div>
+        
+        <div>
+            <label for="id_Actual_Inventory_Count">Actual Inventory Count:</label>
+            <input type="number" name="product_initial_count" required id="id_Actual_Inventory_Count">
+        </div>
+
+        <div>
+            <label for="id_Actual_Inventory_Count">Stock Level Threshold:</label>
+            <input type="number" name="product_stock_level_threshold" required id="id_Actual_Inventory_Count">
+        </div>
+        
+        
+        <div class="row">
+            <button type="submit" class="btn-success" name="Add">Create</button>
+            <a href="{% url 'current_inventory' %}" class="btn-danger">Cancel</a>
+        </div>  
+    </form>
+
+    {% endblock %}
