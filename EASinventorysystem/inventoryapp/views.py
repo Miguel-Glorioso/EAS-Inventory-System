@@ -66,5 +66,7 @@ def add_product(request):
         return render(request, 'inventoryapp/add_product.html')
 
 
-def view_product(request):
-	return
+def view_product(request, pk):
+    p = get_object_or_404(Product, pk=pk)
+    print("CHECK THIS", p)
+    return render(request, 'inventoryapp/view_product.html', {'p':p})

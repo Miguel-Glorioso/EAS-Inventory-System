@@ -30,19 +30,19 @@
           </tr>
         </thead>
         <tbody>
-          {% for i in product %} 
-          {% if i.Picture %}
+          {% for p in product %} 
+          {% if p.Picture %}
           <tr>  
-            <td class = "iname">{{i.Name}}</td>
-            <td class = "iid">{{i.EAS_Product_ID}}</td>    
-            <td class = "ipicture"> <img src="{{i.Picture.url}}" width="50"></td> 
-            <td class = "iact_inv_cnt">{{i.Actual_Inventory_Count}}</td>
-            <td class = "irsrvd_cnt">{{i.Reserved_Inventory_Count}}</td>
-            <td class = "ito_be_rcvd_cnt">{{i.To_Be_Received_Inventory_Count}}</td>    
-            <td class = "icategories">{{i.Category}}</td>    
-            <td class = "iconsignee">{{i.Consignee}}</td>  
+            <td class = "iname">{{p.Name}}</td>
+            <td class = "iid">{{p.EAS_Product_ID}}</td>    
+            <td class = "ipicture"> <img src="{{p.Picture.url}}" width="50"></td> 
+            <td class = "iact_inv_cnt">{{p.Actual_Inventory_Count}}</td>
+            <td class = "irsrvd_cnt">{{p.Reserved_Inventory_Count}}</td>
+            <td class = "ito_be_rcvd_cnt">{{p.To_Be_Received_Inventory_Count}}</td>    
+            <td class = "icategories">{{p.Category}}</td>    
+            <td class = "iconsignee">{{p.Consignee}}</td>  
             <td> 
-              <button type="button" class="btn btn-primary">View</button>
+              <a href="{% url 'view_product' pk=p.Product_ID %}" type="button" class="btn btn-primary">View</button>
             </td>             
           </tr>
           {% endif %}
