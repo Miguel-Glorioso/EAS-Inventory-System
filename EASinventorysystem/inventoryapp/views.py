@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . models import Product, Category, Account
+from . models import Product, Category, Account,Consignee, Consignee_Product
 from django.http import HttpResponseRedirect
 
 # Create your views here.
@@ -31,7 +31,9 @@ def account_login(request):
 
 def inventory_list(request):
     all_inventory = Product.objects.all()
-    return render(request, 'inventoryapp/current_inventory.html', {'product':all_inventory})
+    all_consignee_products = Consignee_Product.objects.all()
+    print("CHECKTHIS", all_consignee_products, all_inventory)
+    return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'consignee_products':all_consignee_products})
 
 
 def add_product(request):

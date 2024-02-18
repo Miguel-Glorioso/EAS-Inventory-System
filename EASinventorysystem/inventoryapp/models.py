@@ -48,7 +48,7 @@ class Category(models.Model):
     Notes = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)
 
     def __str__(self):
-        return
+        return 
     
 class Purchase_Order(models.Model):
     Purchase_Order_ID = models.AutoField(primary_key=True)
@@ -112,7 +112,7 @@ class Customer(models.Model):
     Notes = models.TextField(null=True, blank=True, validators=[MaxLengthValidator(1024)])
 
     def __str__(self):
-        return 
+        return self.Customer_Name
     
 class Consignee(models.Model):
     Consignee_ID = models.AutoField(primary_key=True)
@@ -133,14 +133,17 @@ class Consignee(models.Model):
     Tag_Hex_Color_ID = models.CharField(max_length=7)
 
     def __str__(self):
-        return 
+        return self.Customer_Name
     
 class Consignee_Product(models.Model):
     Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
     Consignee_ID = models.ForeignKey(Consignee, on_delete=models.PROTECT)
     
+    def getConsignee_Tag(self):
+        return self.Consignee_ID.Consignee_Tag_ID
+    
     def __str__(self):
-        return 
+        return f"Consignee: {self.Consignee_ID.Consignee_Tag_ID}"
 
 class Count_Edit_History(models.Model):
     Count_Edit_ID = models.AutoField(primary_key=True)
