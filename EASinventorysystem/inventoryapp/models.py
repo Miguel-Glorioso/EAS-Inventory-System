@@ -25,7 +25,7 @@ class Product(models.Model):
     Product_ID = models.AutoField(primary_key=True)            
     EAS_Product_ID = models.CharField(max_length=32, unique=True)
     Name = models.CharField(max_length=64)
-    Picture = models.ImageField(upload_to='product_images/', null=True, blank=True)
+    Picture = models.ImageField(null=True, blank=True, upload_to='product_images/')
     SKU = models.CharField(max_length=32)
     Price = models.DecimalField(max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
     Actual_Inventory_Count = models.PositiveIntegerField(validators =[MaxValueValidator(9999)])

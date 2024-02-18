@@ -14,9 +14,11 @@
         <li><strong>Tags:</strong> {{ p.Consignee }}</li>
         <li><strong>Stock Level Threshold:</strong> {{ p.Product_Low_Stock_Threshold }}</li>
     </ul>
-    <div class="product-image">
+    {% if p.Picture %}
+    <div class="product-image"> 
         <img src="{{p.Picture.url}}" width="50">
     </div>
+    {% endif %}
     <div class="row">
         <a href="{% url 'current_inventory' %}" class="btn-danger">Back</a>
     </div>  

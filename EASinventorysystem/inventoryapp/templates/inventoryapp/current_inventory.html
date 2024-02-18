@@ -33,7 +33,11 @@
             <tr>  
               <td class = "iname">{{p.Name}}</td>
               <td class = "iid">{{p.EAS_Product_ID}}</td>    
-              <td class = "ipicture"> <img src="{{p.Picture.url}}" width="50"></td> 
+              <td class = "ipicture">         
+                {% if p.Picture %}
+                  <img src="{{ p.Picture.url }}" width="50">
+                {% endif %}
+              </td> 
               <td class = "iact_inv_cnt">{{p.Actual_Inventory_Count}}</td>
               <td class = "irsrvd_cnt">{{p.Reserved_Inventory_Count}}</td>
               <td class = "ito_be_rcvd_cnt">{{p.To_Be_Received_Inventory_Count}}</td>    
@@ -57,7 +61,7 @@
               <!-- <div class="justify-content-center">
                 <button type="submit" class="btn btn-info" id="cls">Add Item</button>
               </div> -->
-      
+      <a href="{% url 'account_login' %}" type="button" class="btn btn-primary">Log Out</button>
   </body>
 
 {% endblock %}
