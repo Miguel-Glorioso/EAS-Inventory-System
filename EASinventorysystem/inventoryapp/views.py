@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from . models import Product, Category, Account,Consignee, Consignee_Product
 from django.http import HttpResponseRedirect
+from django.core.files.storage import default_storage
+from django.core.files import File
 
 
 # Create your views here.
@@ -91,8 +93,11 @@ def update_product(request, pk):
  
         if Product_Picture is not None:
             product = Product.objects.get(pk=pk)
+            previous_picture_filename = product.Picture.name
             product.Picture = Product_Picture
             product.save()
+            if previous_picture_filename:
+                default_storage.delete(previous_picture_filename)
             
         Product.objects.filter(pk=pk).update(
             EAS_Product_ID=EAS_Product_ID,
@@ -106,5 +111,6 @@ def update_product(request, pk):
             Product_Low_Stock_Threshold=Product_Stock_threshold,
         )
         return redirect('current_inventory')
+    
     else:
         return render(request, 'inventoryapp/update_product.html', {'p':p})
