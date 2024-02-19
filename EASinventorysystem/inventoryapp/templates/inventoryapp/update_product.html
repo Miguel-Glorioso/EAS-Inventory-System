@@ -1,0 +1,72 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Create Item<h1>
+<br><br><form method="POST" action="{% url 'update_product' pk=p.Product_ID %}"  enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        <label for="id_EAS_Product_ID">EAS Product ID:</label>
+        <input type="text" name="eas_id" maxlength="32" id="id_EAS_Product_ID" value="{{ p.EAS_Product_ID }}">
+    </div>
+    
+    <div>
+        <label for="id_Name">Name:</label>
+        <input type="text" name="product_name"  maxlength="64" id="id_Name" value="{{ p.Name }}">
+    </div>
+
+    <div>
+        <label for="id_SKU">SKU:</label>
+        <input type="text" name="product_sku"  maxlength="64" id="id_SKU" value="{{ p.SKU }}">
+    </div>
+    
+    <div>
+        <label for="id_Picture">Picture:</label>
+        {% if p.Picture %}
+        <div class="product-image"> 
+            <img src="{{p.Picture.url}}" width="50">
+        </div>
+        {% endif %}
+        <input type="file" name="product_picture" accept="image/*" id="id_Picture">
+    </div>
+    
+    <div>
+        <label for="id_Price">Price:</label>
+        <input type="number" name="product_price" step="0.01" id="id_Price" value="{{ p.Price }}">
+    </div>
+
+    <div class="form-group">
+        <div class="checkbox">
+            <input type="hidden" name="product_visibility" value="False" />
+            <label><input type="checkbox" name="product_visibility" value="True" id="id_Visibility" {% if p.Visibility %}checked{% endif %}>Visibility</label>
+        </div>
+    </div>
+
+    <div>
+        <label for="id_Actual_Inventory_Count">Actual Inventory Count:</label>
+        <input type="number" name="product_initial_count" id="id_Actual_Inventory_Count" value="{{ p.Actual_Inventory_Count }}">
+    </div>
+    
+    <div>
+        <label for="id_Reserved_Inventory_Count">Reserved Inventory Count:</label>
+        <input type="number" name="product_reserved_count" id="id_Reserved_Inventory_Count" value="{{ p.Reserved_Inventory_Count }}">
+    </div>
+
+    <div>
+        <label for="id_To_Be_Received_Inventory_Count">To Be Received Inventory Count:</label>
+        <input type="number" name="product_to_be_received_count" id="id_To_Be_Received_Inventory_Count" value="{{ p.To_Be_Received_Inventory_Count }}">
+    </div>
+
+    <div>
+        <label for="id_Stock_Level_Threshold">Stock Level Threshold:</label>
+        <input type="number" name="product_stock_level_threshold" id="id_Stock_Level_Threshold" value="{{ p.Product_Low_Stock_Threshold }}">
+    </div>
+    
+    <div class="row">
+        <button type="submit" class="btn-success" name="Add">Update</button>
+        <a href="{% url 'current_inventory' %}" class="btn-danger">Cancel</a>
+    </div>  
+</form>
+
+
+{% endblock %}
