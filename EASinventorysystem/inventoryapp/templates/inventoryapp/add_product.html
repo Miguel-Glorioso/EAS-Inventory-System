@@ -81,7 +81,26 @@
             <input type="number" name="product_stock_level_threshold" required id="id_Stock_Level_Threshold">
         </div>
         
+        <div>
+            <label for="id_Category">Category:</label>
+            <select name="product_category" id="id_Category" >
+                <option value="" disabled selected>Select category</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.Category_ID }}" >{{ cat.Category_Name }}</option>
+                {% endfor %}
+            </select>
+        </div>
         
+        <div>
+            <label for="id_Consignee">Consignee:</label>
+            <select name="product_consignee" id="id_Consignee">
+                <option value="" disabled selected>Select consignee</option>
+                {% for con in consignees %}
+                    <option value="{{ con.Consignee_ID}}">{{ con.Customer_Name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <div class="row">
             <button type="submit" class="btn-success" name="Add">Create</button>
             <a href="{% url 'current_inventory' %}" class="btn-danger">Cancel</a>

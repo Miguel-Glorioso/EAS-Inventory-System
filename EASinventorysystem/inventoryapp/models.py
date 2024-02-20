@@ -49,7 +49,7 @@ class Category(models.Model):
     Notes = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)
 
     def __str__(self):
-        return 
+        return self.Category_Name
     
 class Purchase_Order(models.Model):
     Purchase_Order_ID = models.AutoField(primary_key=True)
@@ -144,7 +144,7 @@ class Consignee_Product(models.Model):
         return self.Consignee_ID.Consignee_Tag_ID
     
     def __str__(self):
-        return f"Consignee: {self.Consignee_ID.Consignee_Tag_ID}"
+        return f"{self.Product_ID.Name} Consignee: {self.Consignee_ID.Consignee_Tag_ID}"
 
 class Count_Edit_History(models.Model):
     Count_Edit_ID = models.AutoField(primary_key=True)
