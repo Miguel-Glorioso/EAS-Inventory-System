@@ -30,48 +30,50 @@
             {% endif %}
         </div>
         <input type="file" name="product_picture" accept="image/*" id="id_Picture">
-        <button type="button" id="remove-image">Remove Image</button>
+        <button type="button" id="remove-image" {% if not p.Picture %}style="display: none;"{% endif %}>Remove Image</button>
         <input type="hidden" name="removed_product_picture" id="remove-product-picture" value='Not'>
 
     </div>
         
-        <script>
-           document.addEventListener("DOMContentLoaded", function() {
-            const pictureInput = document.getElementById("id_Picture");
-            const imagePreview = document.getElementById("image-preview");
-            const removeImageButton = document.getElementById("remove-image");
-            const imageRemoved = document.getElementById("remove-product-picture");
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        const pictureInput = document.getElementById("id_Picture");
+        const imagePreview = document.getElementById("image-preview");
+        const removeImageButton = document.getElementById("remove-image");
+        const imageRemoved = document.getElementById("remove-product-picture");
 
-            // Function to update the image preview
-            function updatePreview() {
-                const file = pictureInput.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const image = new Image();
-                        image.src = event.target.result;
-                        image.width = 50;
-                        imagePreview.innerHTML = '';
-                        imagePreview.appendChild(image);
-                    };
-                    reader.readAsDataURL(file);
-                } else {
+        // Function to update the image preview
+        function updatePreview() {
+            const file = pictureInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const image = new Image();
+                    image.src = event.target.result;
+                    image.width = 50;
                     imagePreview.innerHTML = '';
-                }
+                    imagePreview.appendChild(image);
+                    removeImageButton.style.display = "inline-block"; // Show the "Remove Image" button
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.innerHTML = '';
             }
+        }
 
-            // Event listener for input change
-            pictureInput.addEventListener("change", updatePreview);
+        // Event listener for input change
+        pictureInput.addEventListener("change", updatePreview);
 
-            // Event listener for remove image button
-            removeImageButton.addEventListener("click", function() {
-                pictureInput.value = null; // Clear the input field
-                imageRemoved.value = "removed";
-                updatePreview(); // Update the preview to remove the image
-            });
+        // Event listener for remove image button
+        removeImageButton.addEventListener("click", function() {
+            pictureInput.value = null; // Clear the input field
+            removeImageButton.style.display = "none"; // Hide the "Remove Image" button
+            imageRemoved.value = "removed";
+            updatePreview(); // Update the preview to remove the image
         });
+    });
 
-        </script>
+    </script>
     
     
     <div>
