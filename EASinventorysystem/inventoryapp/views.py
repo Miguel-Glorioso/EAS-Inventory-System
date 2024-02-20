@@ -87,15 +87,23 @@ def update_product(request, pk):
         Product_Category = request.POST.get('product_category')
         Product_Stock_threshold = request.POST.get("product_stock_level_threshold")
         Product_Visibility = request.POST.get('product_visibility')
-        
+        Remove_Image = request.POST.get('remove_image')
+
         if Product_Stock_threshold == 0:
               Product_Stock_threshold = None
- 
+
+        product = Product.objects.get(pk=pk)
         if Product_Picture is not None:
-            product = Product.objects.get(pk=pk)
             previous_picture_filename = product.Picture.name
             product.Picture = Product_Picture
             product.save()
+            
+            if previous_picture_filename:
+                default_storage.delete(previous_picture_filename)
+
+        if Remove_Image == 'True':
+            previous_picture_filename = product.Picture.name
+            product.Picture.delete()
             if previous_picture_filename:
                 default_storage.delete(previous_picture_filename)
             
