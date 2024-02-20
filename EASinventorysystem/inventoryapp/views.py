@@ -50,9 +50,9 @@ def add_product(request):
         Product_Picture = request.FILES.get('product_picture') 
         Product_Stock_threshold = request.POST.get("product_stock_level_threshold")
         Product_Category = request.POST.get('product_category')
-        Product_Consignee = request.POST.get('product_consignee')
+        Product_Consignees = request.POST.getlist('product_consignees')
 
-        print('yes',Product_Consignee)
+        print('yes',Product_Consignees)
 
         if Product_Stock_threshold == 0:
               Product_Stock_threshold = None
@@ -71,14 +71,14 @@ def add_product(request):
             Category = Category.objects.get(pk=Product_Category)
         )
 
-        if Product_Consignee:
+        if Product_Consignees:
             # Retrieve the product object that was just created
             product = Product.objects.get(EAS_Product_ID=EAS_Product_ID)
-            
-            # Retrieve the consignee object
-            consignee = Consignee.objects.get(pk=Product_Consignee)
+
             
             # Create Consignee_Product object
+        for consignee_id in Product_Consignees:
+            consignee = Consignee.objects.get(pk=consignee_id)
             Consignee_Product.objects.create(
                 Product_ID=product,
                 Consignee_ID=consignee
@@ -96,6 +96,7 @@ def view_product(request, pk):
 
 def update_product(request, pk):
     p = get_object_or_404(Product, pk=pk)
+    con = Consignee_Product.objects.filter(Product_ID=pk)
     if request.method == 'POST':
         Product_Name = request.POST.get('product_name')
         Product_Price = request.POST.get('product_price')
@@ -112,7 +113,6 @@ def update_product(request, pk):
 
         if Product_Stock_threshold == 0:
               Product_Stock_threshold = None
-              
 
         product = Product.objects.get(pk=pk)
         if Image_removed == 'removed':
@@ -130,7 +130,7 @@ def update_product(request, pk):
             
             if previous_picture_filename:
                 default_storage.delete(previous_picture_filename)
-            
+        
         Product.objects.filter(pk=pk).update(
             EAS_Product_ID=EAS_Product_ID,
             Name=Product_Name,
@@ -142,7 +142,6 @@ def update_product(request, pk):
             Visibility=Product_Visibility,
             Product_Low_Stock_Threshold=Product_Stock_threshold,
         )
-        return redirect('current_inventory')
     
     else:
-        return render(request, 'inventoryapp/update_product.html', {'p':p})
+        return render(request, 'inventoryapp/update_product.html', {'p':p, 'con':con})

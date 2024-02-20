@@ -107,7 +107,20 @@
         <label for="id_Stock_Level_Threshold">Stock Level Threshold:</label>
         <input type="number" name="product_stock_level_threshold" id="id_Stock_Level_Threshold" value="{{ p.Product_Low_Stock_Threshold }}">
     </div>
-    
+
+    <div>
+        <label for="id_Category">Category:</label>
+        <input type="text" name="product_category" id="id_Category" value="{{p.Category}}" readonly>
+    </div>
+
+    <div>
+        <label for="id_Consignees">Consignees:</label>
+        {% for c in con %}
+            <button type="button" class="remove-consignee" data-consignee-id="{{ c.Consignee_ID }}">Remove</button>
+            <input type="text" name="product_consignees" id="id_Consignees" value="{{ c.Consignee_ID.Customer_Name }}" readonly>
+        {% endfor %}
+    </div>
+
     <div class="row">
         <button type="submit" class="btn-success" name="Add">Update</button>
         <a href="{% url 'current_inventory' %}" class="btn-danger">Cancel</a>

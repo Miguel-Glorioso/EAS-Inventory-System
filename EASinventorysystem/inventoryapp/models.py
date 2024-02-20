@@ -35,7 +35,7 @@ class Product(models.Model):
     Visibility = models.BooleanField(default=True)
     Product_Low_Stock_Threshold = models.PositiveIntegerField(validators =[MaxValueValidator(9999)], null=True, blank=True)
     Product_Stock_Status = models.CharField(max_length=16) # needs implementation
-    Category = models.ForeignKey("Category", on_delete=models.PROTECT, blank=True,null=True)
+    Category = models.ForeignKey("Category", on_delete=models.PROTECT)
 
     def __str__(self):
         return self.Name
