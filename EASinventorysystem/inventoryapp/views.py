@@ -142,6 +142,6 @@ def update_product(request, pk):
             Visibility=Product_Visibility,
             Product_Low_Stock_Threshold=Product_Stock_threshold,
         )
-    
+        return redirect('view_product', pk=pk)
     else:
         return render(request, 'inventoryapp/update_product.html', {'p':p, 'con':con})
