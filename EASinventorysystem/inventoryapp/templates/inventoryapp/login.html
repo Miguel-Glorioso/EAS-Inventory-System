@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="static/login.css">
 <html>
     <head>
         <title>Login Page</title>
@@ -5,14 +6,7 @@
 
     </head>
     <body>
-        <nav class="navbar navbar-dark bg-custom mb-3 sticky-top" style="background-color: #970101;">
-            <div class="container-fluid">   
-                <a class="navbar-brand mb-0">Everything About Santa</a>
-    
-            </div>
-
-        </nav>
-        <div class = "container-fluid">
+        <!-- <div class = "container-fluid">
             <div class="row justify-content-center">
                 <div class="col-6">
 
@@ -45,8 +39,38 @@
                             </form>                
                 
                         </div>
-                    </div>
+                    </div> -->
                 
                 </div>
-    </body>
+                <body>
+                    <div class="picture-container">
+                        <img src="static/EAS logo_red.jpg" alt="EAS LOGO">
+                    </div>
+
+                  <div class="full-screen-container">
+                    <div class="login-container">
+                      <h1 class="login-title">Sign in</h1>
+                      
+                      <form method=POST action="{% url 'account_login' %}">{% csrf_token %}
+                        <div class="input-group success">
+                            <label for="user_name">Your username</label>
+                            <input type="text" class="form-control" id="user_name" name="user_name" required>
+                        </div>
+                        
+                        <div class="input-group error">
+                            <label for="password">Your password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        {% if error_msg %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ error_msg }}
+                                </div>
+                                {% endif %}
+                                <div class="login-button-container">
+                                    <button type="submit" class="login-button">Log in</button>
+                                </div>
+                        <!-- <button type="submit" class="login-button">Log in</button> -->
+                      </form>
+                    </div>
+                  </div>
 </html>
