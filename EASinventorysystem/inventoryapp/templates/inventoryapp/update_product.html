@@ -111,9 +111,9 @@
     <div>
         <label for="id_Category">Category:</label>
         <select name="product_category" id="id_Category" required>
-            <option value="{{p.Category}}">{{p.Category}}</option>
+            <option value="{{p.Category.Category_ID}}">{{p.Category}}</option>
             {% for cat in categories %}
-                {% if cat.Category_ID != p.Category.Category_ID%}
+                {% if cat.Category_ID != p.Category.Category_ID %}
                     <option value="{{ cat.Category_ID }}" >{{ cat.Category_Name }}</option>
                 {% endif %}
             {% endfor %}
@@ -121,16 +121,22 @@
     </div>
 
     <div>
-        <label for="id_Consignees">Consignees:</label>
-        {% for c in con %}
-            <button type="button" class="remove-consignee" data-consignee-id="{{ c.Consignee_ID }}">Remove</button>
-            <input type="text" name="product_consignees" id="id_Consignees" value="{{ c.Consignee_ID.Customer_Name }}" readonly>
-        {% endfor %}
+        <label for="id_Consignees">Consignee:</label>
+        <select name="product_consignees" id="id_Consignees" multiple>
+            {% for cp in con_p %}
+            <option value="{{ cp.Consignee_ID.Consignee_ID }}" selected>{{ cp.Consignee_ID }}</option>
+            {% endfor %}
+            {% for con in consignees %}
+                {% if con.Consignee_ID not in con_p_ids %}
+                    <option value="{{ con.Consignee_ID }}">{{ con.Customer_Name }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
     </div>
 
     <div class="row">
         <button type="submit" class="btn-success" name="Add">Update</button>
-        <a href="{% url 'current_inventory' %}" class="btn-danger">Cancel</a>
+        <a href="{% url 'view_product' pk=p.Product_ID %}" class="btn-danger">Cancel</a>
     </div>  
 </form>
 

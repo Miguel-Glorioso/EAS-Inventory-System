@@ -72,19 +72,15 @@ def add_product(request):
         )
 
         if Product_Consignees:
-            # Retrieve the product object that was just created
             product = Product.objects.get(EAS_Product_ID=EAS_Product_ID)
 
-            
-            # Create Consignee_Product object
+        
         for consignee_id in Product_Consignees:
             consignee = Consignee.objects.get(pk=consignee_id)
             Consignee_Product.objects.create(
                 Product_ID=product,
                 Consignee_ID=consignee
             )
-        else:
-            print('failure')
         return redirect('current_inventory')
     else:
         return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees})
@@ -97,7 +93,9 @@ def view_product(request, pk):
 def update_product(request, pk):
     p = get_object_or_404(Product, pk=pk)
     con_p = Consignee_Product.objects.filter(Product_ID=pk)
+    con_p_ids = con_p.values_list('Consignee_ID', flat=True)
     categories = Category.objects.all()
+    consignees = Consignee.objects.all()
     if request.method == 'POST':
         Product_Name = request.POST.get('product_name')
         Product_Price = request.POST.get('product_price')
@@ -111,6 +109,7 @@ def update_product(request, pk):
         Product_Category = request.POST.get('product_category')
         Product_Stock_threshold = request.POST.get("product_stock_level_threshold")
         Product_Visibility = request.POST.get('product_visibility')
+        Product_Consignees = request.POST.getlist('product_consignees')
 
         if Product_Stock_threshold == 0:
               Product_Stock_threshold = None
@@ -144,6 +143,20 @@ def update_product(request, pk):
             Product_Low_Stock_Threshold=Product_Stock_threshold,
             Category= Product_Category
         )
+
+        for consignee_id in Product_Consignees:
+            consignee = Consignee.objects.get(pk=consignee_id)
+            if not con_p.filter(Consignee_ID=consignee).exists():
+                Consignee_Product.objects.create(
+                    Product_ID=product,
+                    Consignee_ID=consignee
+                )
+        
+        for con_ids in con_p_ids:
+            if str(con_ids) not in Product_Consignees:
+                Consignee_Product.objects.filter(Consignee_ID=con_ids, Product_ID=pk).delete()
+        
+        
         return redirect('view_product', pk=pk)
     else:
-        return render(request, 'inventoryapp/update_product.html', {'p':p, 'con':con_p, 'categories': categories,})
+        return render(request, 'inventoryapp/update_product.html', {'p':p, 'con_p':con_p, 'con_p_ids':con_p_ids, 'categories': categories,  'consignees': consignees})
