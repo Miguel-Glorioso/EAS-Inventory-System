@@ -96,7 +96,8 @@ def view_product(request, pk):
 
 def update_product(request, pk):
     p = get_object_or_404(Product, pk=pk)
-    con = Consignee_Product.objects.filter(Product_ID=pk)
+    con_p = Consignee_Product.objects.filter(Product_ID=pk)
+    categories = Category.objects.all()
     if request.method == 'POST':
         Product_Name = request.POST.get('product_name')
         Product_Price = request.POST.get('product_price')
@@ -141,7 +142,8 @@ def update_product(request, pk):
             To_Be_Received_Inventory_Count=Product_To_Be_Received_Count,
             Visibility=Product_Visibility,
             Product_Low_Stock_Threshold=Product_Stock_threshold,
+            Category= Product_Category
         )
         return redirect('view_product', pk=pk)
     else:
-        return render(request, 'inventoryapp/update_product.html', {'p':p, 'con':con})
+        return render(request, 'inventoryapp/update_product.html', {'p':p, 'con':con_p, 'categories': categories,})

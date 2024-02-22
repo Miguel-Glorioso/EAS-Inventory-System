@@ -110,7 +110,14 @@
 
     <div>
         <label for="id_Category">Category:</label>
-        <input type="text" name="product_category" id="id_Category" value="{{p.Category}}" readonly>
+        <select name="product_category" id="id_Category" required>
+            <option value="{{p.Category}}">{{p.Category}}</option>
+            {% for cat in categories %}
+                {% if cat.Category_ID != p.Category.Category_ID%}
+                    <option value="{{ cat.Category_ID }}" >{{ cat.Category_Name }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>   
     </div>
 
     <div>
