@@ -34,7 +34,6 @@
                 const imagePreview = document.getElementById("image-preview");
                 const removeImageButton = document.getElementById("remove-image");
 
-                // Function to update the image preview
                 function updatePreview() {
                     const file = pictureInput.files[0];
                     if (file) {
@@ -43,25 +42,23 @@
                             const image = new Image();
                             image.src = event.target.result;
                             image.width = 50;
-                            imagePreview.innerHTML = ''; // Clear any existing preview
+                            imagePreview.innerHTML = ''; 
                             imagePreview.appendChild(image);
-                            removeImageButton.style.display = "inline-block"; // Show the "Remove Image" button
+                            removeImageButton.style.display = "inline-block"; 
                         };
                         reader.readAsDataURL(file);
                     } else {
-                        imagePreview.innerHTML = ''; // Clear the preview if no file is selected
-                        removeImageButton.style.display = "none"; // Hide the "Remove Image" button
+                        imagePreview.innerHTML = ''; 
+                        removeImageButton.style.display = "none";
                     }
                 }
 
-                // Event listener for input change
                 pictureInput.addEventListener("change", updatePreview);
 
-                // Event listener for remove image button
                 removeImageButton.addEventListener("click", function() {
-                    pictureInput.value = null; // Clear the input field
-                    imagePreview.innerHTML = ''; // Clear the preview
-                    removeImageButton.style.display = "none"; // Hide the "Remove Image" button
+                    pictureInput.value = null; 
+                    imagePreview.innerHTML = '';
+                    removeImageButton.style.display = "none"; 
                 });
             });
         </script>

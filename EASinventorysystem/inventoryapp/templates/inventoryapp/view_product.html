@@ -11,7 +11,12 @@
         <li><strong>Price:</strong> {{ p.Price }}</li>
         <li><strong>Actual Count:</strong> {{ p.Actual_Inventory_Count }}</li>
         <li><strong>Category:</strong> {{ p.Category }}</li>
-        <li><strong>Tags:</strong> {{ p.Consignee }}</li>
+        <li><strong>Tags:</strong> 
+            {% for c_p in con_p%}
+                {{ c_p.Consignee_ID }}
+            {% endfor %}
+        </li>
+        
         <li><strong>Stock Level Threshold:</strong> {{ p.Product_Low_Stock_Threshold }}</li>
     </ul>
     {% if p.Picture %}

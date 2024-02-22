@@ -52,11 +52,10 @@ def add_product(request):
         Product_Category = request.POST.get('product_category')
         Product_Consignees = request.POST.getlist('product_consignees')
 
-        print('yes',Product_Consignees)
-
         if Product_Stock_threshold == 0:
               Product_Stock_threshold = None
         
+
         product = Product.objects.create(
             EAS_Product_ID = EAS_Product_ID,
             Name = Product_Name,
@@ -88,7 +87,8 @@ def add_product(request):
 
 def view_product(request, pk):
     p = get_object_or_404(Product, pk=pk)
-    return render(request, 'inventoryapp/view_product.html', {'p':p})
+    con_p = Consignee_Product.objects.filter(Product_ID=pk)
+    return render(request, 'inventoryapp/view_product.html', {'p':p, 'con_p':con_p })
 
 def update_product(request, pk):
     p = get_object_or_404(Product, pk=pk)
@@ -102,15 +102,12 @@ def update_product(request, pk):
         EAS_Product_ID = request.POST.get('eas_id')
         Product_SKU = request.POST.get('product_sku')
         Product_Initial_Count = request.POST.get('product_initial_count')
-        Product_Reserved_Count = request.POST.get('product_reserved_count')
-        Product_To_Be_Received_Count = request.POST.get('product_to_be_received_count')
         Product_Picture = request.FILES.get('product_picture')
         Image_removed = request.POST.get('removed_product_picture')
         Product_Category = request.POST.get('product_category')
         Product_Stock_threshold = request.POST.get("product_stock_level_threshold")
         Product_Visibility = request.POST.get('product_visibility')
         Product_Consignees = request.POST.getlist('product_consignees')
-
         if Product_Stock_threshold == 0:
               Product_Stock_threshold = None
 
@@ -122,7 +119,7 @@ def update_product(request, pk):
             
             if previous_picture_filename:
                 default_storage.delete(previous_picture_filename)
-            
+        
         elif Product_Picture is not None:
             previous_picture_filename = product.Picture.name
             product.Picture = Product_Picture
@@ -137,8 +134,6 @@ def update_product(request, pk):
             SKU=Product_SKU,
             Price=Product_Price,
             Actual_Inventory_Count=Product_Initial_Count,
-            Reserved_Inventory_Count=Product_Reserved_Count,
-            To_Be_Received_Inventory_Count=Product_To_Be_Received_Count,
             Visibility=Product_Visibility,
             Product_Low_Stock_Threshold=Product_Stock_threshold,
             Category= Product_Category
