@@ -1,12 +1,12 @@
 .custom-background {
     background-color: #DDD7D7;
     color: #DDD7D7;
+    max-width: 80%;
 }
 .input-group .btn {
     color: #fff;
     background-color: #007BFF;
     border-color: #007BFF;
-    margin-left: 10px;
 }
 
 .input-group .btn:hover {
@@ -18,7 +18,6 @@
     color: #fff;
     border: none;
     width: 10%;
-    padding: 10px 20px;
     border-radius: 5px;
     font-size: 16px;
 }
@@ -31,4 +30,7 @@
 }
 .custom-text {
     color: #000;
+}
+.custom-container {
+    margin-top: 10px; /* Adjust the value as needed */
 }
