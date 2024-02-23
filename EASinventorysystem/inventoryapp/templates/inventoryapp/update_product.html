@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<h1>Create Item<h1>
+<h1>Edit Item Details<h1>
 <br><br><form method="POST" action="{% url 'update_product' pk=p.Product_ID %}"  enctype="multipart/form-data">
     {% csrf_token %}
     <div>
@@ -54,6 +54,7 @@
                     image.width = 50;
                     imagePreview.innerHTML = '';
                     imagePreview.appendChild(image);
+                    imageRemoved.value = "Not";
                     removeImageButton.style.display = "inline-block"; // Show the "Remove Image" button
                 };
                 reader.readAsDataURL(file);
