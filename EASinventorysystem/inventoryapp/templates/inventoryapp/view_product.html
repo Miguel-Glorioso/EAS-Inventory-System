@@ -13,7 +13,9 @@
         <li><strong>Category:</strong> {{ p.Category }}</li>
         <li><strong>Tags:</strong> 
             {% for c_p in con_p%}
-                {{ c_p.Consignee_ID }}
+                <span class="rounded-pill badge bg-danger"> 
+                    {{ c_p.Consignee_ID.Consignee_Tag_ID }}
+                </span> 
             {% endfor %}
         </li>
         
