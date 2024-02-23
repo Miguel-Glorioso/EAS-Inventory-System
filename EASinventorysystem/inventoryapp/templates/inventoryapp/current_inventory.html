@@ -9,9 +9,90 @@
   </head>
 
 <body class="bg-light">
-  <div class="container">
-    <h1>Products</h1>
-    <div>
+  <div class="container-fluid">
+    <!-- Filter row -->
+    <div class="row p-1" style="background-color: #eee;">
+      <div class="col-md-auto d-flex align-items-center">
+        <h4 class="m-0 mr-3">Current Inventory</h4>
+      </div>
+      
+      <!-- Search Bar -->
+      <div class="col d-flex align-items-center">
+        <div class="search-bar ml-auto">
+          <input type="text" class="form-control" style="width: 300px;" placeholder="Search...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons row -->
+    <div class="row mt-3">
+      <!-- Buttons column -->
+      <div class="col-md-auto">
+        <a href="{% url 'add_product' %}" class="btn btn-primary">Add Product</a>
+      </div>
+
+      <div class="col-md-auto">
+        <a href="#" class="btn btn-primary">Edit Count</a>
+      </div>
+    </div>
+
+    <!-- Table Inventory row -->
+    <div class="row mt-3">
+      <div class="table-responsive">
+        <table class="table text-center">
+          <thead>
+            <tr>
+              <th scope="col" style="background-color: #C2C1C1;">Name</th>
+              <th scope="col" style="background-color: #C2C1C1;">ID</th>
+              <th scope="col" style="background-color: #C2C1C1;">Picture</th>
+              <th scope="col" style="background-color: #C2C1C1;">Actual Count</th>
+              <th scope="col" style="background-color: #C2C1C1;">Reserved</th>
+              <th scope="col" style="background-color: #C2C1C1;">To Be Received</th>
+              <th scope="col" style="background-color: #C2C1C1;">Categories</th>
+              <th scope="col" style="background-color: #C2C1C1;">Consignee</th>
+              <th scope="col" style="background-color: #C2C1C1;"> </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in products %}
+              <tr>  
+                <td class = "iname">{{p.Name}}</td>
+                <td class = "iid">{{p.EAS_Product_ID}}</td>    
+                <td class = "ipicture">         
+                  {% if p.Picture %}
+                    <img src="{{ p.Picture.url }}" width="50">
+                  {% endif %}
+                </td> 
+                <td class = "iact_inv_cnt">{{p.Actual_Inventory_Count}}</td>
+                <td class = "irsrvd_cnt">{{p.Reserved_Inventory_Count}}</td>
+                <td class = "ito_be_rcvd_cnt">{{p.To_Be_Received_Inventory_Count}}</td>    
+                <td class = "icategories">{{p.Category}}</td>    
+                <td class = "iconsignee">
+                  {% for c in consignee_products %}
+                    {% if c.Product_ID.Product_ID == p.Product_ID %}
+                      {{ c.Consignee_ID.Consignee_Tag_ID }}
+                    {% endif %}
+                  {% endfor %}
+                </td>  
+                <td> 
+                  <a href="{% url 'view_product' pk=p.Product_ID %}" type="button" class="btn btn-primary">View</button>
+                </td>             
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <!-- <div>
       <a href="{% url 'add_product' %}" class="btn btn-danger">Add Product</a>
     </div>
     <div class="table-responsive">
@@ -57,7 +138,7 @@
           {% endfor %}
         </tbody>
       </table>
-    </div>
+    </div> -->
               <!-- <div class="justify-content-center">
                 <button type="submit" class="btn btn-info" id="cls">Add Item</button>
               </div> -->
