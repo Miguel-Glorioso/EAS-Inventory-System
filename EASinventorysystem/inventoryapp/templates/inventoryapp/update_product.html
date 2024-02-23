@@ -80,7 +80,7 @@
     
     <div>
         <label for="id_Price">Price:</label>
-        <input type="number" name="product_price" step="0.01" id="id_Price" value="{{ p.Price }}">
+        <input type="number" name="product_price" step="0.01" min="0" id="id_Price" value="{{ p.Price }}">
     </div>
 
     <div class="form-group">
@@ -90,10 +90,6 @@
         </div>
     </div>
 
-    <div>
-        <label for="id_Actual_Inventory_Count">Actual Inventory Count:</label>
-        <input type="number" name="product_initial_count" id="id_Actual_Inventory_Count" value="{{ p.Actual_Inventory_Count }}" readonly>
-    </div>
 
     <div>
         <label for="id_Stock_Level_Threshold">Stock Level Threshold:</label>

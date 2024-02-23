@@ -101,7 +101,6 @@ def update_product(request, pk):
         Product_Price = request.POST.get('product_price')
         EAS_Product_ID = request.POST.get('eas_id')
         Product_SKU = request.POST.get('product_sku')
-        Product_Initial_Count = request.POST.get('product_initial_count')
         Product_Picture = request.FILES.get('product_picture')
         Image_removed = request.POST.get('removed_product_picture')
         Product_Category = request.POST.get('product_category')
@@ -133,7 +132,6 @@ def update_product(request, pk):
             Name=Product_Name,
             SKU=Product_SKU,
             Price=Product_Price,
-            Actual_Inventory_Count=Product_Initial_Count,
             Visibility=Product_Visibility,
             Product_Low_Stock_Threshold=Product_Stock_threshold,
             Category= Product_Category
