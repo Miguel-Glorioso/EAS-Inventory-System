@@ -8,12 +8,6 @@
     <title>Inventory System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
-        .vl {
-          border-left: 2px solid gray;
-          height: 65px;
-          padding: 0;
-        }
-
         .label {
             font-size: 14px;
         }
@@ -22,80 +16,97 @@
             padding: 0;
             min-height: 80px; /* Adjust the height as needed */
         }
+
+        .navbar-brand {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar-brand:not(:last-child) {
+            border-right: 2px solid #5A5A5A;
+            padding-right: 10px; /* Adjust the padding to your preference */
+            height: 70px; 
+        }
+
+        /* Exclude border-right for the first two navbar-brand elements */
+        .navbar-brand:nth-child(1),
+        .navbar-brand:nth-child(2) {
+            border-right: none;
+        }
+
+        /* Center the text */
+        .navbar-brand span {
+            text-align: center;
+            margin: auto; /* Center horizontally */
+        }
     </style>
 </head>
 <body>
     <nav class="px-2 navbar navbar-light" style="background-color: #C2C1C1;">
-        <a class="navbar-brand" href="#">
-            <div class="row row-cols-auto">
-                <!-- EAS Logo -->
-                <div class="col">
-                    <img src="{% static 'images/EAS_logo.png' %}" width="63" height="63">
-                </div>
-                <div class="col p-0">
-                    <!-- EAS Title -->
-                    <span class="h3">Inventory System</span>
-                    <div class="row">
-                        <!-- Date & Time -->
-                        <span id="datetime" class="h6"></span>
-                        <script>
-                        var dt = new Date();
-                        document.getElementById("datetime").innerHTML = (("0"+dt.getDate()).slice(-2)) +"."+ (("0"+(dt.getMonth()+1)).slice(-2)) +"."+ (dt.getFullYear()) +" "+ (("0"+dt.getHours()).slice(-2)) +":"+ (("0"+dt.getMinutes()).slice(-2));
-                        </script>
-                    </div>
+        <div class="container-fluid">
+            <!-- EAS Logo -->
+            <div class="navbar-brand">
+                <img src="{% static 'images/EAS_logo.png' %}" width="65" height="65">
+            </div>
+
+            <!-- EAS Title -->
+            <div class="navbar-brand">
+                <span class="h3">Inventory System</span>
+                <div class="row">
+                    <!-- Date & Time -->
+                    <span id="datetime" class="h6"></span>
+                    <script>
+                    var dt = new Date();
+                    document.getElementById("datetime").innerHTML = (("0"+dt.getDate()).slice(-2)) +"/"+ (("0"+(dt.getMonth()+1)).slice(-2)) +"/"+ (dt.getFullYear()) +" "+ (("0"+dt.getHours()).slice(-2)) +":"+ (("0"+dt.getMinutes()).slice(-2));
+                    </script>
                 </div>
             </div>
-        </a>
-        <!-- Screen Pages -->
-        <div class="row row-cols-auto mt-2">
 
+            <!-- Screen Pages -->
             <!-- Current Inventory button page -->
-            <div class="col d-flex justify-content-center text-center">
+            <div class="navbar-brand">
                 <a href="{% url 'current_inventory' %}" class="text-decoration-none text-secondary">
                     <img src= "{% static 'images/icon_warehouse.png' %}" width="35" height="35"><br>
                     <span><h6 class="label mt-1">Current Inventory</h6></span>
                 </a>
             </div>
-            <div class="vl"></div>
 
             <!-- Order Analytics button page -->
-            <div class="col d-flex justify-content-center text-center">
+            <div class="navbar-brand">
                 <a href="#" class="text-decoration-none text-secondary">
                     <img src= "{% static 'images/icon_file-graph.png' %}" width="35" height="35"><br>
-                    <span><h6 class="label mt-1">Order Analytics</h6></span>
+                    <span><h6 class="label m-1">Order Analytics</h6></span>
                 </a>
             </div>
-            <div class="vl"></div>
 
             <!-- Consignee Tags and Categories button page -->
-            <div class="col d-flex justify-content-center text-center">
+            <div class="navbar-brand">
                 <a href="#" class="text-decoration-none text-secondary">
                     <img src= "{% static 'images/icon_consignee-tags.png' %}" width="35" height="35"><br>
-                    <span><h6 class="label mt-1 mb-0">Consignee Tags <br> and Categories</h6></span>
+                    <span><h6 class="label m-1"> Consignee Tags <br> & Categories</h6></span>
                 </a>
             </div>
-            <div class="vl"></div>
 
             <!-- Customers button page -->
-            <div class="col d-flex justify-content-center text-center">
+            <div class="navbar-brand">
                 <a href="#" class="text-decoration-none text-secondary">
                     <img src= "{% static 'images/icon_customers.png' %}" width="35" height="35"><br>
-                    <span><h6 class="label mt-1">Customers</h6></span>
+                    <span><h6 class="label m-1">Customers</h6></span>
                 </a>
             </div>
-            <div class="vl"></div>
 
             <!-- PO button page -->
-            <div class="col d-flex justify-content-center text-center">
+            <div class="navbar-brand">
                 <a href="#" class="text-decoration-none text-secondary">
                     <img src= "{% static 'images/icon_po.png' %}" width="35" height="35"><br>
                     <span><h6 class="label mt-1">Purchase Orders</h6></span>
                 </a>
             </div>
-            <div class="vl"></div>
 
             <!-- PRO button page -->
-            <div class="col d-flex justify-content-center text-center">
+            <div class="navbar-brand">
                 <a href="#" class="text-decoration-none text-secondary">
                     <img src= "{% static 'images/icon_pro.png' %}" width="35" height="35"><br>
                     <span><h6 class="label mt-1">Product Requisitions</h6></span>
@@ -103,18 +114,16 @@
             </div>
 
             <!-- Logout -->
-            <div class="col px-6 d-flex justify-content-center text-center" style="padding-left: 200px; padding-right:50px;">
+            <div class="navbar-brand">
                 <a href="{% url 'account_login' %}" class="text-decoration-none">
                     <span style="color: red;"><h5> Logout </h5></span>
                 </a>
             </div>
+        </div>
     </nav>
-    <div class="row">
-        <div class="container" style="margin-left: 50px; margin-bottom: 200px;"> 
-            <div>
-                {% block content %}
-                {% endblock %}
-            </div>
+        <div>
+            {% block content %}
+            {% endblock %}
         </div>
     </div> 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
