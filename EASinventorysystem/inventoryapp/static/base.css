@@ -61,7 +61,7 @@
   left: 0;
   height: 100%;
   width: 250px;
-  padding: 10px 14px;
+  padding: 10px 10px;
   background: var(--sidebar-color);
   transition: var(--tran-05);
   z-index: 100;
@@ -92,13 +92,41 @@
 }
 
 .sidebar li{
+  /* position: relative; */
   height: 50px;
-  /* background: red; */
   margin-top: 10px;
   list-style: none;
   display: flex;
   align-items: center;
+  border-radius: 6px;
 }
+
+/* .sidebar li .tooltip{
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  border-radius: 6px;
+  height: auto;
+  min-width: 150px;
+  max-width: 200px;
+  padding: 5px 10px;
+  background: var(--body-color);
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  transition: 0s;
+  opacity: 0;
+  pointer-events: none;
+  font-size: 14px;
+  margin: 0;
+  display: none;
+}
+
+.sidebar.close li:hover .tooltip {
+  transition: var(--tran-02);
+  opacity: 1;
+  top: 50%;
+} */
 
 .sidebar li .icon{
   display: flex;
@@ -138,7 +166,7 @@ header .image-text .header-text{
   font-weight: 600;
 }
 
-.header-text .systemName{
+.header-text .clock{
   margin-top: -2px;
 }
 
@@ -175,14 +203,15 @@ header .image-text .header-text{
   text-decoration: none;
   border-radius: 6px;
   transition: var(--tran-04);
+  /* white-space: nowrap; */
 }
 
-.sidebar li a:hover{
+.sidebar li:hover{
   background: var(--primary-color);
 }
 
-.sidebar li a:hover .icon,
-.sidebar li a:hover .text{
+.sidebar li:hover .icon,
+.sidebar li:hover .text{
   color: var(--sidebar-color);
 }
 

@@ -62,8 +62,12 @@
                 </span>
 
                 <div class="text header-text">
-                    <span class="name">EAS</span>
-                    <span class="systemName">Inventory System</span>
+                    <span class="name">Inventory System</span>
+                    <span id="datetime" class="clock"></span>
+                    <script>
+                    var dt = new Date();
+                    document.getElementById("datetime").innerHTML = (("0"+dt.getDate()).slice(-2)) +"/"+ (("0"+(dt.getMonth()+1)).slice(-2)) +"/"+ (dt.getFullYear()) +" "+ (("0"+dt.getHours()).slice(-2)) +":"+ (("0"+dt.getMinutes()).slice(-2));
+                    </script>
                 </div>
             </div>
             
@@ -74,40 +78,46 @@
             <div class="menu">
                 <ul class="menu-links">
                     <li class="nav-link">
-                        <a href="#">
+                        <a href="{% url 'current_inventory' %}">
                             <i class='bx bxs-cabinet icon' ></i>
                             <span class="text nav-text">Current Inventory</span>
                         </a>
+                        <!-- <span class="tooltip">Current Inventory</span> -->
                     </li>
                     <li class="nav-link">
                         <a href="#">
                             <i class='bx bxs-report icon'></i>
                             <span class="text nav-text">Order Analytics</span>
                         </a>
+                        <!-- <span class="tooltip">Order Analytics</span> -->
                     </li>
                     <li class="nav-link">
                         <a href="#">
                             <i class='bx bxs-purchase-tag icon' ></i>
                             <span class="text nav-text">Tags and Categories</span>
                         </a>
+                        <!-- <span class="tooltip">Tags and Categories</span> -->
                     </li>
                     <li class="nav-link">
                         <a href="#">
                             <i class='bx bxs-group icon' ></i>
                             <span class="text nav-text">Customers</span>
                         </a>
+                        <!-- <span class="tooltip">Customers</span> -->
                     </li>
                     <li class="nav-link">
                         <a href="#">
                             <i class='bx bxs-cart icon'></i>
                             <span class="text nav-text">Purchase Orders</span>
                         </a>
+                        <!-- <span class="tooltip">Purchase Orders</span> -->
                     </li>
                     <li class="nav-link">
                         <a href="#">
                             <i class='bx bxs-basket icon'></i>
                             <span class="text nav-text">Product Requisitions</span>
                         </a>
+                        <!-- <span class="tooltip">Product Requisitions</span> -->
                     </li>
                 </ul>
             </div>
