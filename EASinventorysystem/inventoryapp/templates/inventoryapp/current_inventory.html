@@ -1,3 +1,5 @@
+<link rel ="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel ="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
@@ -10,19 +12,19 @@
 
 <body class="bg-light">
   <div class="container-fluid">
-    <!-- Filter row -->
+
     <div class="row p-1" style="background-color: #eee;">
       <div class="col-md-auto d-flex align-items-center">
         <h4 class="m-0 mr-3">Current Inventory</h4>
       </div>
+    </div>
       
-      <!-- Search Bar -->
-      <div class="col d-flex align-items-center">
+      <!-- <div class="col d-flex align-items-center">
         <div class="search-bar ml-auto">
           <input type="text" class="form-control" style="width: 300px;" placeholder="Search...">
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Buttons row -->
     <div class="row mt-3">
@@ -39,7 +41,7 @@
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">
-        <table class="table text-center">
+        <table id ="currentinventory" class="table text-center">
           <thead>
             <tr>
               <th scope="col" style="background-color: #C2C1C1;">Name</th>
@@ -84,6 +86,16 @@
       </div>
     </div>
   </div>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+              <!-- <div class="justify-content-center">
+                <button type="submit" class="btn btn-info" id="cls">Add Item</button>
+              </div> -->
+    <script>
+    	new DataTable('#currentinventory');
+    </script>
 </body>
 {% endblock %}
 
