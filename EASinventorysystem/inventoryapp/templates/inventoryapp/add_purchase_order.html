@@ -1,0 +1,134 @@
+
+<div class="container2">
+    <form method="POST" action="{% url 'add_purchase_order' %}" class="mt-5 border p-4 bg-light shadow">
+        {% csrf_token %}
+        <main>
+            <fieldset>
+            <legend>Customer Information:</legend>
+            
+            <label for="requested_date">Requested Date:</label><br>
+            <input type="date" id="requested_date" name="requested_date"><br><br>
+            
+            <label for="customer_type">Type of Customer:</label><br>
+            <select id="customer_type" name="customer_type">
+                <option value="consignee">Consignee</option>
+                <option value="direct">Direct</option>
+            </select><br><br>
+            
+            <label for="customer_name">Customer Name:</label><br>
+            <input type="text" id="customer_name" name="customer_name"><br><br>
+            
+            <label for="shipping_method">Shipping Method:</label><br>
+            <select id="shipping_method" name="shipping_method">
+                <option value="grab">Grab</option>
+                <option value="lalamove">Lalamove</option>
+                <option value="direct_delivery">Direct Delivery</option>
+                <option value="lazada">Lazada</option>
+                <option value="shopee">Shopee</option>
+            </select><br><br>
+            
+            <label for="order_method">Order Method:</label><br>
+            <select id="order_method" name="order_method">
+                <option value="walk_in">Walk-in</option>
+                <option value="lazada">Lazada</option>
+                <option value="shopee">Shopee</option>
+            </select><br><br>
+            
+            <label for="primary_contact">Primary Contact Info:</label><br>
+            <input type="tel" id="primary_contact" name="primary_contact"><br><br>
+            
+            <label for="email_address">Email Address:</label><br>
+            <input type="email" id="email_address" name="email_address"><br><br>
+            
+            <label for="emergency_contact">Emergency Contact Info:</label><br>
+            <input type="tel" id="emergency_contact" name="emergency_contact"><br><br>
+            
+            <label for="address_line1">Address Line 1:</label><br>
+            <input type="text" id="address_line1" name="address_line1"><br><br>
+            
+            <label for="province">Province:</label><br>
+            <input type="text" id="province" name="province"><br><br>
+            
+            <label for="municipality">Municipality:</label><br>
+            <input type="text" id="municipality" name="municipality"><br><br>
+            
+            <label for="barangay">Barangay:</label><br>
+            <input type="text" id="barangay" name="barangay"><br><br>
+            
+            <label for="zip_code">Zip Code:</label><br>
+            <input type="text" id="zip_code" name="zip_code"><br><br>
+            
+            <label for="notes">Notes:</label><br>
+            <textarea id="notes" name="notes" rows="4" cols="50"></textarea><br><br>
+        
+            </fieldset>
+                        <fieldset>
+            <legend>Customer Information:</legend>
+            
+            <label for="requested_date">Requested Date:</label><br>
+            <input type="date" id="requested_date" name="requested_date"><br><br>
+            
+            <label for="customer_type">Type of Customer:</label><br>
+            <select id="customer_type" name="customer_type">
+                <option value="consignee">Consignee</option>
+                <option value="direct">Direct</option>
+            </select><br><br>
+            
+            <label for="customer_name">Customer Name:</label><br>
+            <input type="text" id="customer_name" name="customer_name"><br><br>
+            
+            <label for="shipping_method">Shipping Method:</label><br>
+            <select id="shipping_method" name="shipping_method">
+                <option value="grab">Grab</option>
+                <option value="lalamove">Lalamove</option>
+                <option value="direct_delivery">Direct Delivery</option>
+                <option value="lazada">Lazada</option>
+                <option value="shopee">Shopee</option>
+            </select><br><br>
+            
+            <label for="order_method">Order Method:</label><br>
+            <select id="order_method" name="order_method">
+                <option value="walk_in">Walk-in</option>
+                <option value="lazada">Lazada</option>
+                <option value="shopee">Shopee</option>
+            </select><br><br>
+            
+            <label for="primary_contact">Primary Contact Info:</label><br>
+            <input type="tel" id="primary_contact" name="primary_contact"><br><br>
+            
+            <label for="email_address">Email Address:</label><br>
+            <input type="email" id="email_address" name="email_address"><br><br>
+            
+            <label for="emergency_contact">Emergency Contact Info:</label><br>
+            <input type="tel" id="emergency_contact" name="emergency_contact"><br><br>
+            
+            <label for="address_line1">Address Line 1:</label><br>
+            <input type="text" id="address_line1" name="address_line1"><br><br>
+            
+            <label for="province">Province:</label><br>
+            <input type="text" id="province" name="province"><br><br>
+            
+            <label for="municipality">Municipality:</label><br>
+            <input type="text" id="municipality" name="municipality"><br><br>
+            
+            <label for="barangay">Barangay:</label><br>
+            <input type="text" id="barangay" name="barangay"><br><br>
+            
+            <label for="zip_code">Zip Code:</label><br>
+            <input type="text" id="zip_code" name="zip_code"><br><br>
+            
+            <label for="notes">Notes:</label><br>
+            <textarea id="notes" name="notes" rows="4" cols="50"></textarea><br><br>
+        
+            </fieldset>
+            
+
+            <div class="row">
+                <button type="submit" class="btn-success" name="Add">Create PO</button>
+                <a href="{% url 'current_purchase_orders' %}" class="btn-danger">Cancel</a>
+            </div>  
+        </main>
+    </form>
+</div>
+
+  

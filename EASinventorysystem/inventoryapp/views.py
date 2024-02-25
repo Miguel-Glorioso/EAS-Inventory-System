@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . models import Product, Category, Account,Consignee, Consignee_Product
+from . models import Product, Category, Account,Consignee, Consignee_Product, Purchase_Order, Products_Ordered
 from django.http import HttpResponseRedirect
 from django.core.files.storage import default_storage
 from django.core.files import File
@@ -153,3 +153,16 @@ def update_product(request, pk):
         return redirect('view_product', pk=pk)
     else:
         return render(request, 'inventoryapp/update_product.html', {'p':p, 'con_p':con_p, 'con_p_ids':con_p_ids, 'categories': categories,  'consignees': consignees})
+    
+def purchase_order_list(request):
+    all_purchase_orders = Purchase_Order.objects.all()
+    print(all_purchase_orders)
+    return render(request, 'inventoryapp/current_purchase_orders.html', {'purchase_orders':all_purchase_orders})
+
+def add_purchase_order(request):
+    if request.method == 'POST':
+        print("yes")
+    else:
+        return render(request, 'inventoryapp/add_purchase_order.html')
+
+

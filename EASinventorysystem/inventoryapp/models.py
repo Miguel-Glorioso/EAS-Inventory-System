@@ -67,7 +67,7 @@ class Purchase_Order(models.Model):
     Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT)
 
     def __str__(self):
-        return 
+        return f" Purchase Order Number {self.Purchase_Order_ID}"
 
 class Products_Ordered(models.Model):
     Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
@@ -75,7 +75,7 @@ class Products_Ordered(models.Model):
     Quantity = models.PositiveIntegerField( validators=[MaxValueValidator(9999)])
 
     def __str__(self):
-        return 
+        return f"{self.Purchase_Order_ID} Product: {self.Product_ID.Name}"
     
 class Product_Requisition_Order(models.Model):
     Product_Requisition_ID = models.AutoField(primary_key=True)
