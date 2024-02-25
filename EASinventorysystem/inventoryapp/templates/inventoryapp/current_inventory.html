@@ -44,32 +44,32 @@
         <table id ="currentinventory" class="table text-center">
           <thead>
             <tr>
-              <th scope="col" style="background-color: #C2C1C1;">Name</th>
-              <th scope="col" style="background-color: #C2C1C1;">ID</th>
-              <th scope="col" style="background-color: #C2C1C1;">Picture</th>
-              <th scope="col" style="background-color: #C2C1C1;">Actual Count</th>
-              <th scope="col" style="background-color: #C2C1C1;">Reserved</th>
-              <th scope="col" style="background-color: #C2C1C1;">To Be Received</th>
-              <th scope="col" style="background-color: #C2C1C1;">Categories</th>
-              <th scope="col" style="background-color: #C2C1C1;">Consignee</th>
-              <th scope="col" style="background-color: #C2C1C1;"> </th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Name</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">ID</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;" data-orderable="false">Picture</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Actual Count</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Reserved</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">To Be Received</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Categories</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Consignee</th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
             </tr>
           </thead>
           <tbody>
             {% for p in products %}
               <tr>  
-                <td class = "iname">{{p.Name}}</td>
-                <td class = "iid">{{p.EAS_Product_ID}}</td>    
-                <td class = "ipicture">         
+                <td class = "iname" style="text-align: center;">{{p.Name}}</td>
+                <td class = "iid" style="text-align: center;">{{p.EAS_Product_ID}}</td>    
+                <td class = "ipicture" style="text-align: center;">         
                   {% if p.Picture %}
                     <img src="{{ p.Picture.url }}" width="50">
                   {% endif %}
                 </td> 
-                <td class = "iact_inv_cnt">{{p.Actual_Inventory_Count}}</td>
-                <td class = "irsrvd_cnt">{{p.Reserved_Inventory_Count}}</td>
-                <td class = "ito_be_rcvd_cnt">{{p.To_Be_Received_Inventory_Count}}</td>    
-                <td class = "icategories">{{p.Category}}</td>    
-                <td class = "iconsignee">
+                <td class = "iact_inv_cnt" style="text-align: center;">{{p.Actual_Inventory_Count}}</td>
+                <td class = "irsrvd_cnt" style="text-align: center;">{{p.Reserved_Inventory_Count}}</td>
+                <td class = "ito_be_rcvd_cnt" style="text-align: center;">{{p.To_Be_Received_Inventory_Count}}</td>    
+                <td class = "icategories" style="text-align: center;">{{p.Category}}</td>    
+                <td class = "iconsignee" style="text-align: center;">
                   {% for c in consignee_products %}
                     {% if c.Product_ID.Product_ID == p.Product_ID %}
                       {{ c.Consignee_ID.Consignee_Tag_ID }}
@@ -90,9 +90,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
-              <!-- <div class="justify-content-center">
-                <button type="submit" class="btn btn-info" id="cls">Add Item</button>
-              </div> -->
     <script>
     	new DataTable('#currentinventory');
     </script>
