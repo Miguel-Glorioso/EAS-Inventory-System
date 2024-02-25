@@ -68,7 +68,7 @@
 }
 
 .sidebar.close{
-  width: 88px;
+  width: 85px;
 }
 /* ====== Resuable CSS ====== */
 .sidebar .text{
@@ -230,7 +230,7 @@ header .image-text .header-text{
   position: relative;
   left: 250px;
   height: 100vh;
-  width: calc(100% - 88px);
+  width: calc(100% - 85px);
   background: var(--body-color);
   transition: var(--tran-05);
 }
@@ -243,6 +243,6 @@ header .image-text .header-text{
 }
 
 .sidebar.close ~ .home{
-  left: 88px;
-  width: calc(100% - 88px);
+  left: 85px;
+  width: calc(100% - 85px);
 }
