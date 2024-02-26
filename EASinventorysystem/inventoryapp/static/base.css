@@ -60,7 +60,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  width: 250px;
+  width: 270px; /* CHANGED FOR HAMBURGER */
   padding: 10px 10px;
   background: var(--sidebar-color);
   transition: var(--tran-05);
@@ -81,9 +81,11 @@
   opacity: 1;
 }
 
-.sidebar.close .text{
+.sidebar.close .text,
+.sidebar.close .image{
   opacity: 0;
-}
+} 
+/* ^ Added .sidebar.close .image for hamburger!! */
 
 .sidebar .image{
   min-width: 60px;
@@ -175,7 +177,28 @@ header .image-text .header-text{
   margin-top: -2px;
 }
 
-.sidebar header .toggle{
+/* Hamburger Button!! */
+
+.sidebar #btn{
+  position: absolute;
+  color: var(--text-color);
+  left: 105%;
+  top: 8px;
+  font-size: 28px;
+  height: 50px;
+  width: 50px;
+  text-align: center;
+  line-height: 35px;
+  transform: translate(-115%);
+}
+
+.sidebar.close header .toggle{
+  transform: translateY(-95%);
+}
+
+/* Header Toggle --> Old button (Chevron) */
+
+/* .sidebar header .toggle{
   position: absolute;
   top: 50%;
   right: -25px;
@@ -194,8 +217,9 @@ header .image-text .header-text{
 
 .sidebar.close header .toggle{
   transform: translateY(-50%);
-}
+} */
 
+/* END OF HAMBURGER */
 .sidebar .menu{
   margin-top: 35px;
 }
@@ -234,9 +258,9 @@ header .image-text .header-text{
 
 .home{
   position: relative;
-  left: 250px;
+  left: 270px; /* CHANGED FOR HAMBURGER --> before 250% */
   height: 100vh;
-  width: calc(100% - 80px);
+  width: calc(100% - 80px); 
   background: var(--body-color);
   transition: var(--tran-05);
 }
@@ -250,7 +274,7 @@ header .image-text .header-text{
 
 .sidebar.close ~ .home{
   left: 80px;
-  width: calc(100% - 80px);
+  width: calc(100% - 80px); 
 }
 
 .sidebar.close .nav-text {
