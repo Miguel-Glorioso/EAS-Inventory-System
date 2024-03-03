@@ -22,7 +22,7 @@
     <div class="row mt-3">
       <!-- Buttons column -->
       <div class="col-md-auto">
-        <a href="{% url 'add_purchase_order' %}" class="btn btn-primary">Add Purchase Order</a>
+        <a href="{% url 'add_po' %}" class="btn btn-primary">Add Purchase Order</a>
       </div>
 
       <div class="col-md-auto">
@@ -69,7 +69,7 @@
                   </td>   
                 <td> 
                   <!-- HI MIGGY, THIS IS THE VIEW BUTTON, theres javascript below with my comment too-->
-                  <a href="#" type="button" class="btn btn-primary" onclick="viewPurchaseOrder({{ po.Purchase_Order_ID }})">View</a>
+                  <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
                 </td>             
               </tr>
             {% endfor %}
@@ -83,17 +83,5 @@
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
     
-
-  <script>
-    new DataTable('#currentpo');
-
-    // HI MIGGY, this is the script! Change it accordingly na lang if needed
-
-    // Function to handle viewing purchase order
-    function viewPurchaseOrder(pk) {
-          // Redirect to view_po page with pk 
-          window.location.href = "{% url 'view_po' %}?pk=" + pk;
-      }
-  </script>
 </body>
 {% endblock %}

@@ -88,7 +88,7 @@ def add_product(request):
         return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees})
 
 
-def view_product(request, product_pk):
+def view_product(product_pk):
     try:
         product = Product.objects.get(pk=product_pk)
         con_p = Consignee_Product.objects.filter(Product_ID=product_pk)
@@ -174,13 +174,15 @@ def update_product(request, pk):
 def purchase_order_list(request):
     all_purchase_orders = Purchase_Order.objects.all()
     print(all_purchase_orders)
-    return render(request, 'inventoryapp/current_purchase_orders.html', {'purchase_orders':all_purchase_orders})
+    return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
 
 def add_purchase_order(request):
     if request.method == 'POST':
         print("yes")
     else:
-        return render(request, 'inventoryapp/add_purchase_order.html')
+        return render(request, 'inventoryapp/add_po.html')
 
-def view_po(request): #TIMMY ADDED
-     return render(request, 'inventoryapp/view_po.html')
+def view_po(request, pk):
+    purchase_order = get_object_or_404(Purchase_Order, pk=pk)
+    products_ordered = Products_Ordered.objects.filter(Purchase_Order_ID=pk)
+    return render(request, 'inventoryapp/view_po.html', {'po':purchase_order, 'products':products_ordered})

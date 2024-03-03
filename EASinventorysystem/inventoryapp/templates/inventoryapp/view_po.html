@@ -21,7 +21,7 @@ also, i added something sa views.py and urls.py, may comment din siya with my na
         <div class="row mt-3">
             <div class="col">
                 <!-- HI MIGUEL, add pk stuff here, replace the "[ insert po no.]"  -->
-                <h5>Purchase Order No. [ insert po no.]</h5>
+                <h5>Purchase Order No. {{ po.Purchase_Order_ID }}</h5>
             </div>
             <div class="col-auto">
                 <button class="btn btn-danger me-2">Delete</button>
@@ -33,20 +33,30 @@ also, i added something sa views.py and urls.py, may comment din siya with my na
         <div class="row mt-3">
             <div class="col">
                 <!-- HERE TOO, add pk stuff here! -->
-                <p>Creation Date: </p> 
-                <p>Requested Date:</p>
-                <p>Type of Purchaser:</p>
-                <p>Purchaser Name:</p>
-                <p>Shipping Method:</p>
-                <p>Delivery Address:</p>
-                <p>Total Due:</p>
-                <p>Progress:</p>
+                <p>Creation Date: {{ po.Creation_Date }}</p> 
+                <p>Requested Date: {{ po.Requested_Date }}</p>
+                {% if po.Customer_ID %}
+                    <p>Type of Purchaser: {{ po.Customer_ID.Customer_Type }}</p>
+                    <p>Purchaser Name: {{ po.Customer_ID.Customer_Name }}</p>
+                    <p>Delivery Address: {{ po.Customer_ID.Address_Line_1 }}, {{ po.Customer_ID.Barangay }}, {{ po.Customer_ID.Municipality }}, {{ po.Customer_ID.Province }}</p>
+                {% elif po.Consignee_ID %}
+                    <p>Type of Purchaser: {{ po.Consignee_ID.Customer_Type }}</p>
+                    <p>Purchaser Name: {{ po.Consignee_ID.Customer_Name }}</p>   
+                    <p>Delivery Address: {{ po.Consignee_ID.Address_Line_1 }}, {{ po.Consignee_ID.Barangay }}, {{ po.Consignee_ID.Municipality }}, {{ po.Consignee_ID.Province }}</p>
+                {% endif %}
+                <p>Shipping Method: {{ po.Shipping_Method }}</p>
+                <p>Total Due: {{ po.Total_Due }}</p>
+                <p>Progress: {{ po.Creation_Date }}</p>
             </div>
             <div class="col">
                 <!-- AND THIS TOO, add pk stuff :3 -->
-                <p>Primary Contact Number:</p>
-                <p>Email Address:</p>
-                <p>Emergency Contact No. (Mobile/Landline):</p>
+                {% if po.Customer_ID %}
+                    <p>Primary Contact Number: {{ po.Customer_ID.Primary_Contact_Number }}</p>
+                {% elif po.Consignee_ID %}
+                    <p>Primary Contact Number: {{ po.Consignee_ID.Primary_Contact_Number }}</p>
+                    <p>Email Address: {{ po.Consignee_ID.Email_Address }}</p>
+                    <p>Emergency Contact No. (Mobile/Landline): {{ po.Consignee_ID.Emergency_Contact_Number }}</p>
+                {% endif %}
             </div>
         </div>
 
@@ -55,7 +65,7 @@ also, i added something sa views.py and urls.py, may comment din siya with my na
                 <div class="overflow-auto p-3" style="background-color: #ddd; border-radius: 10px;">
                     <h6>Notes:</h6>
                     <!-- HERE TOO, add notes pk ! -->
-                    <p>[Contents of Notes]</p>
+                    <p>{{ po.Notes }}]</p>
                 </div>
             </div>
         </div>
@@ -74,7 +84,15 @@ also, i added something sa views.py and urls.py, may comment din siya with my na
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- WIP: Add content when its done na -->
+                        {% for p in products %}
+                            <tr>
+                                <td>{{ p.Product_ID.Name }}</td>
+                                <td>{{ p.Product_ID.EAS_Product_ID }}</td>
+                                <td>{{ p.Product_ID.Price}}</td>
+                                <td>{{ p.Quantity }}</td>
+                                <td>{{ p.Total}}</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -82,7 +100,7 @@ also, i added something sa views.py and urls.py, may comment din siya with my na
 
         <div class="row mt-3">
             <div class="col">
-                <a href="{% url 'current_purchase_orders' %}" class="btn btn-primary">Go Back</a>
+                <a href="{% url 'current_pos' %}" class="btn btn-primary">Go Back</a>
             </div>
         </div>
     </div>

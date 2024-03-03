@@ -25,7 +25,7 @@ urlpatterns = [
     path('add_product', views.add_product, name='add_product'),
     path('view_product/<int:product_pk>/', views.view_product, name='view_product'),
     path('update_product/<int:pk>/', views.update_product, name='update_product'),
-    path('current_purchase_orders', views.purchase_order_list, name='current_purchase_orders'),
-    path('add_purchase_order', views.add_purchase_order, name='add_purchase_order'),
-    path('view_po', views.view_po, name='view_po'), #TIMMY ADDED
+    path('current_pos', views.purchase_order_list, name='current_pos'),
+    path('add_po', views.add_purchase_order, name='add_po'),
+    path('view_po/<int:pk>/', views.view_po, name='view_po'), 
 ]
