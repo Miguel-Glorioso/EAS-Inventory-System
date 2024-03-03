@@ -88,9 +88,10 @@ also, i added something sa views.py and urls.py, may comment din siya with my na
                             <tr>
                                 <td>{{ p.Product_ID.Name }}</td>
                                 <td>{{ p.Product_ID.EAS_Product_ID }}</td>
-                                <td>{{ p.Product_ID.Price}}</td>
+                                <td>PHP {{ p.Product_ID.Price}}</td>
                                 <td>{{ p.Quantity }}</td>
-                                <td>{{ p.Total}}</td>
+                                {% load mathfilters %}
+                                <td>PHP {{ p.Quantity|mul:p.Product_ID.Price }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
