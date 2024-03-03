@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from . models import Product, Category, Account,Consignee, Consignee_Product, Purchase_Order, Products_Ordered
-from django.http import HttpResponseRedirect
+from django.http import  JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files import File
 
@@ -88,10 +88,24 @@ def add_product(request):
         return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees})
 
 
-def view_product(request, pk):
-    p = get_object_or_404(Product, pk=pk)
-    con_p = Consignee_Product.objects.filter(Product_ID=pk)
-    return render(request, 'inventoryapp/view_product.html', {'p':p, 'con_p':con_p })
+def view_product(request, product_pk):
+    try:
+        product = Product.objects.get(pk=product_pk)
+        con_p = Consignee_Product.objects.filter(Product_ID=product_pk)
+        response_data = {
+            'name': product.Name,
+            'id': product.EAS_Product_ID,
+            'sku': product.SKU,
+            'price': product.Price,
+            'count': product.Actual_Inventory_Count,
+            'category': product.Category.Category_Name,
+            'tags': [consignee_product.Consignee_ID.Customer_Name for consignee_product in con_p], 
+            'threshold': product.Product_Low_Stock_Threshold,
+            'picture': product.Picture.url if product.Picture else None,
+        }
+        return JsonResponse(response_data)
+    except Product.DoesNotExist:
+        return JsonResponse({'error': 'Product not found'}, status=404)
 
 def update_product(request, pk):
     p = get_object_or_404(Product, pk=pk)
