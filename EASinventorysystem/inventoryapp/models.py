@@ -34,7 +34,7 @@ class Product(models.Model):
     To_Be_Received_Inventory_Count = models.PositiveIntegerField(validators =[MaxValueValidator(9999)], default = 0)
     Visibility = models.BooleanField(default=True)
     Product_Low_Stock_Threshold = models.PositiveIntegerField(validators =[MaxValueValidator(9999)], null=True, blank=True)
-    Product_Stock_Status = models.CharField(max_length=16) # needs implementation
+    Product_Stock_Status = models.CharField(max_length=16, null=True, blank=True) # needs implementation
     Category = models.ForeignKey("Category", on_delete=models.PROTECT)
 
     def __str__(self):
@@ -73,7 +73,6 @@ class Products_Ordered(models.Model):
     Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
     Purchase_Order_ID = models.ForeignKey(Purchase_Order, on_delete=models.PROTECT)
     Quantity = models.PositiveIntegerField( validators=[MaxValueValidator(9999)])
-    Total = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0)])
 
     def __str__(self):
         return f"{self.Product_ID.Name} in {self.Purchase_Order_ID} "
