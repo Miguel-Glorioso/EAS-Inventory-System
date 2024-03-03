@@ -4,6 +4,9 @@ from django.http import HttpResponseRedirect
 from django.core.files.storage import default_storage
 from django.core.files import File
 
+from django.http import HttpResponse
+
+
 
 # Create your views here.
 
@@ -165,4 +168,5 @@ def add_purchase_order(request):
     else:
         return render(request, 'inventoryapp/add_purchase_order.html')
 
-
+def view_po(request): #TIMMY ADDED
+     return render(request, 'inventoryapp/view_po.html')

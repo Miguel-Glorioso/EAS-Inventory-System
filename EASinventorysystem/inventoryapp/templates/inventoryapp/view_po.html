@@ -1,0 +1,90 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- HI MIGGY, before proceeding, check View button of current_purchase_order.html to be sure na nakukuha pk!
+also, i added something sa views.py and urls.py, may comment din siya with my name to indicate na inadd ko siya -->
+<head>
+    <title>Current Purchase Orders</title>
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">View Purchase Order</h4>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <!-- HI MIGUEL, add pk stuff here, replace the "[ insert po no.]"  -->
+                <h5>Purchase Order No. [ insert po no.]</h5>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-danger me-2">Delete</button>
+                <button class="btn btn-primary me-2">Edit</button>
+                <button class="btn btn-success me-2">Close</button>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <!-- HERE TOO, add pk stuff here! -->
+                <p>Creation Date: </p> 
+                <p>Requested Date:</p>
+                <p>Type of Purchaser:</p>
+                <p>Purchaser Name:</p>
+                <p>Shipping Method:</p>
+                <p>Delivery Address:</p>
+                <p>Total Due:</p>
+                <p>Progress:</p>
+            </div>
+            <div class="col">
+                <!-- AND THIS TOO, add pk stuff :3 -->
+                <p>Primary Contact Number:</p>
+                <p>Email Address:</p>
+                <p>Emergency Contact No. (Mobile/Landline):</p>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <div class="overflow-auto p-3" style="background-color: #ddd; border-radius: 10px;">
+                    <h6>Notes:</h6>
+                    <!-- HERE TOO, add notes pk ! -->
+                    <p>[Contents of Notes]</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <h6>Products Ordered:</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Product ID</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- WIP: Add content when its done na -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <a href="{% url 'current_purchase_orders' %}" class="btn btn-primary">Go Back</a>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

@@ -27,4 +27,5 @@ urlpatterns = [
     path('update_product/<int:pk>/', views.update_product, name='update_product'),
     path('current_purchase_orders', views.purchase_order_list, name='current_purchase_orders'),
     path('add_purchase_order', views.add_purchase_order, name='add_purchase_order'),
+    path('view_po', views.view_po, name='view_po'), #TIMMY ADDED
 ]

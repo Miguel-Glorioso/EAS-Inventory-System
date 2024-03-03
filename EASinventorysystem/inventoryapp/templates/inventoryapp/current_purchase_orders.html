@@ -6,9 +6,8 @@
 {% block content %}
 
 <head>
-
     <title>Current Purchase Orders</title>
-  </head>
+</head>
 
 <body class="bg-light">
   <div class="container-fluid">
@@ -18,13 +17,6 @@
         <h4 class="m-0 mr-3">Current Purchase Orders</h4>
       </div>
     </div>
-      
-      <!-- <div class="col d-flex align-items-center">
-        <div class="search-bar ml-auto">
-          <input type="text" class="form-control" style="width: 300px;" placeholder="Search...">
-        </div>
-      </div>
-    </div> -->
 
     <!-- Buttons row -->
     <div class="row mt-3">
@@ -41,42 +33,43 @@
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">
-        <table id ="currentinventory" class="table text-center">
+        <table id ="currentpo" class="table text-center">
           <thead>
             <tr>
-              <th scope="col" style="background-color: #C2C1C1;">Purchase Order Number</th>
-              <th scope="col" style="background-color: #C2C1C1;">Requested Date</th>
-              <th scope="col" style="background-color: #C2C1C1;">Type of Customer</th>
-              <th scope="col" style="background-color: #C2C1C1;">Customer Name</th>
-              <th scope="col" style="background-color: #C2C1C1;">Progress</th>
-              <th scope="col" style="background-color: #C2C1C1;"> </th>
-              <th scope="col" style="background-color: #C2C1C1;"> </th>
-              <th scope="col" style="background-color: #C2C1C1;"> </th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Purchase Order No.</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Requested Date</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Type of Customer</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Customer Name</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Progress</th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
             </tr>
           </thead>
           <tbody>
             {% for po in purchase_orders %}
               <tr>  
-                <td class = "iname">{{po.Purchase_Order_ID}}</td>
-                <td class = "iid">{{po.Requested_Date}}</td>
+                <td class = "iname" style="text-align: center;">{{po.Purchase_Order_ID}}</td>
+                <td class = "iid" style="text-align: center;">{{po.Requested_Date}}</td>
 
                 {% if po.Customer_ID %}
-                  <td class = "iact_inv_cnt">{{po.Customer_ID.Customer_Type}}</td>
-                  <td class = "iact_inv_cnt">{{po.Customer_ID.Customer_Name}}</td>
+                  <td class = "iact_inv_cnt" style="text-align: center;">{{po.Customer_ID.Customer_Type}}</td>
+                  <td class = "iact_inv_cnt" style="text-align: center;">{{po.Customer_ID.Customer_Name}}</td>
                 {% elif po.Consignee_ID %}
-                  <td class = "iact_inv_cnt">{{po.Consignee_ID.Customer_Type}}</td>
-                  <td class = "iact_inv_cnt">{{po.Consignee_ID.Customer_Name}}</td>
+                  <td class = "iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Customer_Type}}</td>
+                  <td class = "iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Customer_Name}}</td>
                 {% endif %}
 
-                <td class = "iact_inv_cnt">{{po.Progress}}</td>
+                <td class = "iact_inv_cnt" style="text-align: center;">{{po.Progress}}</td>
                 <td> 
-                    <a href="#" type="button" class="btn btn-primary">Delete</button>
+                    <a href="#" type="button" class="btn btn-danger">Delete</button>
                   </td>   
                 <td> 
                     <a href="#" type="button" class="btn btn-primary">Close</button>
                   </td>   
                 <td> 
-                  <a href="#" type="button" class="btn btn-primary">View</button>
+                  <!-- HI MIGGY, THIS IS THE VIEW BUTTON, theres javascript below with my comment too-->
+                  <a href="#" type="button" class="btn btn-primary" onclick="viewPurchaseOrder({{ po.Purchase_Order_ID }})">View</a>
                 </td>             
               </tr>
             {% endfor %}
@@ -86,14 +79,21 @@
     </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
-              <!-- <div class="justify-content-center">
-                <button type="submit" class="btn btn-info" id="cls">Add Item</button>
-              </div> -->
-    <script>
-    	new DataTable('#currentinventory');
-    </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+    
+
+  <script>
+    new DataTable('#currentpo');
+
+    // HI MIGGY, this is the script! Change it accordingly na lang if needed
+
+    // Function to handle viewing purchase order
+    function viewPurchaseOrder(pk) {
+          // Redirect to view_po page with pk 
+          window.location.href = "{% url 'view_po' %}?pk=" + pk;
+      }
+  </script>
 </body>
 {% endblock %}
