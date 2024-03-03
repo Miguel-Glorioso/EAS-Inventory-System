@@ -1,134 +1,192 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+{% load static %}
 
-<div class="container2">
-    <form method="POST" action="{% url 'add_po' %}" class="mt-5 border p-4 bg-light shadow">
-        {% csrf_token %}
-        <main>
-            <fieldset>
-            <legend>Customer Information:</legend>
-            
-            <label for="requested_date">Requested Date:</label><br>
-            <input type="date" id="requested_date" name="requested_date"><br><br>
-            
-            <label for="customer_type">Type of Customer:</label><br>
-            <select id="customer_type" name="customer_type">
-                <option value="consignee">Consignee</option>
-                <option value="direct">Direct</option>
-            </select><br><br>
-            
-            <label for="customer_name">Customer Name:</label><br>
-            <input type="text" id="customer_name" name="customer_name"><br><br>
-            
-            <label for="shipping_method">Shipping Method:</label><br>
-            <select id="shipping_method" name="shipping_method">
-                <option value="grab">Grab</option>
-                <option value="lalamove">Lalamove</option>
-                <option value="direct_delivery">Direct Delivery</option>
-                <option value="lazada">Lazada</option>
-                <option value="shopee">Shopee</option>
-            </select><br><br>
-            
-            <label for="order_method">Order Method:</label><br>
-            <select id="order_method" name="order_method">
-                <option value="walk_in">Walk-in</option>
-                <option value="lazada">Lazada</option>
-                <option value="shopee">Shopee</option>
-            </select><br><br>
-            
-            <label for="primary_contact">Primary Contact Info:</label><br>
-            <input type="tel" id="primary_contact" name="primary_contact"><br><br>
-            
-            <label for="email_address">Email Address:</label><br>
-            <input type="email" id="email_address" name="email_address"><br><br>
-            
-            <label for="emergency_contact">Emergency Contact Info:</label><br>
-            <input type="tel" id="emergency_contact" name="emergency_contact"><br><br>
-            
-            <label for="address_line1">Address Line 1:</label><br>
-            <input type="text" id="address_line1" name="address_line1"><br><br>
-            
-            <label for="province">Province:</label><br>
-            <input type="text" id="province" name="province"><br><br>
-            
-            <label for="municipality">Municipality:</label><br>
-            <input type="text" id="municipality" name="municipality"><br><br>
-            
-            <label for="barangay">Barangay:</label><br>
-            <input type="text" id="barangay" name="barangay"><br><br>
-            
-            <label for="zip_code">Zip Code:</label><br>
-            <input type="text" id="zip_code" name="zip_code"><br><br>
-            
-            <label for="notes">Notes:</label><br>
-            <textarea id="notes" name="notes" rows="4" cols="50"></textarea><br><br>
+{% block content %}
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">View Purchase Order</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <form method="POST" action="{% url 'add_po' %}" class="border p-4 shadow" style="background-color: #DDD7D7;">
+                {% csrf_token %}
+                <main>
+                    <fieldset>
+                    <legend>Customer Information</legend>
+                    
+                    <!-- Row 1: Requested Date and Type of Customer -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="requested_date">Requested Date:</label><br>
+                            <input type="date" id="requested_date" name="requested_date" class="form-control rounded-10 border-0"><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="customer_type">Type of Customer:</label><br>
+                            <select id="customer_type" name="customer_type" class="form-select rounded-10 border-0" onchange="toggleFields()">
+                                <option value="" selected disabled>Select Type</option>
+                                <option value="consignee">Consignee</option>
+                                <option value="direct">Direct</option>
+                            </select><br><br>
+                        </div>
+                    </div>
+                    
+                    <!-- Row 2: Customer Name, Shipping Method, and Order Method -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="customer_name">Customer Name:</label><br>
+                            <input type="text" id="customer_name" name="customer_name" class="form-control rounded-10 border-0" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="shipping_method">Shipping Method:</label><br>
+                            <select id="shipping_method" name="shipping_method" class="form-select rounded-10 border-0" disabled>
+                                <option value="" selected disabled>Select Shipping Method</option>
+                                <option value="grab">Grab</option>
+                                <option value="lalamove">Lalamove</option>
+                                <option value="direct_delivery">Direct Delivery</option>
+                                <option value="lazada">Lazada</option>
+                                <option value="shopee">Shopee</option>
+                            </select><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="order_method">Order Method:</label><br>
+                            <select id="order_method" name="order_method" class="form-select rounded-10 border-0" disabled>
+                                <option value="" selected disabled>Select Order Method</option>
+                                <option value="walk_in">Walk-in</option>
+                                <option value="lazada">Lazada</option>
+                                <option value="shopee">Shopee</option>
+                            </select><br><br>
+                        </div>
+                    </div>
+                    
+                    <!-- Row 3: Primary Contact Info, Email Address, and Emergency Contact Info -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="primary_contact">Primary Contact Info:</label><br>
+                            <input type="tel" id="primary_contact" name="primary_contact" class="form-control rounded-10 border-0" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="email_address">Email Address:</label><br>
+                            <input type="email" id="email_address" name="email_address" class="form-control rounded-10 border-0" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="emergency_contact">Emergency Contact Info:</label><br>
+                            <input type="tel" id="emergency_contact" name="emergency_contact" class="form-control rounded-10 border-0" disabled><br><br>
+                        </div>
+                    </div>
+                    
+                    <!-- Row 4: Address Line 1, Province, Municipality, Barangay, and Zip Code -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="address_line1">Address Line 1:</label><br>
+                            <input type="text" id="address_line1" name="address_line1" class="form-control rounded-10 border-0" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="province">Province:</label><br>
+                            <input type="text" id="province" name="province" class="form-control rounded-10 border-0" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="municipality">Municipality:</label><br>
+                            <input type="text" id="municipality" name="municipality" class="form-control rounded-10 border-0" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="barangay">Barangay:</label><br>
+                            <input type="text" id="barangay" name="barangay" class="form-control rounded-10 border-0" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="zip_code">Zip Code:</label><br>
+                            <input type="text" id="zip_code" name="zip_code" class="form-control rounded-10 border-0" disabled><br><br>
+                        </div>
+                    </div>
+                    
+                    <!-- Row 5: Notes -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="notes">Notes:</label><br>
+                            <textarea id="notes" name="notes" rows="4" cols="50" class="form-control rounded-10 border-0" disabled></textarea><br><br>
+                        </div>
+                    </div>
+                
+                    </fieldset>
         
-            </fieldset>
-                        <fieldset>
-            <legend>Customer Information:</legend>
+                    <div class="row">
+                        <!-- Fixed buttons -->
+                        <div class="col">
+                            <a href="{% url 'current_pos' %}" class="btn btn-danger">Cancel</a>
+                        </div>
+                        <div class="col text-end">
+                            <button type="submit" class="btn btn-success" name="Add">Create PO</button>
+                        </div>
+                    </div>  
+                </main>
+            </form>
+
+        </div>
+    </div>
+
+
+    <script>
+        function toggleFields() {
+            var customerType = document.getElementById("customer_type").value;
+            var orderMethodField = document.getElementById("order_method");
+            var emailField = document.getElementById("email_address");
+            var emergencyContactField = document.getElementById("emergency_contact");
+            var customerNameField = document.getElementById("customer_name");
+            var shippingMethodField = document.getElementById("shipping_method");
+            var primaryContactField = document.getElementById("primary_contact");
+            var addressLine1Field = document.getElementById("address_line1");
+            var provinceField = document.getElementById("province");
+            var municipalityField = document.getElementById("municipality");
+            var barangayField = document.getElementById("barangay");
+            var zipCodeField = document.getElementById("zip_code");
+            var notesField = document.getElementById("notes");
             
-            <label for="requested_date">Requested Date:</label><br>
-            <input type="date" id="requested_date" name="requested_date"><br><br>
+            if (customerType === "") {
+                orderMethodField.disabled = true;
+                emailField.disabled = true;
+                emergencyContactField.disabled = true;
+                customerNameField.disabled = true;
+                shippingMethodField.disabled = true;
+                primaryContactField.disabled = true;
+                addressLine1Field.disabled = true;
+                provinceField.disabled = true;
+                municipalityField.disabled = true;
+                barangayField.disabled = true;
+                zipCodeField.disabled = true;
+                notesField.disabled = true;
+            } else {
+                orderMethodField.disabled = false;
+                emailField.disabled = false;
+                emergencyContactField.disabled = false;
+                customerNameField.disabled = false;
+                shippingMethodField.disabled = false;
+                primaryContactField.disabled = false;
+                addressLine1Field.disabled = false;
+                provinceField.disabled = false;
+                municipalityField.disabled = false;
+                barangayField.disabled = false;
+                zipCodeField.disabled = false;
+                notesField.disabled = false;
+            }
             
-            <label for="customer_type">Type of Customer:</label><br>
-            <select id="customer_type" name="customer_type">
-                <option value="consignee">Consignee</option>
-                <option value="direct">Direct</option>
-            </select><br><br>
-            
-            <label for="customer_name">Customer Name:</label><br>
-            <input type="text" id="customer_name" name="customer_name"><br><br>
-            
-            <label for="shipping_method">Shipping Method:</label><br>
-            <select id="shipping_method" name="shipping_method">
-                <option value="grab">Grab</option>
-                <option value="lalamove">Lalamove</option>
-                <option value="direct_delivery">Direct Delivery</option>
-                <option value="lazada">Lazada</option>
-                <option value="shopee">Shopee</option>
-            </select><br><br>
-            
-            <label for="order_method">Order Method:</label><br>
-            <select id="order_method" name="order_method">
-                <option value="walk_in">Walk-in</option>
-                <option value="lazada">Lazada</option>
-                <option value="shopee">Shopee</option>
-            </select><br><br>
-            
-            <label for="primary_contact">Primary Contact Info:</label><br>
-            <input type="tel" id="primary_contact" name="primary_contact"><br><br>
-            
-            <label for="email_address">Email Address:</label><br>
-            <input type="email" id="email_address" name="email_address"><br><br>
-            
-            <label for="emergency_contact">Emergency Contact Info:</label><br>
-            <input type="tel" id="emergency_contact" name="emergency_contact"><br><br>
-            
-            <label for="address_line1">Address Line 1:</label><br>
-            <input type="text" id="address_line1" name="address_line1"><br><br>
-            
-            <label for="province">Province:</label><br>
-            <input type="text" id="province" name="province"><br><br>
-            
-            <label for="municipality">Municipality:</label><br>
-            <input type="text" id="municipality" name="municipality"><br><br>
-            
-            <label for="barangay">Barangay:</label><br>
-            <input type="text" id="barangay" name="barangay"><br><br>
-            
-            <label for="zip_code">Zip Code:</label><br>
-            <input type="text" id="zip_code" name="zip_code"><br><br>
-            
-            <label for="notes">Notes:</label><br>
-            <textarea id="notes" name="notes" rows="4" cols="50"></textarea><br><br>
+            if (customerType === "direct") {
+                emailField.value = "";
+                emailField.disabled = true;
+                emergencyContactField.value = "";
+                emergencyContactField.disabled = true;
+            }
+
+            if (customerType === "consignee") {
+                orderMethodField.selectedIndex = 0;
+                orderMethodField.disabled = true;
+            }
+        }
         
-            </fieldset>
-            
-
-            <div class="row">
-                <button type="submit" class="btn-success" name="Add">Create PO</button>
-                <a href="{% url 'current_pos' %}" class="btn-danger">Cancel</a>
-            </div>  
-        </main>
-    </form>
-</div>
-
-  
+        // Call toggleFields() on page load
+        window.onload = toggleFields;
+    </script>
+</body>
+{% endblock %}
