@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . models import Product, Category, Account,Consignee, Consignee_Product, Purchase_Order, Products_Ordered
+from . models import Product, Category, Account, Consignee, Consignee_Product, Purchase_Order, Products_Ordered, Customer
 from django.http import  JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files import File
@@ -173,12 +173,97 @@ def update_product(request, pk):
     
 def purchase_order_list(request):
     all_purchase_orders = Purchase_Order.objects.all()
-    print(all_purchase_orders)
     return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
 
 def add_purchase_order(request):
     if request.method == 'POST':
-        print("yes")
+        Requested_Date = request.POST.get('requested_date')
+        Customer_Type = request.POST.get('customer_type')
+        Customer_Name = request.POST.get('customer_name')
+        Shipping_Method = request.POST.get('shipping_method')
+        Order_Method = request.POST.get('order_method')
+        Primary_Contact = request.POST.get('primary_contact')
+        Email_Address = request.POST.get('email_address')
+        Emergency_Contact = request.POST.get('emergency_contact')
+        Address_Line1 = request.POST.get('address_line1')
+        Province = request.POST.get('province')
+        Municipality = request.POST.get('municipality')
+        Barangay = request.POST.get('barangay')
+        Zip_Code = request.POST.get('zip_code')
+        Notes = request.POST.get('notes')
+
+        #Checks customer type
+        if Customer_Type == "Consignee":
+
+            existing_consignee = Consignee.objects.filter(
+                name=Customer_Name,
+                address_line1=Address_Line1,
+                zip_code=Zip_Code,
+                primary_contact=Primary_Contact
+            )
+            #Checks if consignee already exists
+            if existing_consignee:
+                PO_customer = existing_customer
+
+            else:
+                PO_consignee = Consignee.objects.create(
+                    Customer_Name = Customer_Name,
+                    Primary_Contact = Primary_Contact,
+                    Customer_Type = Customer_Type,
+                    Email_Address = Email_Address,
+                    Emergency_Contact = Emergency_Contact,
+                    Address_Line1 = Address_Line1,
+                    Province = Province,
+                    Municipality = Municipality,
+                    Barangay = Barangay,
+                    Zip_Code = Zip_Code,
+                    Notes = Notes
+                )
+
+        elif Customer_Type == 'Direct':
+
+            existing_customer = Customer.objects.filter(
+                Customer_Name = Customer_Name,
+                Primary_Contact = Primary_Contact,
+                Email_Address = Email_Address,
+                Emergency_Contact = Emergency_Contact,
+                Address_Line1 = Address_Line1,
+                Province = Province,
+                Municipality = Municipality,
+                Barangay = Barangay,
+                Zip_Code = Zip_Code
+            )
+
+            #Checks if customer already exists
+            if existing_customer:
+                PO_consignee = existing_consignee
+                
+            else:
+                PO_customer = Consignee.objects.create(
+                    Customer_Name = Customer_Name,
+                    Primary_Contact = Primary_Contact,
+                    Customer_Type = Customer_Type,
+                    Address_Line1 = Address_Line1,
+                    Province = Province,
+                    Municipality = Municipality,
+                    Barangay = Barangay,
+                    Zip_Code = Zip_Code,
+                    Notes = Notes
+                )
+            
+        Purchase_Order.objects.create(
+            Requested_Date=Requested_Date,
+            Shipping_Method=Shipping_Method,
+            Order_Method=Order_Method,
+            Consignee_ID=PO_consignee,
+            Customer_ID=PO_customer,
+            #Account_ID=PO_account,
+            #Total_Due=Total_Due,
+            Notes=Notes,
+            )
+
+        return redirect('current_pos')
+
     else:
         return render(request, 'inventoryapp/add_po.html')
 
