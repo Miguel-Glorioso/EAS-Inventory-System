@@ -3,7 +3,7 @@ from . models import Product, Category, Account, Consignee, Consignee_Product, P
 from django.http import  JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files import File
-
+from django.utils import timezone
 from django.http import HttpResponse
 
 
@@ -296,18 +296,18 @@ def view_po(request, pk):
 
 def close_po(request, pk):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
-    products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
+    if purchase_order.PO_Status != 'Closed':
+        products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
 
-    for product in products_ordered:
-        product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID)
-        print(product_listing.Actual_Inventory_Count)
-        product_listing.Actual_Inventory_Count -= product.Quantity
-        product_listing.Reserved_Inventory_Count -= product.Quantity
-        product_listing.save()
-        print(product_listing.Actual_Inventory_Count)
+        for product in products_ordered:
+            product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID)
+            product_listing.Actual_Inventory_Count -= product.Quantity
+            product_listing.Reserved_Inventory_Count -= product.Quantity
+            product_listing.save()
 
-    purchase_order.PO_Status = 'Closed'
-    purchase_order.Progress = 'Shipped'
-    purchase_order.save()
+        purchase_order.Fulfilled_Date = timezone.now()
+        purchase_order.PO_Status = 'Closed'
+        purchase_order.Progress = 'Shipped'
+        purchase_order.save()
     
     return redirect('current_pos')

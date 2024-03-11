@@ -48,30 +48,32 @@
           </thead>
           <tbody>
             {% for po in purchase_orders %}
-              <tr>  
-                <td class = "iname" style="text-align: center;">{{po.Purchase_Order_ID}}</td>
-                <td class = "iid" style="text-align: center;">{{po.Requested_Date}}</td>
+              {% if po.PO_Status != "Closed" %}
+                <tr>  
+                  <td class = "iname" style="text-align: center;">{{po.Purchase_Order_ID}}</td>
+                  <td class = "iid" style="text-align: center;">{{po.Requested_Date}}</td>
 
-                {% if po.Customer_ID %}
-                  <td class = "iact_inv_cnt" style="text-align: center;">{{po.Customer_ID.Customer_Type}}</td>
-                  <td class = "iact_inv_cnt" style="text-align: center;">{{po.Customer_ID.Customer_Name}}</td>
-                {% elif po.Consignee_ID %}
-                  <td class = "iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Customer_Type}}</td>
-                  <td class = "iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Customer_Name}}</td>
-                {% endif %}
+                  {% if po.Customer_ID %}
+                    <td class = "iact_inv_cnt" style="text-align: center;">{{po.Customer_ID.Customer_Type}}</td>
+                    <td class = "iact_inv_cnt" style="text-align: center;">{{po.Customer_ID.Customer_Name}}</td>
+                  {% elif po.Consignee_ID %}
+                    <td class = "iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Customer_Type}}</td>
+                    <td class = "iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Customer_Name}}</td>
+                  {% endif %}
 
-                <td class = "iact_inv_cnt" style="text-align: center;">{{po.Progress}}</td>
-                <td> 
-                    <a href="#" type="button" class="btn btn-danger">Delete</button>
-                  </td>   
-                <td> 
-                    <a href="{% url 'close_po' pk=po.pk %}" type="button" class="btn btn-primary">Close</button>
-                  </td>   
-                <td> 
-                  <!-- HI MIGGY, THIS IS THE VIEW BUTTON, theres javascript below with my comment too-->
-                  <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
-                </td>             
-              </tr>
+                  <td class = "iact_inv_cnt" style="text-align: center;">{{po.Progress}}</td>
+                  <td> 
+                      <a href="#" type="button" class="btn btn-danger">Delete</button>
+                    </td>   
+                  <td> 
+                      <a href="{% url 'close_po' pk=po.pk %}" type="button" class="btn btn-primary">Close</button>
+                    </td>   
+                  <td> 
+                    <!-- HI MIGGY, THIS IS THE VIEW BUTTON, theres javascript below with my comment too-->
+                    <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
+                  </td>             
+                </tr>
+              {% endif %}
             {% endfor %}
           </tbody>
         </table>
