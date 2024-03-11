@@ -193,6 +193,7 @@ def add_purchase_order(request):
         Zip_Code = request.POST.get('zip_code')
         Notes = request.POST.get('notes')
         #Products = request.POST.getlist('sampleproduct') This should contain the list of product ids in the PO and quantity split by -
+        #product and quantity can also be shown in a diff way this is just the first one i thought of
         PO_customer = None
         PO_consignee = None
 
@@ -292,3 +293,21 @@ def view_po(request, pk):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
     products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
     return render(request, 'inventoryapp/view_po.html', {'po':purchase_order, 'products':products_ordered})
+
+def close_po(request, pk):
+    purchase_order = get_object_or_404(Purchase_Order, pk=pk)
+    products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
+
+    for product in products_ordered:
+        product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID)
+        print(product_listing.Actual_Inventory_Count)
+        product_listing.Actual_Inventory_Count -= product.Quantity
+        product_listing.Reserved_Inventory_Count -= product.Quantity
+        product_listing.save()
+        print(product_listing.Actual_Inventory_Count)
+
+    purchase_order.PO_Status = 'Closed'
+    purchase_order.Progress = 'Shipped'
+    purchase_order.save()
+    
+    return redirect('current_pos')
