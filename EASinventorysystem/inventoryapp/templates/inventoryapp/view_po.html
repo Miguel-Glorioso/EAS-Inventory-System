@@ -46,7 +46,7 @@ also, i added something sa views.py and urls.py, may comment din siya with my na
                 {% endif %}
                 <p>Shipping Method: {{ po.Shipping_Method }}</p>
                 <p>Total Due: {{ po.Total_Due }}</p>
-                <p>Progress: {{ po.Creation_Date }}</p>
+                <p>Progress: {{ po.Progress }}</p>
             </div>
             <div class="col">
                 <!-- AND THIS TOO, add pk stuff :3 -->
@@ -65,7 +65,7 @@ also, i added something sa views.py and urls.py, may comment din siya with my na
                 <div class="overflow-auto p-3" style="background-color: #ddd; border-radius: 10px;">
                     <h6>Notes:</h6>
                     <!-- HERE TOO, add notes pk ! -->
-                    <p>{{ po.Notes }}]</p>
+                    <p>{{ po.Notes }}</p>
                 </div>
             </div>
         </div>

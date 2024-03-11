@@ -214,7 +214,7 @@ def add_purchase_order(request):
             #Checks if consignee already exists
             if existing_consignee:
                 print('CONexistCHECK: yes')
-                PO_customer = existing_consignee.first()
+                PO_consignee = existing_consignee.first()
 
             else:
                 print('CONexistCHECK: no')
@@ -273,6 +273,7 @@ def add_purchase_order(request):
                 Total_Due=10000,
                 Notes=Notes,
                 )
+        
         # this is to make the associative entities Product_Ordered
         #for p_id in Products:
         #    p_id.split('-')
@@ -289,5 +290,5 @@ def add_purchase_order(request):
 
 def view_po(request, pk):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
-    products_ordered = Products_Ordered.objects.filter(Purchase_Order_ID=pk)
+    products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
     return render(request, 'inventoryapp/view_po.html', {'po':purchase_order, 'products':products_ordered})
