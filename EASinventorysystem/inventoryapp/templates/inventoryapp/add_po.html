@@ -28,8 +28,8 @@
                             <label for="customer_type">Type of Customer:</label><br>
                             <select id="customer_type" name="customer_type" class="form-select rounded-10 border-0" onchange="toggleFields()">
                                 <option value="" selected disabled>Select Type</option>
-                                <option value="consignee">Consignee</option>
-                                <option value="direct">Direct</option>
+                                <option value="Consignee">Consignee</option>
+                                <option value="Direct">Direct</option>
                             </select><br><br>
                         </div>
                     </div>
@@ -172,14 +172,14 @@
                 notesField.disabled = false;
             }
             
-            if (customerType === "direct") {
+            if (customerType === "Direct") {
                 emailField.value = "";
                 emailField.disabled = true;
                 emergencyContactField.value = "";
                 emergencyContactField.disabled = true;
             }
 
-            if (customerType === "consignee") {
+            if (customerType === "Consignee") {
                 orderMethodField.selectedIndex = 0;
                 orderMethodField.disabled = true;
             }
