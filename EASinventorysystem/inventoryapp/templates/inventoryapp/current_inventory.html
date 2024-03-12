@@ -108,7 +108,7 @@
                 </td>  
                 <!-- Updated View button trigger -->
                 <td> 
-                  <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#productModal" data-product-pk="{{ p.pk }}">View</button>
+                  <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#productModal" data-product-pk="{{ p.Product_ID }}">View</button>
                 </td>     
               </tr>
             {% endfor %}
@@ -134,6 +134,7 @@
   <script>
     $('.btn-view').click(function() {
       var productPk = $(this).data('product-pk');
+      console.log("Product PK:", productPk);
       $.ajax({
         url: '/view_product/' + productPk + '/',
         method: 'GET',

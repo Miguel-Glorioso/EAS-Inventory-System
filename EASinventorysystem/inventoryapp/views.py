@@ -88,7 +88,7 @@ def add_product(request):
         return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees})
 
 
-def view_product(product_pk):
+def view_product(request, product_pk):
     try:
         product = Product.objects.get(pk=product_pk)
         con_p = Consignee_Product.objects.filter(Product_ID=product_pk)
@@ -191,7 +191,7 @@ def add_purchase_order(request):
         Municipality = request.POST.get('municipality')
         Barangay = request.POST.get('barangay')
         Zip_Code = request.POST.get('zip_code')
-        Notes = request.POST.get('notes')
+        Notes = request.POST.get('c_notes')
         #Products = request.POST.getlist('sampleproduct') This should contain the list of product ids in the PO and quantity split by -
         #product and quantity can also be shown in a diff way this is just the first one i thought of
         PO_customer = None
