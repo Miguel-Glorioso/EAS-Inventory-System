@@ -53,7 +53,7 @@ class Category(models.Model):
     
 class Purchase_Order(models.Model):
     Purchase_Order_ID = models.AutoField(primary_key=True)
-    Creation_Date = models.DateTimeField(auto_now_add=True)
+    Creation_Date = models.DateTimeField()
     Requested_Date = models.DateField(null=True, blank=True)
     Fulfilled_Date = models.DateTimeField(null=True, blank=True)
     Total_Due = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0)])
@@ -79,7 +79,7 @@ class Product_Ordered(models.Model):
     
 class Product_Requisition_Order(models.Model):
     Product_Requisition_ID = models.AutoField(primary_key=True)
-    Creation_Date = models.DateTimeField(auto_now_add=True)
+    Creation_Date = models.DateTimeField()
     Estimated_Receiving_Date = models.DateField( null=True, blank=True)
     Received_Date = models.DateTimeField(null=True, blank=True)
     PRO_Manufacturer = models.CharField(max_length=32)
@@ -148,7 +148,7 @@ class Consignee_Product(models.Model):
 
 class Count_Edit_History(models.Model):
     Count_Edit_ID = models.AutoField(primary_key=True)
-    Date_Updated = models.DateTimeField(auto_now_add=True)
+    Date_Updated = models.DateTimeField()
     Initial_Inventory_Count = models.PositiveIntegerField(validators=[MaxValueValidator(9999)])
     Updated_Inventory_Count = models.PositiveIntegerField(validators=[MaxValueValidator(9999)])
     Image_Report = models.ImageField(upload_to='count_edit_images/', null=True, blank=True, )
@@ -161,7 +161,7 @@ class Count_Edit_History(models.Model):
 
 class Partially_Fulfilled_History(models.Model):
     Partially_Fulfill_Edit_ID = models.AutoField(primary_key=True)
-    Date_Updated = models.DateTimeField(auto_now_add=True)
+    Date_Updated = models.DateTimeField()
     Partially_Fulfilled_Quantity = models.PositiveIntegerField(validators=[MaxValueValidator(9999)])
     Image_Report = models.ImageField(upload_to='partially_fulfilled_images/', null=True, blank=True)
     Text_Report = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)

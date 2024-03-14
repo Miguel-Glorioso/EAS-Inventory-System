@@ -16,26 +16,17 @@
         <div class="modal-content">
 
           <div class="modal-header">
-            <h5 class="modal-title" id="productModalLabel">Product Information</h5>
+            <h5 class="modal-title" id="productModalLabel"></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: gray;"></button>
           </div>
 
           <div class="modal-body">
             <div id="productInfo">
-              <p><strong>Product Name:</strong> <span id="productName"></span></p>
-              <p><strong>Product ID:</strong> <span id="productId"></span></p>
-              <p><strong>SKU:</strong> <span id="productSku"></span></p>
-              <p><strong>Price:</strong> <span id="productPrice"></span></p>
-              <p><strong>Actual Count:</strong> <span id="productCount"></span></p>
-              <p><strong>Category:</strong> <span id="productCategory"></span></p>
-              <p><strong>Stock Level Threshold:</strong> <span id="productThreshold"></span></p>
-              <p><strong>Tags:</strong> <span id="productTags"></span></p>
-              <div id="productImage" class="product-image"></div>
             </div>
           </div>
 
           <div class="modal-footer">
-            <a href="#" class="btn btn-primary">Edit</a> 
+            <a class="btn btn-primary">Edit</a> 
             <!-- Hi Dom! Add here ^ the edit product page -->
           </div>
         </div>
@@ -151,6 +142,8 @@
             ${response.tags ? `<p><strong>Tags:</strong> ${response.tags.join(', ')}</p>` : ''}
             ${response.picture ? `<div class="product-image"><img src="${response.picture}" width="50"></div>` : ''}
           `);
+          $('#productModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_product/' + response.product_id + '/');
+
           $('#productModal').modal('show');
         },
         error: function(xhr, status, error) {

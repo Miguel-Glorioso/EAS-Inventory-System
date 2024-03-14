@@ -93,6 +93,7 @@ def view_product(request, product_pk):
         product = Product.objects.get(pk=product_pk)
         con_p = Consignee_Product.objects.filter(Product_ID=product_pk)
         response_data = {
+            'product_id' : product.Product_ID,
             'name': product.Name,
             'id': product.EAS_Product_ID,
             'sku': product.SKU,
@@ -264,8 +265,10 @@ def add_purchase_order(request):
                     Notes = Notes
                 )
         print("create po")  
+        current_date = timezone.now()
         PO = Purchase_Order.objects.create(
                 Requested_Date=Requested_Date,
+                Creation_Date = current_date,
                 Shipping_Method=Shipping_Method,
                 Order_Method=Order_Method,
                 Consignee_ID=PO_consignee,
