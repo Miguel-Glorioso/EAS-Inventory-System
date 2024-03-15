@@ -100,7 +100,7 @@ def view_product(request, product_pk):
             'price': product.Price,
             'count': product.Actual_Inventory_Count,
             'category': product.Category.Category_Name,
-            'tags': [consignee_product.Consignee_ID.Customer_Name for consignee_product in con_p], 
+            'tags': [consignee_product.Consignee_ID.Consignee_Name for consignee_product in con_p], 
             'threshold': product.Product_Low_Stock_Threshold,
             'picture': product.Picture.url if product.Picture else None,
         }
@@ -181,7 +181,7 @@ def add_purchase_order(request):
         print("start")
         Requested_Date = request.POST.get('requested_date')
         Customer_Type = request.POST.get('customer_type')
-        Customer_Name = request.POST.get('customer_name')
+        Name = request.POST.get('customer_name')
         Shipping_Method = request.POST.get('shipping_method')
         Order_Method = request.POST.get('order_method')
         Primary_Contact = request.POST.get('primary_contact')
@@ -203,7 +203,7 @@ def add_purchase_order(request):
         if Customer_Type == "Consignee":
             print('Ctypecheck: CON')
             existing_consignee = Consignee.objects.filter(
-                Customer_Name = Customer_Name,
+                Consignee_Name = Name,
                 Primary_Contact_Number = Primary_Contact,
                 Email_Address = Email_Address,
                 Emergency_Contact_Number = Emergency_Contact,
@@ -221,7 +221,7 @@ def add_purchase_order(request):
             else:
                 print('CONexistCHECK: no')
                 PO_consignee = Consignee.objects.create(
-                    Customer_Name = Customer_Name,
+                    Consignee_Name = Name,
                     Primary_Contact_Number = Primary_Contact,
                     Customer_Type = Customer_Type,
                     Email_Address = Email_Address,
@@ -237,7 +237,7 @@ def add_purchase_order(request):
         elif Customer_Type == 'Direct':
             print('Ctypecheck: DIR')
             existing_customer = Customer.objects.filter(
-                Customer_Name = Customer_Name,
+                Customer_Name = Name,
                 Primary_Contact_Number = Primary_Contact,
                 Address_Line_1 = Address_Line1,
                 Province = Province,
@@ -254,7 +254,7 @@ def add_purchase_order(request):
             else:
                 print('CUSTExistCHECK: NO')
                 PO_customer = Customer.objects.create(
-                    Customer_Name = Customer_Name,
+                    Customer_Name = Name,
                     Primary_Contact_Number = Primary_Contact,
                     Customer_Type = Customer_Type,
                     Address_Line_1 = Address_Line1,

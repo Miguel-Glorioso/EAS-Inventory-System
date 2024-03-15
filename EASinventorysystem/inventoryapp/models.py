@@ -117,8 +117,8 @@ class Customer(models.Model):
     
 class Consignee(models.Model):
     Consignee_ID = models.AutoField(primary_key=True)
-    Consignee_Tag_ID = models.CharField(max_length=32)
-    Customer_Name = models.CharField(max_length=32)
+    Consignee_Tag_ID = models.CharField(max_length=32, unique=True)
+    Consignee_Name = models.CharField(max_length=32, unique=True)
     Address_Line_1 = models.CharField(max_length=128)
     Barangay = models.CharField(max_length=64)
     Municipality = models.CharField(max_length=64)
@@ -134,7 +134,7 @@ class Consignee(models.Model):
     Tag_Hex_Color_ID = models.CharField(max_length=7)
 
     def __str__(self):
-        return self.Customer_Name
+        return self.Consignee_Name
     
 class Consignee_Product(models.Model):
     Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
