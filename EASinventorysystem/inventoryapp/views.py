@@ -314,3 +314,6 @@ def close_po(request, pk):
         purchase_order.save()
     
     return redirect('current_pos')
+
+def customer_list(request):
+    return render(request, 'inventoryapp/current_customer.html')

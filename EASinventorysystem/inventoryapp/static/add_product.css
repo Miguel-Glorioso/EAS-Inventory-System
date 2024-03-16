@@ -34,3 +34,13 @@
 .custom-container {
     margin-top: 10px; /* Adjust the value as needed */
 }
+.red-button {
+    color: #fff;
+    background-color: #dc3545; /* Red color */
+    border-color: #dc3545; /* Red color */
+}
+
+.red-button:hover {
+    background-color: #c82333; /* Darker shade of red on hover */
+    border-color: #bd2130; /* Darker shade of red on hover */
+}

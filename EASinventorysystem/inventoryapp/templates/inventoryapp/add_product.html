@@ -1,42 +1,48 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="static/add_product.css">
-    {% extends 'inventoryapp/base.html' %}
-    {% load static %}
 
-    {% block content %}
-    <h1>Add Product<h1>
-    <br><br>
-    <section class="container-fluid my-2 custom-background text-light p-3" style="height: 70vh; width: 150vh;">
-    <form method="POST" action="{% url 'add_product' %}"  enctype="multipart/form-data">
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">Add Product</h1>
+    <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
         {% csrf_token %}
-            <div class="row">
-                <div class="custom-text"><h1>Product Information<h1></h1></div>
-                
-                <div class="col-md-4">
-                    <label for="id_Name" class="form-label small-label custom-text">Product Name:</label>
+        <h2 class="custom-text">Product Information</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="id_Name" class="form-label custom-text">Product Name:</label>
                     <input type="text" name="product_name" class="form-control" maxlength="64" required id="id_Name" placeholder="Product Name">
                 </div>
-                <div class="col-md-4">
-                    <label for="id_EAS_Product_ID" class="form-label small-label custom-text">EAS Product ID:</label>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="id_EAS_Product_ID" class="form-label custom-text">EAS Product ID:</label>
                     <input type="text" name="eas_id" class="form-control" maxlength="32" required id="id_EAS_Product_ID" placeholder="Product ID">
                 </div>
             </div>
-                   
-            <div class="row">
-                <div class="col-md-4">
-                    <label for="id_Name" class="form-label small-label custom-text">SKU:</label>
-                    <input type="text" name="product_sku" class="form-control" maxlength="64" required id="id_Name" placeholder="SKU">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="id_Sku" class="form-label custom-text">SKU:</label>
+                    <input type="text" name="product_sku" class="form-control" maxlength="64" required id="id_Sku" placeholder="SKU">
                 </div>
-            
-                <div class="col-md-6">
-                    <label for="id_Price" class="form-label small-label custom-text">Price:</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="id_Price" class="form-label custom-text">Price:</label>
                     <div class="input-group">
                         <span class="input-group-text">PHP</span>
-                        <input type="number" name="product_price" step="1" min = 0 max="99999.99" maxlength="9" class="form-control" required id="id_Price" placeholder="0.00">
+                        <input type="number" name="product_price" step="1" min="0" max="99999.99" maxlength="9" class="form-control" required id="id_Price" placeholder="0.00">
                     </div>
                 </div>
-            
-                <div class="col-md-6">
-                    <label for="id_Actual_Inventory_Count" class="form-label small-label custom-text">Initial Inventory Count:</label>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="id_Actual_Inventory_Count" class="form-label custom-text">Initial Inventory Count:</label>
                     <div class="input-group">
                         <input type="number" min='0' name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" placeholder="0">
                         <div class="input-group-append">
@@ -46,120 +52,135 @@
                     </div>
                 </div>
             </div>
-            
-            <script>
-                function incrementCount() {
-                    var input = document.getElementById('id_Actual_Inventory_Count');
-                    input.stepUp();
-                }
-            
-                function decrementCount() {
-                    var input = document.getElementById('id_Actual_Inventory_Count');
-                    input.stepDown();
-                }
-            </script>
-            
-        <div class="col-md-6">
-            <label for="id_Stock_Level_Threshold" class="form-label small-label custom-text">Stock Level Threshold:</label>
-            <div class="input-group">
-                <input type="number" min='0' name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" placeholder="0">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
-                    <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="id_Stock_Level_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
+                    <div class="input-group">
+                        <input type="number" min='0' name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" placeholder="0">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <script>
-            function incrementThreshold() {
-                var input = document.getElementById('id_Stock_Level_Threshold');
-                input.stepUp();
-            }
-        
-            function decrementThreshold() {
-                var input = document.getElementById('id_Stock_Level_Threshold');
-                input.stepDown();
-            }
-        </script>
-        <div class="col-md-6">
-            <label for="id_Category" class="form-label small-label custom-text">Category:</label>
-            <select name="product_category" class="form-select" id="id_Category" required>
-                <option value="" disabled selected>Select category</option>
-                {% for cat in categories %}
-                    <option value="{{ cat.Category_ID }}">{{ cat.Category_Name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <div>
-            <label for="id_Consignees" class="form-label small-label custom-text">Consignee:</label>
-            <select name="product_consignees" class="form-select" id="id_Consignees" multiple required>
-                {% for con in consignees %}
-                    <option value="{{ con.Consignee_ID }}">{{ con.Customer_Name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div>
-            <label for="id_Picture" class="small-label custom-text">Picture:</label>
-            <div id="image-preview"></div>
-            <input type="file" name="product_picture" accept="image/*" id="id_Picture" class="small-label custom-text">
-            <button type="button" id="remove-image" style="display: none;" class="small-label custom-text">Remove Image</button>
-        </div>
-        
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const pictureInput = document.getElementById("id_Picture");
-                const imagePreview = document.getElementById("image-preview");
-                const removeImageButton = document.getElementById("remove-image");
-
-                function updatePreview() {
-                    const file = pictureInput.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            const image = new Image();
-                            image.src = event.target.result;
-                            image.width = 50;
-                            imagePreview.innerHTML = ''; 
-                            imagePreview.appendChild(image);
-                            removeImageButton.style.display = "inline-block"; 
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        imagePreview.innerHTML = ''; 
-                        removeImageButton.style.display = "none";
-                    }
-                }
-
-                pictureInput.addEventListener("change", updatePreview);
-
-                removeImageButton.addEventListener("click", function() {
-                    pictureInput.value = null; 
-                    imagePreview.innerHTML = '';
-                    removeImageButton.style.display = "none"; 
-                });
-            });
-        </script>
-        <!-- <div>
-            <label for="id_Consignees">Consignee:</label>
-            <select name="product_consignees" id="id_Consignees" multiple>
-                {% for con in consignees %}
-                    <option value="{{ con.Consignee_ID}}">{{ con.Customer_Name }}</option>
-                {% endfor %}
-            </select>
-        </div> -->
-        <div class="custom-container">
-            <div class="row">
-                <div class="col">
-                    <a href="{% url 'current_inventory' %}" class="btn btn-danger small-label">Cancel</a>
+                <div class="mb-3">
+                    <label for="id_Stock_Level_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
+                    <div class="input-group">
+                        <input type="number" min='0' name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" placeholder="0">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col text-end">
-                    <button type="submit" class="custom-btn small-label" name="Add" onclick="return confirm('Are you sure you want to create this product?')">Create</button>
+                <div class="mb-3">
+                    <label for="id_Category" class="form-label custom-text">Category:</label>
+                    <select name="product_category" class="form-select" id="id_Category" required>
+                        <option value="" disabled selected>Select category</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.Category_ID }}">{{ cat.Category_Name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- <div class="mb-3">
+                    <label for="id_Consignees" class="form-label custom-text">Consignee:</label>
+                    <select name="product_consignees" class="form-select" id="id_Consignees" multiple required>
+                        {% for con in consignees %}
+                        <option value="{{ con.Consignee_ID }}">{{ con.Customer_Name }}</option>
+                        {% endfor %}
+                    </select>
+                </div> -->
+                
+                <div class="mb-3">
+                    <label class="form-label custom-text">Consignee:</label>
+                    <div id="consignee-list" class="form-check">
+                        {% for con in consignees %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="consignee{{ con.Consignee_ID }}">
+                            <label class="form-check-label" for="consignee{{ con.Consignee_ID }}">{{ con.Customer_Name }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                
+                <div class="mb-3">
+                    <label for="id_Picture" class="form-label custom-text">Picture:</label>
+                    <div id="image-preview" class="mb-3"></div>
+                    <div class="input-group">
+                        <input type="file" name="product_picture" accept="image/*" id="id_Picture" class="form-control">
+                        <button type="button" id="remove-image" style="display: none;" class="btn btn-outline-danger">Remove Image</button>
+                    </div>
+                </div>
+                           
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="{% url 'current_inventory' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button type="submit" class="btn btn-success" name="Add" onclick="return confirm('Are you sure you want to create this product?')">Create</button>
+                    </div>
                 </div>
             </div>
         </div>
-        
-    </section>
     </form>
+</div>
 
-    {% endblock %}
+<script>
+    function incrementCount() {
+        var input = document.getElementById('id_Actual_Inventory_Count');
+        input.stepUp();
+    }
+
+    function decrementCount() {
+        var input = document.getElementById('id_Actual_Inventory_Count');
+        input.stepDown();
+    }
+
+    function incrementThreshold() {
+        var input = document.getElementById('id_Stock_Level_Threshold');
+        input.stepUp();
+    }
+
+    function decrementThreshold() {
+        var input = document.getElementById('id_Stock_Level_Threshold');
+        input.stepDown();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const pictureInput = document.getElementById("id_Picture");
+        const imagePreview = document.getElementById("image-preview");
+        const removeImageButton = document.getElementById("remove-image");
+
+        function updatePreview() {
+            const file = pictureInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const image = new Image();
+                    image.src = event.target.result;
+                    image.width = 50;
+                    imagePreview.innerHTML = '';
+                    imagePreview.appendChild(image);
+                    removeImageButton.style.display = "inline-block";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.innerHTML = '';
+                removeImageButton.style.display = "none";
+            }
+        }
+
+        pictureInput.addEventListener("change", updatePreview);
+
+        removeImageButton.addEventListener("click", function() {
+            pictureInput.value = null;
+            imagePreview.innerHTML = '';
+            removeImageButton.style.display = "none";
+        });
+    });
+</script>
+{% endblock %}
+
