@@ -98,8 +98,8 @@
                     <div id="consignee-list" class="form-check">
                         {% for con in consignees %}
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="consignee{{ con.Consignee_ID }}">
-                            <label class="form-check-label" for="consignee{{ con.Consignee_ID }}">{{ con.Customer_Name }}</label>
+                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="consignee">
+                            <label class="form-check-label" for="consignee{{ con.Consignee_ID }}">{{ con.Consignee_Name }}</label>
                         </div>
                         {% endfor %}
                     </div>
@@ -183,4 +183,3 @@
     });
 </script>
 {% endblock %}
-
