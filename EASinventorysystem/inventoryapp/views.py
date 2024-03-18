@@ -315,7 +315,7 @@ def close_po(request, pk):
     
     return redirect('current_pos')
 
-def requesition_order_list(request):
+def requisition_order_list(request):
     all_requisition_orders = Product_Requisition_Order.objects.all()
     return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
 
@@ -346,3 +346,6 @@ def view_pro(request, pk):
     stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID = pk)
     print(stocks_ordered)
     return render(request, 'inventoryapp/view_pro.html', {'pro':product_requisition_order, 'stocks':stocks_ordered})
+
+def customer_list(request):
+    return render(request, 'inventoryapp/current_customer.html')
