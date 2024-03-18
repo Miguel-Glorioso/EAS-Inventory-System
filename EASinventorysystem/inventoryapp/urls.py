@@ -29,4 +29,8 @@ urlpatterns = [
     path('add_po', views.add_purchase_order, name='add_po'),
     path('view_po/<int:pk>/', views.view_po, name='view_po'), 
     path('close_po/<int:pk>/', views.close_po, name='close_po'), 
+    path('current_pros', views.requesition_order_list, name='current_pros'),
+    path('add_pro', views.add_requisition_order, name='add_pro'),
+    path('view_pro/<int:pk>/', views.view_pro, name='view_pro'), 
+
 ]

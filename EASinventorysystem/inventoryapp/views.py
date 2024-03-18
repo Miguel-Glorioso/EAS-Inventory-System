@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . models import Product, Category, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer
+from . models import Product, Category, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered
 from django.http import  JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files import File
@@ -168,7 +168,7 @@ def update_product(request, pk):
                 Consignee_Product.objects.filter(Consignee_ID=con_ids, Product_ID=pk).delete()
         
         
-        return redirect('view_product', pk=pk)
+        return redirect('current_inventory')
     else:
         return render(request, 'inventoryapp/update_product.html', {'p':p, 'con_p':con_p, 'con_p_ids':con_p_ids, 'categories': categories,  'consignees': consignees})
     
@@ -314,3 +314,35 @@ def close_po(request, pk):
         purchase_order.save()
     
     return redirect('current_pos')
+
+def requesition_order_list(request):
+    all_requisition_orders = Product_Requisition_Order.objects.all()
+    return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
+
+
+def add_requisition_order(request):
+    if request.method == 'POST':
+        Estimated_Receiving_Date = request.POST.get('estimated_receiving_date')
+        PRO_Manufacturer = request.POST.get('manufacturer_name')
+        Total_Cost =  request.POST.get('total_cost')
+        PRO_Notes = request.POST.get('pro_notes')
+        
+        current_date = timezone.now()
+        
+        Product_Requisition_Order.objects.create(
+            Estimated_Receiving_Date = Estimated_Receiving_Date,
+            Creation_Date = current_date,
+            PRO_Manufacturer = PRO_Manufacturer,
+            Total_Cost = Total_Cost,
+            Notes = PRO_Notes,
+        )
+        return redirect('current_pros')
+    else:
+        return render(request, 'inventoryapp/add_pro.html')
+    
+def view_pro(request, pk):
+    product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+    print(product_requisition_order, 'yes')
+    stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID = pk)
+    print(stocks_ordered)
+    return render(request, 'inventoryapp/view_pro.html', {'pro':product_requisition_order, 'stocks':stocks_ordered})

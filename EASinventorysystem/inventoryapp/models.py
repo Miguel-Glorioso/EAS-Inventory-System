@@ -87,18 +87,18 @@ class Product_Requisition_Order(models.Model):
     Notes = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)
     Progress = models.CharField(max_length=16, default = "Pending")
     PRO_Status = models.CharField(max_length=16, default = "Ongoing")
-    Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT)
+    Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT, null=True, blank=True) # temporarily null
     
     def __str__(self):
-        return 
+        return f" Product Requisition Order # {self.Product_Requisition_ID}"
     
 class Stock_Ordered(models.Model):
     Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
     Product_Requisition_ID = models.ForeignKey(Product_Requisition_Order, on_delete=models.PROTECT)
     Quantity = models.PositiveIntegerField( validators=[MaxValueValidator(9999)])
-
+    
     def __str__(self):
-        return 
+        return f"{self.Product_ID.Name} in {self.Product_Requisition_ID} "
 
 class Customer(models.Model):
     Customer_ID = models.AutoField(primary_key=True)

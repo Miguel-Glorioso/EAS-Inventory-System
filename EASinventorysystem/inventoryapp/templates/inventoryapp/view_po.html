@@ -1,12 +1,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
 {% block content %}
 
-<!-- HI MIGGY, before proceeding, check View button of current_purchase_order.html to be sure na nakukuha pk!
-also, i added something sa views.py and urls.py, may comment din siya with my name to indicate na inadd ko siya -->
 <head>
+
     <title>Current Purchase Orders</title>
 </head>
 
@@ -105,5 +105,9 @@ also, i added something sa views.py and urls.py, may comment din siya with my na
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
 </body>
 {% endblock %}

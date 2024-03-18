@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+    <title>Current Product Requisition Orders</title>
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">View Product Requisition Order</h4>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <h5>Product Requisition Order No. {{ pro.Product_Requisition_ID }}</h5>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-danger me-2">Delete</button>
+                <button class="btn btn-primary me-2">Edit</button>
+                <button class="btn btn-success me-2">Close</button>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <p>Creation Date: {{ pro.Creation_Date }}</p> 
+                <p>Estimated Receiving Date: {{ pro.Estimated_Receiving_Date }}</p>
+                <p>Manufacturer: {{ pro.PRO_Manufacturer }}</p>
+                <p>Total Cost: {{ pro.Total_Cost }}</p>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <div class="overflow-auto p-3" style="background-color: #ddd; border-radius: 10px;">
+                    <h6>Notes:</h6>
+                    <!-- HERE TOO, add notes pk ! -->
+                    <p>{{ pro.Notes }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <h6>Product Stocks Ordered:</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Product ID</th>
+                            <th>Quantity</th>
+                            <th>Partially Fullfilled</th>
+                            <th>To Be Received</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in stocks %}
+                            <tr>
+                                <td>{{ s.Product_ID.Name }}</td>
+                                <td>{{ s.Product_ID.EAS_Product_ID }}</td>
+                                <td>{{ s.Quantity }}</td>
+                                <!--will implement when partially fulfilled is implemented-->
+                                <td>0</td>
+                                {% load mathfilters %}
+                                <td>{{s.Quantity }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <a href="{% url 'current_pros' %}" class="btn btn-primary">Go Back</a>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

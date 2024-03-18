@@ -1,0 +1,81 @@
+<link rel ="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel ="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+    <title>Current Product Requisition Orders</title>
+</head>
+
+<body class="bg-light">
+  <div class="container-fluid">
+
+    <div class="row p-1" style="background-color: #eee;">
+      <div class="col-md-auto d-flex align-items-center">
+        <h4 class="m-0 mr-3">Current Product Requisition Orders</h4>
+      </div>
+    </div>
+
+    <!-- Buttons row -->
+    <div class="row mt-3">
+      <!-- Buttons column -->
+      <div class="col-md-auto">
+        <a href="{% url 'add_pro' %}" class="btn btn-primary">Add Product Requisition Order</a>
+      </div>
+
+      <div class="col-md-auto">
+        <a href="#" class="btn btn-primary">Product Requisition Order History</a>
+      </div>
+    </div>
+
+    <!-- Table Inventory row -->
+    <div class="row mt-3">
+      <div class="table-responsive">
+        <table id ="currentpro" class="table text-center">
+          <thead>
+            <tr>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Requisition Number</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Creation Date</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Estimated Receiving Date</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Manufacturer</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Progress</th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for pro in requisition_orders %}
+              {% if pro.PRO_Status != "Closed" %}
+                <tr>  
+                    <td class = "iname" style="text-align: center;">{{pro.Product_Requisition_ID}}</td>
+                    <td class = "iid" style="text-align: center;">{{pro.Creation_Date}}</td>
+                    <td class = "iact_inv_cnt" style="text-align: center;">{{pro.Estimated_Receiving_Date}}</td>
+                    <td class = "iact_inv_cnt" style="text-align: center;">{{pro.PRO_Manufacturer}}</td>
+                    <td class = "iact_inv_cnt" style="text-align: center;">{{pro.Progress}}</td>
+                    <td> 
+                        <a href="#" type="button" class="btn btn-danger">Delete</button>
+                    </td>   
+                    <td> 
+                      <a href="#" type="button" class="btn btn-primary">Close</button>
+                    </td>   
+                    <td> 
+                      <a href="{% url 'view_pro' pk=pro.pk %}" type="button" class="btn btn-primary">View</a>
+                    </td>             
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+    
+</body>
+{% endblock %}
