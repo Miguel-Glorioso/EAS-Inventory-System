@@ -3,132 +3,174 @@
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/add_product.css">
+
 {% block content %}
-<h1>Edit Item Details<h1>
-<br><br><form method="POST" action="{% url 'update_product' pk=p.Product_ID %}"  enctype="multipart/form-data">
-    {% csrf_token %}
-    <div>
-        <label for="id_EAS_Product_ID">EAS Product ID:</label>
-        <input type="text" name="eas_id" maxlength="32" id="id_EAS_Product_ID" value="{{ p.EAS_Product_ID }}">
-    </div>
-    
-    <div>
-        <label for="id_Name">Name:</label>
-        <input type="text" name="product_name"  maxlength="64" id="id_Name" value="{{ p.Name }}">
-    </div>
-
-    <div>
-        <label for="id_SKU">SKU:</label>
-        <input type="text" name="product_sku"  maxlength="64" id="id_SKU" value="{{ p.SKU }}">
-    </div>
-
-    <div>
-        <label for="id_Picture">Picture:</label>
-        <div id="image-preview">
-            {% if p.Picture %}
-                <div class="product-image"> 
-                    <img src="{{ p.Picture.url }}" width="50">
+<div class="container">
+    <h1 class="mt-4 mb-4">Edit Item Details</h1>
+    <form method="POST" action="{% url 'update_product' pk=p.Product_ID %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <div class="form-check">
+                <input type="hidden" name="product_visibility" value="False" />
+                <input class="form-check-input" type="checkbox" name="product_visibility" value="True" id="id_Visibility" {% if p.Visibility %}checked{% endif %}>
+                <label class="form-check-label" for="id_Visibility">Visibility</label>
+            </div>
+        </div>
+        <!-- <div class="mb-3">
+            <div class="border p-3">
+                <div class="form-group mb-0">
+                    <div class="form-check">
+                        <input type="hidden" name="product_visibility" value="False" />
+                        <input class="form-check-input" type="checkbox" name="product_visibility" value="True" id="id_Visibility" {% if p.Visibility %}checked{% endif %}>
+                        <label class="form-check-label" for="id_Visibility">Visibility</label>
+                    </div>
                 </div>
-            {% endif %}
+            </div>
+        </div> -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="id_EAS_Product_ID" class="form-label custom-text">EAS Product ID:</label>
+                <input type="text" name="eas_id" class="form-control" maxlength="32" id="id_EAS_Product_ID" value="{{ p.EAS_Product_ID }}">
+            </div>
+            <div class="col-md-4">
+                <label for="id_Name" class="form-label custom-text">Name:</label>
+                <input type="text" name="product_name" class="form-control" maxlength="64" id="id_Name" value="{{ p.Name }}">
+            </div>
+            <div class="col-md-4">
+                <label for="id_SKU" class="form-label custom-text">SKU:</label>
+                <input type="text" name="product_sku" class="form-control" maxlength="64" id="id_SKU" value="{{ p.SKU }}">
+            </div>
         </div>
-        <input type="file" name="product_picture"  accept="image/*" id="id_Picture">
-        <button type="button" id="remove-image" {% if not p.Picture %}style="display: none;"{% endif %}>Remove Image</button>
-        <input type="hidden" name="removed_product_picture" id="remove-product-picture" value='Not'>
 
-    </div>
-    
+        <div class="mb-3">
+            <label for="id_Picture" class="form-label custom-text">Picture:</label>
+            <div id="image-preview">
+                {% if p.Picture %}
+                    <div class="product-image"> 
+                        <img src="{{ p.Picture.url }}" width="50">
+                    </div>
+                {% endif %}
+            </div>
+            <div style="display: flex; align-items: center;">
+                <input type="file" name="product_picture" accept="image/*" id="id_Picture" class="form-control" style="flex: 1;">
+                <button type="button" id="remove-image" {% if not p.Picture %}style="display: none;"{% endif %} class="btn btn-outline-danger">Remove Image</button>
+            </div>
+            <input type="hidden" name="removed_product_picture" id="remove-product-picture" value='Not'>
+        </div>
         
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-        const pictureInput = document.getElementById("id_Picture");
-        const imagePreview = document.getElementById("image-preview");
-        const removeImageButton = document.getElementById("remove-image");
-        const imageRemoved = document.getElementById("remove-product-picture");
 
-        // Function to update the image preview
-        function updatePreview() {
-            const file = pictureInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const image = new Image();
-                    image.src = event.target.result;
-                    image.width = 50;
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+            const pictureInput = document.getElementById("id_Picture");
+            const imagePreview = document.getElementById("image-preview");
+            const removeImageButton = document.getElementById("remove-image");
+            const imageRemoved = document.getElementById("remove-product-picture");
+
+            // Function to update the image preview
+            function updatePreview() {
+                const file = pictureInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const image = new Image();
+                        image.src = event.target.result;
+                        image.width = 50;
+                        imagePreview.innerHTML = '';
+                        imagePreview.appendChild(image);
+                        imageRemoved.value = "Not";
+                        removeImageButton.style.display = "inline-block"; // Show the "Remove Image" button
+                    };
+                    reader.readAsDataURL(file);
+                } else {
                     imagePreview.innerHTML = '';
-                    imagePreview.appendChild(image);
-                    imageRemoved.value = "Not";
-                    removeImageButton.style.display = "inline-block"; // Show the "Remove Image" button
-                };
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.innerHTML = '';
+                }
             }
-        }
 
-        // Event listener for input change
-        pictureInput.addEventListener("change", updatePreview);
+            // Event listener for input change
+            pictureInput.addEventListener("change", updatePreview);
 
-        // Event listener for remove image button
-        removeImageButton.addEventListener("click", function() {
-            pictureInput.value = null; // Clear the input field
-            removeImageButton.style.display = "none"; // Hide the "Remove Image" button
-            imageRemoved.value = "removed";
-            updatePreview(); // Update the preview to remove the image
+            // Event listener for remove image button
+            removeImageButton.addEventListener("click", function() {
+                pictureInput.value = null; // Clear the input field
+                removeImageButton.style.display = "none"; // Hide the "Remove Image" button
+                imageRemoved.value = "removed";
+                updatePreview(); // Update the preview to remove the image
+            });
         });
-    });
 
-    </script>
-    
-    
-    <div>
-        <label for="id_Price">Price:</label>
-        <input type="number" name="product_price" step="0.01" min="0" id="id_Price" value="{{ p.Price }}">
-    </div>
+        </script>
 
-    <div class="form-group">
-        <div class="checkbox">
-            <input type="hidden" name="product_visibility" value="False" />
-            <label><input type="checkbox" name="product_visibility" value="True" id="id_Visibility" {% if p.Visibility%}checked{% endif %}>Visibility</label>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="id_Price" class="form-label custom-text">Price:</label>
+                <input type="number" name="product_price" step="0.01" min="0" id="id_Price" class="form-control" value="{{ p.Price }}">
+            </div>
+            <div class="col-md-6">
+                <label for="id_Stock_Level_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
+                <input type="number" name="product_stock_level_threshold" class="form-control" id="id_Stock_Level_Threshold" value="{{ p.Product_Low_Stock_Threshold }}">
+            </div>
         </div>
-    </div>
 
+        <div class="form-group mb-3">
+            <div class="checkbox">
+                <input type="hidden" name="product_visibility" value="False" />
+                <label><input type="checkbox" name="product_visibility" value="True" id="id_Visibility" {% if p.Visibility %}checked{% endif %}>Visibility</label>
+            </div>
+        </div>
 
-    <div>
-        <label for="id_Stock_Level_Threshold">Stock Level Threshold:</label>
-        <input type="number" name="product_stock_level_threshold" id="id_Stock_Level_Threshold" value="{{ p.Product_Low_Stock_Threshold }}">
-    </div>
+        <div class="mb-3">
+            <label for="id_Category" class="form-label custom-text">Category:</label>
+            <select name="product_category" class="form-select" id="id_Category" required>
+                <option value="{{ p.Category.Category_ID }}">{{ p.Category }}</option>
+                {% for cat in categories %}
+                    {% if cat.Category_ID != p.Category.Category_ID %}
+                        <option value="{{ cat.Category_ID }}">{{ cat.Category_Name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>   
+        </div>
 
-    <div>
-        <label for="id_Category">Category:</label>
-        <select name="product_category" id="id_Category" required>
-            <option value="{{p.Category.Category_ID}}">{{p.Category}}</option>
-            {% for cat in categories %}
-                {% if cat.Category_ID != p.Category.Category_ID %}
-                    <option value="{{ cat.Category_ID }}" >{{ cat.Category_Name }}</option>
-                {% endif %}
-            {% endfor %}
-        </select>   
-    </div>
+        <div class="mb-3">
+            <label for="id_Consignees" class="form-label custom-text">Consignee:</label>
+            <div class="border p-3" style="max-height: 200px; overflow-y: auto;">
+                {% for cp in con_p %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ cp.Consignee_ID.Consignee_ID }}" id="consignee_{{ cp.Consignee_ID.Consignee_ID }}" checked>
+                    <label class="form-check-label" for="consignee_{{ cp.Consignee_ID.Consignee_ID }}">
+                        {{ cp.Consignee_ID }}
+                    </label>
+                </div>
+                {% endfor %}
+                {% for con in consignees %}
+                    {% if con.Consignee_ID not in con_p_ids %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="consignee_{{ con.Consignee_ID }}">
+                        <label class="form-check-label" for="consignee_{{ con.Consignee_ID }}">
+                            {{ con.Customer_Name }}
+                        </label>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        
+        <div class="row">
+            <div class="col-md-6">
+                <a href="{% url 'current_inventory' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+            <div class="col-md-6 text-end">
+                <button type="submit" class="btn btn-success" name="Add" onclick="return confirm('Are you sure you want to update this product?')">Update</button>
+            </div>
+        </div>
 
-    <div>
-        <label for="id_Consignees">Consignee:</label>
-        <select name="product_consignees" id="id_Consignees" multiple>
-            {% for cp in con_p %}
-            <option value="{{ cp.Consignee_ID.Consignee_ID }}" selected>{{ cp.Consignee_ID }}</option>
-            {% endfor %}
-            {% for con in consignees %}
-                {% if con.Consignee_ID not in con_p_ids %}
-                    <option value="{{ con.Consignee_ID }}">{{ con.Customer_Name }}</option>
-                {% endif %}
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="row">
-        <button type="submit" class="btn-success" name="Add">Update</button>
-        <a href="{% url 'current_inventory' %}" class="btn-danger">Cancel</a>
-    </div>  
-</form>
-
-
+        <!-- <div class="row">
+            <button type="submit" class="btn btn-success" name="Add">Update</button>
+            <a href="{% url 'current_inventory' %}" class="btn btn-danger">Cancel</a>
+        </div>   -->
+    </form>
+</div>
 {% endblock %}
