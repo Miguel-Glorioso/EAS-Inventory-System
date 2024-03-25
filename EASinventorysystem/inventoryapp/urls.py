@@ -33,5 +33,6 @@ urlpatterns = [
     path('current_pros', views.requisition_order_list, name='current_pros'),
     path('add_pro', views.add_requisition_order, name='add_pro'),
     path('view_pro/<int:pk>/', views.view_pro, name='view_pro'), 
-
+    path('create_direct_customer', views.create_direct_customer, name='create_direct_customer'),
+    path('create_consignee', views.create_consignee, name='create_consignee'),
 ]
