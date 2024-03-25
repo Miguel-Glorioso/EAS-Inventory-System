@@ -1,13 +1,13 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxLengthValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 
 # Create your models here.
 # will figure out how to make the images into their own folders
 class Account(models.Model):
     Account_ID = models.AutoField(primary_key=True)
-    Username = models.CharField(max_length = 64)
-    Password = models.CharField(max_length = 32)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     First_name = models.CharField(max_length = 32)
     Last_name = models.CharField(max_length = 32)
     Profile_Picture = models.ImageField(upload_to='account_pfps/', null=True, blank=True)

@@ -5,6 +5,8 @@ from django.core.files.storage import default_storage
 from django.core.files import File
 from django.utils import timezone
 from django.http import HttpResponse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 
 
@@ -14,23 +16,13 @@ def account_login(request):
     if request.method == 'POST':
         login_username = request.POST.get('user_name')
         login_password = request.POST.get('password')
-
-        try:
-            account = Account.objects.get(Username=login_username)
-
-            if account.getPassword() == login_password:
-                global  id 
-                                
-                id = account.pk
-                return redirect('current_inventory')
-            else:
-                error_msg = "Invalid Username/Password"
-                return render(request, 'inventoryapp/login.html', {'error_msg': error_msg})
-            
-        except:        
+        user = authenticate(request, username=login_username, password=login_password)
+        if user is not None:
+            login(request, user)
+            return redirect('current_inventory')
+        else:
             error_msg = "Invalid Username/Password"
             return render(request, 'inventoryapp/login.html', {'error_msg': error_msg})
-
     else:
         return render(request, 'inventoryapp/login.html')
 
@@ -38,7 +30,7 @@ def account_login(request):
 def inventory_list(request):
     all_inventory = Product.objects.all()
     all_consignee_products = Consignee_Product.objects.all()
-    return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'consignee_products':all_consignee_products})
+    return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'consignee_products':all_consignee_products, 'account': id})
 
 
 def add_product(request):
