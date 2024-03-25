@@ -64,9 +64,9 @@
               <!-- Populate options dynamically using Django template -->
               {% for category in categories %}
                   <option value="{{ category.Category_ID }}"
-                            {% if category.Category_ID|stringformat:"s" == request.GET.category|stringformat:"s" %}
-                                selected
-                            {% endif %}>  
+                          {% if category.Category_ID|stringformat:"s" == request.GET.category|stringformat:"s" %}
+                              selected
+                          {% endif %}>
                       {{ category.Category_Name }}
                   </option>
               {% endfor %}
