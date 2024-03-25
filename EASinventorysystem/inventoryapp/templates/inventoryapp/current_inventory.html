@@ -57,7 +57,38 @@
       <div class="col-md-auto">
         <a href="#" class="btn btn-primary">Edit Count</a>
       </div>
-    </div>
+    </div><div class="row mt-3">
+      <div class="col-md-auto">
+          <select id="categoryFilter" class="form-select" aria-label="Filter by Category">
+              <option value="">All Categories</option>
+              <!-- Populate options dynamically using Django template -->
+              {% for category in categories %}
+                  <option value="{{ category.Category_ID }}"
+                          {% if category.Category_ID|stringformat:"s" == request.GET.category|stringformat:"s" %}
+                              selected
+                          {% endif %}>
+                      {{ category.Category_Name }}
+                  </option>
+              {% endfor %}
+          </select>
+      </div>
+      <div class="col-md-auto">
+          <select id="consigneeFilter" class="form-select" aria-label="Filter by Consignee">
+              <option value="">All Consignees</option>
+              <!-- Populate options dynamically using Django template -->
+              {% for consignee in consignees %}
+                  <option value="{{ consignee.Consignee_ID }}"
+                          {% if consignee.Consignee_ID|stringformat:"s" == request.GET.consignee|stringformat:"s" %}
+                              selected
+                          {% endif %}>
+                      {{ consignee.Consignee_Tag_ID }}
+                  </option>
+              {% endfor %}
+          </select>
+      </div>
+  </div>
+  
+  
 
     <!-- Table Inventory row -->
     <div class="row mt-3">
@@ -71,12 +102,11 @@
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Actual Count</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Reserved</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">To Be Received</th>
-              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Categories</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;" data-orderable="false" data-searchable="false">Categories</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Consignee</th>
               <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
             </tr>
           </thead>
-          <h1>{{ user.account.First_name }}</h1>
           <tbody>
             {% for p in products %}
               <tr>  
@@ -118,7 +148,18 @@
   <!-- DataTables Initialization -->
   <script>
     $(document).ready(function() {
-      $('#currentinventory').DataTable();
+        var table = $('#currentinventory').DataTable();
+
+        // Add event listener for category filter
+        $('#categoryFilter, #consigneeFilter').on('change', function() {
+          var category = $('#categoryFilter').val();
+          var consignee = $('#consigneeFilter').val();
+          var url = window.location.pathname; // Get the current URL
+          var params = new URLSearchParams(window.location.search); // Get the existing query parameters
+          params.set('category', category); // Set the 'category' parameter to the selected value
+          params.set('consignee', consignee); // Set the 'consignee' parameter to the selected value
+          window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
+        });
     });
   </script>
 

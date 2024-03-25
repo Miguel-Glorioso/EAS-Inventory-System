@@ -6,7 +6,6 @@ from django.core.files import File
 from django.utils import timezone
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
 
 
 
@@ -30,7 +29,26 @@ def account_login(request):
 def inventory_list(request):
     all_inventory = Product.objects.all()
     all_consignee_products = Consignee_Product.objects.all()
-    return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'consignee_products':all_consignee_products, 'account': id})
+    all_categories = Category.objects.all()
+    all_consignees = Consignee.objects.all()
+    
+    category_param = request.GET.get('category')
+    consignee_param = request.GET.get('consignee')
+
+    # Filter products by category if category parameter is provided
+    if category_param:
+         
+        category = get_object_or_404(Category, Category_ID=category_param)
+        all_inventory = all_inventory.filter(Category=category)
+
+    # Filter products by consignee if consignee parameter is provided
+    if consignee_param:
+        print(consignee_param)  
+        consignee = get_object_or_404(Consignee, Consignee_ID=consignee_param)
+        consignee_products = all_consignee_products.filter(Consignee_ID=consignee)
+        product_ids = consignee_products.values_list('Product_ID', flat=True)
+        all_inventory = all_inventory.filter(Product_ID__in=product_ids)
+    return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products})
 
 
 def add_product(request):
