@@ -302,6 +302,10 @@ def add_purchase_order(request):
     else:
         return render(request, 'inventoryapp/add_po.html')
 
+def add_po_second(request):
+    products = Product.objects.all()
+    return render(request, 'inventoryapp/add_po_second.html', {'products': products})
+
 def view_po(request, pk):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
     products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)

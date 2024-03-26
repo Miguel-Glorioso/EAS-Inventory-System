@@ -12,7 +12,7 @@
         </div>
 
         <div class="row">
-            <form method="POST" action="{% url 'add_po' %}" class="border p-4 shadow" style="background-color: #DDD7D7;">
+            <form method="POST" action="{% url 'add_po' %}" class="border p-4 shadow" style="background-color: #DADEDF;">
                 {% csrf_token %}
                 <main>
                     <fieldset>
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     
-                    <!-- Row 2: Customer Name, Shipping Method, and Order Method -->
+                    <!-- Row 2: Customer Name, Shipping Method, and Order Method  -->
                     <div class="row">
                         <div class="col">
                             <label for="customer_name">Customer Name:</label><br>
@@ -117,8 +117,14 @@
                         <div class="col">
                             <a href="{% url 'current_pos' %}" class="btn btn-danger">Cancel</a>
                         </div>
-                        <div class="col text-end">
+
+                        <!-- CHANGED BUTTON TO CONNECT TO add_po_second page... old code: -->
+                        <!-- <div class="col text-end">
                             <button type="submit" class="btn btn-success" name="Add">Create PO</button>
+                        </div> -->
+
+                        <div class="col text-end">
+                            <a href="{% url 'add_po_second' %}" class="btn btn-success">Next</a>
                         </div>
                     </div>  
                 </main>
