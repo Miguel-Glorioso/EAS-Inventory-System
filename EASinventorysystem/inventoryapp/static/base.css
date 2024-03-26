@@ -88,7 +88,6 @@
 /* ^ Added .sidebar.close .image for hamburger!! */
 
 .sidebar .image{
-  zoom: 7%;
   min-width: 60px;
   display: flex;
   align-items: center;
@@ -156,7 +155,6 @@
 
 .sidebar .image-text img{
   /* width: 50; */
-  zoom: 7%;
   border-radius: 6px;
 }
 
