@@ -1,0 +1,46 @@
+.custom-background {
+    background-color: #DDD7D7;
+    color: #DDD7D7;
+    max-width: 80%;
+}
+.input-group .btn {
+    color: #fff;
+    background-color: #007BFF;
+    border-color: #007BFF;
+}
+
+.input-group .btn:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+.custom-btn {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    width: 10%;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.custom-btn:hover {
+    background-color: #218838;
+}
+.small-label {
+    font-size: 14px;
+}
+.custom-text {
+    color: #000;
+}
+.custom-container {
+    margin-top: 10px; /* Adjust the value as needed */
+}
+.red-button {
+    color: #fff;
+    background-color: #dc3545; /* Red color */
+    border-color: #dc3545; /* Red color */
+}
+
+.red-button:hover {
+    background-color: #c82333; /* Darker shade of red on hover */
+    border-color: #bd2130; /* Darker shade of red on hover */
+}
