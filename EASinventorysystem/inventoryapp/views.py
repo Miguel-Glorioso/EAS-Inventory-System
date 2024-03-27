@@ -5,6 +5,8 @@ from django.core.files.storage import default_storage
 from django.core.files import File
 from django.utils import timezone
 from django.http import HttpResponse
+from itertools import chain
+from operator import attrgetter
 from django.contrib.auth import authenticate, login, logout
 
 
@@ -362,7 +364,10 @@ def view_pro(request, pk):
     return render(request, 'inventoryapp/view_pro.html', {'pro':product_requisition_order, 'stocks':stocks_ordered})
 
 def customer_list(request):
-    return render(request, 'inventoryapp/current_customer.html')
+    all_direct = Customer.objects.all()
+    all_consignees = Consignee.objects.all()
+    all_customers = chain(all_direct, all_consignees)
+    return render(request, 'inventoryapp/current_customer.html', {'customers':all_customers, 'consignees':all_consignees})
 
 def create_direct_customer(request):
     if request.method == 'POST':
