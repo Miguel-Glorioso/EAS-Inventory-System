@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/create_consignee.css">
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
@@ -76,17 +77,55 @@
                         <input type="date" name="consignment_period_start" class="form-control" required id="id_consignment_period_start">
                     </div>
                 </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var inputDate = document.getElementById('id_consignment_period_start');
+                        var today = new Date().toISOString().split('T')[0];
+                        inputDate.setAttribute('min', today);
+                    });
+                </script>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="id_consignment_period_end" class="form-label custom-text">Consignment Period End:</label>
                         <input type="date" name="consignment_period_end" class="form-control" required id="id_consignment_period_end">
                     </div>
                 </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var startDateInput = document.getElementById('id_consignment_period_start');
+                        var endDateInput = document.getElementById('id_consignment_period_end');
+                        function updateMinEndDate() {
+                            var startDateValue = startDateInput.value;
+                            endDateInput.setAttribute('min', startDateValue);
+                        }
+                        startDateInput.addEventListener('input', function() {
+                            updateMinEndDate();
+                        });
+                        updateMinEndDate();
+                    });
+                </script>
             </div>
-            <div class="mb-3">
-                <label for="id_tag_hex_color_id" class="form-label custom-text">Tag Hex Color ID:</label>
-                <input type="text" name="tag_hex_color_id" class="form-control" maxlength="7" required id="id_tag_hex_color_id" placeholder="Tag Hex Color ID">
+            <div class="input-group mb-3">
+                <label for="colorpicker">Tag Color Picker:</label>
+                <input type="color" id="colorpicker" value="#0000ff">
+                <div id="colorDisplay">#0000ff</div>
             </div>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var colorPicker = document.getElementById('colorpicker');
+                    var colorDisplay = document.getElementById('colorDisplay');
+                    function updateColorDisplay() {
+                        colorDisplay.textContent = colorPicker.value;
+                    }
+                    updateColorDisplay();
+                    colorPicker.addEventListener('input', function() {
+                        updateColorDisplay();
+                    });
+                });
+            </script>
+            
+            
             <div class="mb-3">
                 <label for="id_notes" class="form-label custom-text">Notes:</label>
                 <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea>
