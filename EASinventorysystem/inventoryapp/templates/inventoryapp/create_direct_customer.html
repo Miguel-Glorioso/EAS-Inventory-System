@@ -7,6 +7,11 @@
 
     <div class="container">
         <h1 class="mt-4 mb-4">Create Direct Customer</h1>
+        {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_msg }}
+            </div>
+        {% endif %}
         <form method="POST" action="{% url 'create_direct_customer' %}">
             {% csrf_token %}
             <div class="mb-3">
@@ -51,7 +56,11 @@
                 <label for="id_notes" class="form-label custom-text">Notes:</label>
                 <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Create Customer</button>
+            <div class="col">
+                <a href="{% url 'current_customers' %}" class="btn btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create Customer</button>
+            </div>
+
         </form>
     </div>
     

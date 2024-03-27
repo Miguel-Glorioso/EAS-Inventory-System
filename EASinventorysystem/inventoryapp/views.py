@@ -56,6 +56,7 @@ def inventory_list(request):
 def add_product(request):
     categories = Category.objects.all()
     consignees = Consignee.objects.all()
+
     if request.method == 'POST':
         Product_Name = request.POST.get('product_name')
         Product_Price = request.POST.get('product_price')
@@ -70,32 +71,47 @@ def add_product(request):
         if Product_Stock_threshold == 0:
               Product_Stock_threshold = None
         
-
-        product = Product.objects.create(
-            EAS_Product_ID = EAS_Product_ID,
-            Name = Product_Name,
-            Picture = Product_Picture,
-            SKU = Product_SKU,
-            Price = Product_Price,
-            Actual_Inventory_Count = Product_Initial_Count,
-            Reserved_Inventory_Count = 0,
-            To_Be_Received_Inventory_Count = 0,
-            Visibility = True,
-            Product_Low_Stock_Threshold = Product_Stock_threshold, 
-            Category = Category.objects.get(pk=Product_Category)
+        existing_product_name = Product.objects.filter(
+            Name = Product_Name
+        )
+        existing_product_ID = Product.objects.filter(
+            EAS_Product_ID = EAS_Product_ID
         )
 
-        if Product_Consignees:
-            product = Product.objects.get(EAS_Product_ID=EAS_Product_ID)
+        if existing_product_name:
+            error_msg = 'Product Already Exists'
+            return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees, 'error_msg': error_msg})
 
-        
-        for consignee_id in Product_Consignees:
-            consignee = Consignee.objects.get(pk=consignee_id)
-            Consignee_Product.objects.create(
-                Product_ID=product,
-                Consignee_ID=consignee
+        elif existing_product_ID:
+            error_msg = 'Product ID Already Exists'
+            return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees, 'error_msg': error_msg})
+            
+        else:
+            product = Product.objects.create(
+                EAS_Product_ID = EAS_Product_ID,
+                Name = Product_Name,
+                Picture = Product_Picture,
+                SKU = Product_SKU,
+                Price = Product_Price,
+                Actual_Inventory_Count = Product_Initial_Count,
+                Reserved_Inventory_Count = 0,
+                To_Be_Received_Inventory_Count = 0,
+                Visibility = True,
+                Product_Low_Stock_Threshold = Product_Stock_threshold, 
+                Category = Category.objects.get(pk=Product_Category)
             )
-        return redirect('current_inventory')
+
+            if Product_Consignees:
+                product = Product.objects.get(EAS_Product_ID=EAS_Product_ID)
+
+            
+            for consignee_id in Product_Consignees:
+                consignee = Consignee.objects.get(pk=consignee_id)
+                Consignee_Product.objects.create(
+                    Product_ID=product,
+                    Consignee_ID=consignee
+                )
+            return redirect('current_inventory')
     else:
         return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees})
 
@@ -367,11 +383,10 @@ def customer_list(request):
     all_direct = Customer.objects.all()
     all_consignees = Consignee.objects.all()
     all_customers = chain(all_direct, all_consignees)
-    return render(request, 'inventoryapp/current_customer.html', {'customers':all_customers, 'consignees':all_consignees})
+    return render(request, 'inventoryapp/current_customers.html', {'customers':all_customers, 'consignees':all_consignees})
 
 def create_direct_customer(request):
     if request.method == 'POST':
-        # Fetch data from the request
         Customer_Name = request.POST.get('customer_name')
         Primary_Contact_Number = request.POST.get('primary_contact_number')
         Address_Line_1 = request.POST.get('address_line1')
@@ -381,7 +396,6 @@ def create_direct_customer(request):
         Zip_Code = request.POST.get('zip_code')
         Notes = request.POST.get('notes')
 
-        # Check if the customer already exists
         existing_customer = Customer.objects.filter(
             Customer_Name=Customer_Name,
             Primary_Contact_Number=Primary_Contact_Number,
@@ -391,18 +405,16 @@ def create_direct_customer(request):
             Barangay=Barangay,
             Zip_Code=Zip_Code
         )
-
-        # If customer already exists, redirect to some page
         if existing_customer:
-            # Redirect to a page indicating that the customer already exists
-            # IG ADD WARNING THAT IT ALREADY EXISTS?
-            return redirect('current_customer')
+            error_msg = 'Customer Already Exists'
+            return render(request, 'inventoryapp/create_direct_customer.html',  {'error_msg': error_msg})
 
         # If customer doesn't exist, create a new one
         else:
             # Create a new customer object
-            new_customer = Customer.objects.create(
+            Customer.objects.create(
                 Customer_Name=Customer_Name,
+                Customer_Type='Direct',
                 Primary_Contact_Number=Primary_Contact_Number,
                 Address_Line_1=Address_Line_1,
                 Province=Province,
@@ -412,15 +424,12 @@ def create_direct_customer(request):
                 Notes=Notes
             )
 
-            # Redirect to some page after successful creation
-            return redirect('current_customer')
-
+            return redirect('current_customers')
     else:
         return render(request, 'inventoryapp/create_direct_customer.html')
     
 def create_consignee(request):
     if request.method == 'POST':
-        # Fetch data from the request
         Consignee_Tag_ID = request.POST.get('consignee_tag_id')
         Consignee_Name = request.POST.get('consignee_name')
         Address_Line_1 = request.POST.get('address_line_1')
@@ -429,7 +438,6 @@ def create_consignee(request):
         Province = request.POST.get('province')
         Zip_Code = request.POST.get('zip_code')
         Primary_Contact_Number = request.POST.get('primary_contact_number')
-        Customer_Type = request.POST.get('customer_type')
         Notes = request.POST.get('notes')
         Consignment_Period_Start = request.POST.get('consignment_period_start')
         Consignment_Period_End = request.POST.get('consignment_period_end')
@@ -441,30 +449,15 @@ def create_consignee(request):
         existing_consignee = Consignee.objects.filter(
             Consignee_Tag_ID=Consignee_Tag_ID,
             Consignee_Name=Consignee_Name,
-            Address_Line_1=Address_Line_1,
-            Barangay=Barangay,
-            Municipality=Municipality,
-            Province=Province,
-            Zip_Code=Zip_Code,
-            Primary_Contact_Number=Primary_Contact_Number,
-            Customer_Type=Customer_Type,
-            Notes=Notes,
-            Consignment_Period_Start=Consignment_Period_Start,
-            Consignment_Period_End=Consignment_Period_End,
-            Emergency_Contact_Number=Emergency_Contact_Number,
-            Email_Address=Email_Address,
-            Tag_Hex_Color_ID=Tag_Hex_Color_ID
         )
-
-        # If consignee already exists, redirect to some page
         if existing_consignee:
-            # Redirect to a page indicating that the consignee already exists
-            return redirect('current_consignee')
+            error_msg = 'Consignee Already Exists'
+            return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
 
         # If consignee doesn't exist, create a new one
         else:
             # Create a new consignee object
-            new_consignee = Consignee.objects.create(
+            Consignee.objects.create(
                 Consignee_Tag_ID=Consignee_Tag_ID,
                 Consignee_Name=Consignee_Name,
                 Address_Line_1=Address_Line_1,
@@ -473,7 +466,7 @@ def create_consignee(request):
                 Province=Province,
                 Zip_Code=Zip_Code,
                 Primary_Contact_Number=Primary_Contact_Number,
-                Customer_Type=Customer_Type,
+                Customer_Type= 'Consignee',
                 Notes=Notes,
                 Consignment_Period_Start=Consignment_Period_Start,
                 Consignment_Period_End=Consignment_Period_End,
@@ -483,7 +476,7 @@ def create_consignee(request):
             )
 
             # Redirect to some page after successful creation
-            return redirect('current_consignee')
+            return redirect('current_customers')
 
     else:
         return render(request, 'inventoryapp/create_consignee.html')
