@@ -1,31 +1,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+
+{% extends 'inventoryapp/base.html' %}
 {% load static %}
 
 {% block content %}
-<!-- <style>
-    /* CSS for styling the "x" button */
-    .remove-product {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: none; /* Remove button border */
-        background-color: transparent; /* Transparent background */
-        color: red; /* Red color for the button */
-        cursor: pointer; /* Change cursor to pointer on hover */
-        width: 30px; /* Set width */
-        height: 30px; /* Set height */
-        border-radius: 50%; /* Make it a circle */
-        font-weight: bold; /* Bold text */
-        font-size: 16px; /* Increase font size */
-        transition: background-color 0.3s ease; /* Smooth transition */
-    }
-
-    .remove-product:hover {
-        background-color: rgba(255, 0, 0, 0.2); /* Light red background on hover */
-    }
-</style> -->
-
-<body class="bg-light">
+<body>
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
             <div class="col-md-auto d-flex align-items-center">
@@ -33,103 +12,101 @@
             </div>
         </div>
 
-        <!-- Product List -->
-        <div class="container mt-2">
-            <div class="row mb-2">
-                <div class="col-md-6">
-                    <a href="{% url 'add_po' %}" class="btn btn-primary">Back</a>
-                </div>
-                <div class="col-md-6 text-end">
-                    <a href="#" class="btn btn-success">Next</a>
-                </div>
+        <!-- Buttons: back and cancel -->
+        <div class="row mt-2">
+            <div class="col-md-6">
+                <a href="{% url 'add_po' %}" class="btn btn-primary">Back</a>
             </div>
-            <h5>Products Ordered:</h5>
-            <!-- Converted the unordered list into a table -->
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>ID</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Action</th> 
-                        </tr>
-                    </thead>
-                    <tbody id="product-list">
-                        <!-- Products will be appended here as rows -->
-                    </tbody>
-                </table>
+            <div class="col-md-6 text-end">
+                <a href="#" class="btn btn-success">Next</a>
             </div>
         </div>
 
-        <!-- diz da line -->
-        <hr style="border-top: 2px solid black;">
-
-        <!-- Search Bar -->
-        <div class="container mt-4">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" id="search-input" placeholder="Search products..." aria-label="Search products" aria-describedby="search-button">
-            </div>
-        </div>
-        
-        <!-- Product Cards -->
-        <div class="row mt-4 mx-4" id="product-cards">
-            {% for p in products %}
-            <div class="col-md-3 mb-4 product-card" data-id="{{ p.EAS_Product_ID }}">
-                <div class="card" style="width: 18rem;">
-                    {% if p.Picture %}
-                    <img src="{{ p.Picture.url }}" width="50">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ p.Name }}</h5>
-                        <p class="card-text product-id">ID: <span class="product-id-value">{{ p.EAS_Product_ID }}</span></p>
-                        <p class="card-text product-price">Price: $<span class="product-price-value">{{ p.Price }}</span></p>
-                        <!-- added a submit button to the form -->
-                        <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
+        <div class="row mt-4">
+            <!-- Left column for Product List -->
+            <div class="col-md-5">
+                <h5>Products Ordered:</h5>
+                <div class="container mt-2">
+                    <div class="table-responsive">
+                        <table class="table table-borderless text-center">
+                            <thead class="border-bottom border-dark">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>ID</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Action</th> 
+                                </tr>
+                            </thead>
+                            <tbody id="product-list">
+                                <!-- Products will be appended here as rows -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            {% endfor %}
+                        
+            <!-- Right column for Product Cards -->
+            <div class="col-md-6" style="border-left: 2px solid gray;">
+                <h5>List of Products:</h5>
+                <div class="container mt-1">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="search-input" placeholder="Search products..." aria-label="Search products" aria-describedby="search-button">
+                    </div>
+                </div>
+                <div class="row mt-4 mx-4" id="product-cards">
+                    {% for p in products %}
+                    <div class="col-md-6 mb-4 product-card" data-id="{{ p.EAS_Product_ID }}">
+                        <div class="card" style="width: 18rem;">
+                            {% if p.Picture %}
+                            <img src="{{ p.Picture.url }}" width="50">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ p.Name }}</h5>
+                                <p class="card-text product-id">ID: <span class="product-id-value">{{ p.EAS_Product_ID }}</span></p>
+                                <p class="card-text product-price">Price: $<span class="product-price-value">{{ p.Price }}</span></p>
+                                <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // function to render product cards based on search query
         function renderProductCards(query) {
             const productCards = document.querySelectorAll(".product-card");
     
             productCards.forEach(card => {
-                const productId = card.getAttribute("data-id"); // get product ID
+                const productId = card.getAttribute("data-id");
                 const productName = card.querySelector(".card-title").innerText.toLowerCase();
                 const productInList = document.querySelector(`#product-list tr[data-id="${productId}"]`);
     
                 if (!productInList && (productName.includes(query.toLowerCase()) || query.trim() === "")) {
-                    card.style.display = "block"; // show the card
+                    card.style.display = "block";
                 } else {
-                    card.style.display = "none"; // hide the card
+                    card.style.display = "none";
                 }
             });
         }
     
-        // event listener for search input changes
         document.getElementById("search-input").addEventListener("input", function() {
             const searchInput = this.value.trim();
             renderProductCards(searchInput);
         });
     
-        // initial render of product cards (display all products)
         function renderAllProducts() {
             const productCards = document.querySelectorAll(".product-card");
     
             productCards.forEach(card => {
-                card.style.display = "block"; // show all cards initially
+                card.style.display = "block";
             });
         }
     
         renderAllProducts();
     
-        // for handling "Add to Cart" button clicks
         document.addEventListener("DOMContentLoaded", function() {
             const addToCartButtons = document.querySelectorAll(".add-to-cart");
     
@@ -142,22 +119,21 @@
     
                     const productList = document.getElementById("product-list");
                     const productRow = document.createElement("tr");
-                    productRow.setAttribute("data-id", productId); // set product ID as attribute
+                    productRow.setAttribute("data-id", productId);
                     productRow.innerHTML = `
                         <td>${productName}</td>
                         <td>${productId}</td>
                         <td>${productPrice}</td>
                         <td>
-                            <div class="input-group">
+                            <div class="input-group input-group-sm">
                                 <button class="btn btn-outline-secondary decrease-quantity" type="button">-</button>
                                 <input type="text" class="form-control text-center quantity-input" value="1" readonly>
                                 <button class="btn btn-outline-secondary increase-quantity" type="button">+</button>
                             </div>
                         </td>
-                        <td><button class="btn btn-danger remove-product">X</button></td>`; // added remove button
+                        <td><button class="btn btn-danger remove-product">X</button></td>`;
                     productList.appendChild(productRow);
     
-                    // add event listeners for increase and decrease buttons
                     const increaseButton = productRow.querySelector(".increase-quantity");
                     const decreaseButton = productRow.querySelector(".decrease-quantity");
                     const quantityInput = productRow.querySelector(".quantity-input");
@@ -176,17 +152,15 @@
                         }
                     });
     
-                    // hide corresponding product card in the product decks
                     button.closest('.product-card').style.display = 'none';
                 });
             });
     
-            // event listener for removing a product
             document.getElementById("product-list").addEventListener("click", function(event) {
                 if (event.target.classList.contains("remove-product")) {
                     const productId = event.target.closest("tr").getAttribute("data-id");
                     const productCard = document.querySelector(`.product-card[data-id="${productId}"]`);
-                    productCard.style.display = "block"; // show the product card again
+                    productCard.style.display = "block";
                     event.target.closest("tr").remove();
                 }
             });
