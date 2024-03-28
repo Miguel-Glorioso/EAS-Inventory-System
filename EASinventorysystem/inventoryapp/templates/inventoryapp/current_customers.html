@@ -29,7 +29,7 @@
           </div>
         </div>
 
-        <div class="modal-edit">
+        <div class="modal-footer">
           <a class="btn btn-primary">Edit</a> 
         </div>
 
@@ -164,7 +164,8 @@
                       <p><strong>Tag Hex Color ID:</strong> ${response.tag_hex_color_id}</p>
                   `}
               `);
-              $('#customerModal').find('.modal-edit').find('a.btn-primary').attr('href', '/update_direct_customer/' + response.customer_id + '/');
+              $('#customerModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_direct_customer/' + response.customer_id + '/');
+              
               $('#customerModal').modal('show');
           },
           error: function(xhr, status, error) {
