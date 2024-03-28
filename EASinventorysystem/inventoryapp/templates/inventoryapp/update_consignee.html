@@ -1,0 +1,160 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<body>
+    <style>
+    .input-group {
+        /* display: flex;
+        flex-direction: column;
+        align-items: center; */
+        gap: 10px;
+    }
+    input[type="color"] {
+        width: 30px;
+        height: 30px;
+        border: none;
+        border-radius: 50%;
+        outline: none;
+        cursor: pointer;
+    }
+    </style>
+    
+    <div class="container">
+        <h1 class="mt-4 mb-4">Update Consignee</h1>
+        {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_msg }}
+            </div>
+        {% endif %}
+        <form method="POST" action="{% url 'update_consignee' consignee.pk %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_consignee_name" class="form-label custom-text">Consignee Name:</label>
+                <input type="text" name="consignee_name" class="form-control" maxlength="32" required id="id_consignee_name" placeholder="Consignee Name" value="{{ consignee.Consignee_Name }}">
+            </div>
+            <div class="mb-3">
+                <label for="id_consignee_name" class="form-label custom-text">Consignee Tag ID:</label>
+                <input type="text" name="consignee_tag_id" class="form-control" maxlength="16" required id="id_consignee_tag_id" placeholder="Consignee Tag ID" value="{{ consignee.Consignee_Tag_ID }}">
+            </div>
+            <div class="mb-3">
+                <label for="id_address_line_1" class="form-label custom-text">Address Line 1:</label>
+                <input type="text" name="address_line_1" class="form-control" maxlength="128" required id="id_address_line_1" placeholder="Address Line 1" value="{{ consignee.Address_Line_1 }}">
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="id_province" class="form-label custom-text">Province:</label>
+                        <input type="text" name="province" class="form-control" maxlength="64" required id="id_province" placeholder="Province" value="{{ consignee.Province }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="id_municipality" class="form-label custom-text">Municipality:</label>
+                        <input type="text" name="municipality" class="form-control" maxlength="64" required id="id_municipality" placeholder="Municipality" value="{{ consignee.Municipality }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="id_barangay" class="form-label custom-text">Barangay:</label>
+                        <input type="text" name="barangay" class="form-control" maxlength="64" required id="id_barangay" placeholder="Barangay" value="{{ consignee.Barangay }}">
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_zip_code" class="form-label custom-text">Zip Code:</label>
+                <input type="text" name="zip_code" class="form-control" maxlength="4" required id="id_zip_code" placeholder="Zip Code" value="{{ consignee.Zip_Code }}">
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
+                        <input type="tel" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" placeholder="Primary Contact Number" value="{{ consignee.Primary_Contact_Number }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="id_email_address" class="form-label custom-text">Email Address:</label>
+                        <input type="email" name="email_address" class="form-control" maxlength="128" required id="id_email_address" placeholder="Email Address" value="{{ consignee.Email_Address }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="id_emergency_contact_number" class="form-label custom-text">Emergency Contact Number:</label>
+                        <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" required id="id_emergency_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" placeholder="Emergency Contact Number" value="{{ consignee.Emergency_Contact_Number }}">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_consignment_period_start" class="form-label custom-text">Consignment Period Start:</label>
+                        <input type="date" name="consignment_period_start" class="form-control" required id="id_consignment_period_start" value="{{ consignee.Consignment_Period_Start }}">
+                    </div>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var inputDate = document.getElementById('id_consignment_period_start');
+                        var today = new Date().toISOString().split('T')[0];
+                        inputDate.setAttribute('min', today);
+                    });
+                </script>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_consignment_period_end" class="form-label custom-text">Consignment Period End:</label>
+                        <input type="date" name="consignment_period_end" class="form-control" required id="id_consignment_period_end" value="{{ consignee.Consignment_Period_End }}">
+                    </div>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var startDateInput = document.getElementById('id_consignment_period_start');
+                        var endDateInput = document.getElementById('id_consignment_period_end');
+                        function updateMinEndDate() {
+                            var startDateValue = startDateInput.value;
+                            endDateInput.setAttribute('min', startDateValue);
+                        }
+                        startDateInput.addEventListener('input', function() {
+                            updateMinEndDate();
+                        });
+                        updateMinEndDate();
+                    });
+                </script>
+            </div>
+            <div class="input-group mb-3">
+                <label for="colorpicker">Tag Color Picker:</label>
+                <input type="color" id="colorpicker" value="{{ consignee.Tag_Hex_Color_ID }}">
+                <div id="colorDisplay">{{ consignee.Tag_Hex_Color_ID }}</div>
+            </div>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var colorPicker = document.getElementById('colorpicker');
+                    var colorDisplay = document.getElementById('colorDisplay');
+                    function updateColorDisplay() {
+                        colorDisplay.textContent = colorPicker.value;
+                    }
+                    updateColorDisplay();
+                    colorPicker.addEventListener('input', function() {
+                        updateColorDisplay();
+                    });
+                });
+            </script>
+            
+            
+            <div class="mb-3">
+                <label for="id_notes" class="form-label custom-text">Notes:</label>
+                <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes">{{ consignee.Notes }}</textarea>
+            </div>
+            <div class="col">
+                <a href="{% url 'current_customers' %}" class="btn btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update Consignee</button>
+            </div>
+        </form>
+    </div>
+    
+    
+    {% endblock %}
+</body>
+
