@@ -8,6 +8,13 @@
 
 {% block content %}
 <head>
+    <title>Customers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
+</head>
+
+<body class="customer-screen-bg">
+
   <div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -21,15 +28,17 @@
           <div id="customerInfo">
           </div>
         </div>
+
+        <div class="modal-footer">
+          <a class="btn btn-primary">Edit</a> 
+          <!-- Hi Dom! Add here ^ the edit product page -->
+        </div>
+
         </div>
       </div>
     </div>
   </div>
-    <title>Customers</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
-</head>
-<body class="customer-screen-bg">
+
   <div class="container-fluid">
 
     <div class="row p-1" style="background-color: #eee;">
@@ -81,9 +90,9 @@
           <td class="iact_inv_cnt" style="text-align: center;">{{ c.Primary_Contact_Number }}</td>
           <td>
             {% if c.Customer_Name %}
-              <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#customerModal" data-customer-pk="{{ c.id }}" data-direct-customer="true">View</button>
+              <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#customerModal" data-customer-pk="{{ c.Customer_ID }}" data-direct-customer="true">View</button>
             {% elif c.Consignee_Name %}
-              <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#customerModal" data-customer-pk="{{ c.id }}" data-direct-customer="false">View</button>
+              <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#customerModal" data-customer-pk="{{ c.Consignee_ID }}" data-direct-customer="false">View</button>
             {% endif %}
           </td>    
         </tr>
@@ -126,46 +135,44 @@
   });
 </script> -->
 <script> //ayaw gumana doe
- $(document).ready(function() {
-    $('.btn-view').click(function() {
-        var customerId = $(this).data('customer-pk');
-        var isDirectCustomer = $(this).data('direct-customer');
+  $('.btn-view').click(function() {
+      var customerId = $(this).data('customer-pk');
+      var isDirectCustomer = $(this).data('direct-customer');
 
-        var url = isDirectCustomer ? '/view_direct_customer/' : '/view_consignee/';
+      var url = isDirectCustomer ? '/view_customer/direct/' : '/view_customer/consignee/';
+      console.log("Constructed URL:", url);
+      $.ajax({
+          url: url + customerId + '/',
+          method: 'GET',
+          success: function(response) {
+              $('#customerModal').find('.modal-title').text('Customer Information');
+              $('#customerModal').find('.modal-body').html(`
+                  <p><strong>Customer Name:</strong> ${response.name}</p>
+                  <p><strong>Address:</strong> ${response.address}</p>
+                  <p><strong>Barangay:</strong> ${response.barangay}</p>
+                  <p><strong>Municipality:</strong> ${response.municipality}</p>
+                  <p><strong>Province:</strong> ${response.province}</p>
+                  <p><strong>Zip Code:</strong> ${response.zip_code}</p>
+                  <p><strong>Contact Number:</strong> ${response.contact_number}</p>
+                  <p><strong>Customer Type:</strong> ${response.customer_type}</p>
+                  <p><strong>Notes:</strong> ${response.notes}</p>
+                  ${isDirectCustomer ? '' : `
+                      <p><strong>Consignment Period Start:</strong> ${response.consignment_period_start}</p>
+                      <p><strong>Consignment Period End:</strong> ${response.consignment_period_end}</p>
+                      <p><strong>Emergency Contact Number:</strong> ${response.emergency_contact_number}</p>
+                      <p><strong>Email Address:</strong> ${response.email_address}</p>
+                      <p><strong>Tag Hex Color ID:</strong> ${response.tag_hex_color_id}</p>
+                  `}
+              `);
 
-        $.ajax({
-            url: url + customerId + '/',
-            method: 'GET',
-            success: function(response) {
-                $('#customerModal').find('.modal-title').text('Customer Information');
-                $('#customerModal').find('.modal-body').html(`
-                    <p><strong>Customer Name:</strong> ${response.name}</p>
-                    <p><strong>Address:</strong> ${response.address}</p>
-                    <p><strong>Barangay:</strong> ${response.barangay}</p>
-                    <p><strong>Municipality:</strong> ${response.municipality}</p>
-                    <p><strong>Province:</strong> ${response.province}</p>
-                    <p><strong>Zip Code:</strong> ${response.zip_code}</p>
-                    <p><strong>Contact Number:</strong> ${response.contact_number}</p>
-                    <p><strong>Customer Type:</strong> ${response.customer_type}</p>
-                    <p><strong>Notes:</strong> ${response.notes}</p>
-                    ${isDirectCustomer ? '' : `
-                        <p><strong>Consignment Period Start:</strong> ${response.consignment_period_start}</p>
-                        <p><strong>Consignment Period End:</strong> ${response.consignment_period_end}</p>
-                        <p><strong>Emergency Contact Number:</strong> ${response.emergency_contact_number}</p>
-                        <p><strong>Email Address:</strong> ${response.email_address}</p>
-                        <p><strong>Tag Hex Color ID:</strong> ${response.tag_hex_color_id}</p>
-                    `}
-                `);
-
-                // Show the modal
-                $('#customerModal').modal('show');
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
-        });
-    });
-});
+              // Show the modal
+              $('#customerModal').modal('show');
+          },
+          error: function(xhr, status, error) {
+              console.error(error);
+          }
+      });
+  });
 
 
 

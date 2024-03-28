@@ -512,7 +512,8 @@ def view_customer(request, customer_type, customer_id):
                 'email_address': customer.Email_Address,
                 'tag_hex_color_id': customer.Tag_Hex_Color_ID,
             })
-
+        print(response_data)
         return JsonResponse(response_data)
+    
     except (Customer.DoesNotExist, Consignee.DoesNotExist):
         return JsonResponse({'error': 'Customer not found'}, status=404)
