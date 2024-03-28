@@ -480,3 +480,44 @@ def create_consignee(request):
 
     else:
         return render(request, 'inventoryapp/create_consignee.html')
+    
+
+def view_customer(request, customer_type, customer_id):
+    try:
+        # Determine the model based on customer_type
+        if customer_type == 'direct':
+            customer_model = Customer
+        elif customer_type == 'consignee':
+            customer_model = Consignee
+        else:
+            return JsonResponse({'error': 'Invalid customer type'}, status=400)
+
+        # Retrieve customer object based on customer_id
+        customer = get_object_or_404(customer_model, pk=customer_id)
+
+        # Prepare response data
+        response_data = {
+            'name': customer.Customer_Name if hasattr(customer, 'Customer_Name') else customer.Consignee_Name,
+            'address': customer.Address_Line_1,
+            'barangay': customer.Barangay,
+            'municipality': customer.Municipality,
+            'province': customer.Province,
+            'zip_code': customer.Zip_Code,
+            'contact_number': customer.Primary_Contact_Number,
+            'customer_type': customer.Customer_Type,
+            'notes': customer.Notes,
+        }
+
+        # If it's a consignee, include additional fields
+        if customer_type == 'consignee':
+            response_data.update({
+                'consignment_period_start': customer.Consignment_Period_Start,
+                'consignment_period_end': customer.Consignment_Period_End,
+                'emergency_contact_number': customer.Emergency_Contact_Number,
+                'email_address': customer.Email_Address,
+                'tag_hex_color_id': customer.Tag_Hex_Color_ID,
+            })
+
+        return JsonResponse(response_data)
+    except (Customer.DoesNotExist, Consignee.DoesNotExist):
+        return JsonResponse({'error': 'Customer not found'}, status=404)
