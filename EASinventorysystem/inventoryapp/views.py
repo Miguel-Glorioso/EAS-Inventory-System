@@ -484,7 +484,6 @@ def create_consignee(request):
 
 def view_customer(request, customer_type, customer_id):
     try:
-        # Determine the model based on customer_type
         if customer_type == 'direct':
             customer_model = Customer
         elif customer_type == 'consignee':
@@ -492,10 +491,8 @@ def view_customer(request, customer_type, customer_id):
         else:
             return JsonResponse({'error': 'Invalid customer type'}, status=400)
 
-        # Retrieve customer object based on customer_id
         customer = get_object_or_404(customer_model, pk=customer_id)
 
-        # Prepare response data
         response_data = {
             'name': customer.Customer_Name if hasattr(customer, 'Customer_Name') else customer.Consignee_Name,
             'address': customer.Address_Line_1,
@@ -507,8 +504,6 @@ def view_customer(request, customer_type, customer_id):
             'customer_type': customer.Customer_Type,
             'notes': customer.Notes,
         }
-
-        # If it's a consignee, include additional fields
         if customer_type == 'consignee':
             response_data.update({
                 'consignment_period_start': customer.Consignment_Period_Start,
