@@ -29,9 +29,8 @@
           </div>
         </div>
 
-        <div class="modal-footer">
+        <div class="modal-edit">
           <a class="btn btn-primary">Edit</a> 
-          <!-- Hi Dom! Add here ^ the edit product page -->
         </div>
 
         </div>
@@ -134,6 +133,7 @@
     });
   });
 </script> -->
+
 <script> //ayaw gumana doe
   $('.btn-view').click(function() {
       var customerId = $(this).data('customer-pk');
@@ -164,8 +164,7 @@
                       <p><strong>Tag Hex Color ID:</strong> ${response.tag_hex_color_id}</p>
                   `}
               `);
-
-              // Show the modal
+              $('#customerModal').find('.modal-edit').find('a.btn-primary').attr('href', '/update_direct_customer/' + response.customer_id + '/');
               $('#customerModal').modal('show');
           },
           error: function(xhr, status, error) {

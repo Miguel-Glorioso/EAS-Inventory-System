@@ -36,5 +36,6 @@ urlpatterns = [
     path('view_pro/<int:pk>/', views.view_pro, name='view_pro'), 
     path('create_direct_customer', views.create_direct_customer, name='create_direct_customer'),
     path('create_consignee', views.create_consignee, name='create_consignee'),
-    path('view_customer/<str:customer_type>/<int:customer_id>/', views.view_customer, name='view_customer'), #not yet working doe
+    path('view_customer/<str:customer_type>/<int:customer_id>/', views.view_customer, name='view_customer'),
+    path('update_direct_customer/<int:pk>', views.update_direct_customer, name='update_direct_customer'),
 ]

@@ -494,6 +494,7 @@ def view_customer(request, customer_type, customer_id):
         customer = get_object_or_404(customer_model, pk=customer_id)
 
         response_data = {
+            'customer_id': customer.Customer_ID if hasattr(customer, 'Customer_ID') else customer.Consignee_ID,
             'name': customer.Customer_Name if hasattr(customer, 'Customer_Name') else customer.Consignee_Name,
             'address': customer.Address_Line_1,
             'barangay': customer.Barangay,
@@ -517,3 +518,32 @@ def view_customer(request, customer_type, customer_id):
     
     except (Customer.DoesNotExist, Consignee.DoesNotExist):
         return JsonResponse({'error': 'Customer not found'}, status=404)
+    
+def update_direct_customer(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    error_msg = None
+
+    if request.method == 'POST':
+        customer_name = request.POST.get('customer_name')
+        primary_contact_number = request.POST.get('primary_contact_number')
+        address_line1 = request.POST.get('address_line1')
+        province = request.POST.get('province')
+        municipality = request.POST.get('municipality')
+        barangay = request.POST.get('barangay')
+        zip_code = request.POST.get('zip_code')
+        notes = request.POST.get('notes')
+
+        customer.Customer_Name = customer_name
+        customer.Primary_Contact_Number = primary_contact_number
+        customer.Address_Line_1 = address_line1
+        customer.Province = province
+        customer.Municipality = municipality
+        customer.Barangay = barangay
+        customer.Zip_Code = zip_code
+        customer.Notes = notes
+
+        customer.save()
+
+        return redirect('current_customers')
+    else:
+        return render(request, 'inventoryapp/update_direct_customer.html', {'customer': customer, 'error_msg': error_msg})
