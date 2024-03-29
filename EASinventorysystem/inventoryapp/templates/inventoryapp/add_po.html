@@ -4,7 +4,6 @@
 {% load static %}
 
 {% block content %}
-
 <body>
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
@@ -13,13 +12,16 @@
             </div>
         </div>
 
-        <div class="row">
-            <form method="POST" action="{% url 'add_po' %}" class="border p-4 shadow" style="background-color: #F9FAF6;">
+        
+        <form method="POST" action="{% url 'add_po' %}">
+            <!-- First Tab: Customer Information -->
+            <div id="step1">
+            
                 {% csrf_token %}
-                <main>
-                    <fieldset>
+                <fieldset>
                     <legend>Customer Information</legend>
-                    
+
+                    <!-- Rows for Customer Information -->
                     <!-- Row 1: Requested Date and Type of Customer -->
                     <div class="row">
                         <div class="col">
@@ -111,32 +113,182 @@
                             <textarea id="c_notes" name="c_notes" rows="4" cols="50" class="form-control rounded-10 border-0" disabled></textarea><br><br>
                         </div>
                     </div>
-                
-                    </fieldset>
-        
+
+                    <!-- Buttons for navigation -->
                     <div class="row">
-                        <!-- Fixed buttons -->
                         <div class="col">
                             <a href="{% url 'current_pos' %}" class="btn btn-danger">Cancel</a>
                         </div>
-
-                        <!-- CHANGED BUTTON TO CONNECT TO add_po_second page... old code: -->
-                        <!-- <div class="col text-end">
-                            <button type="submit" class="btn btn-success" name="Add">Create PO</button>
-                        </div> -->
-
                         <div class="col text-end">
-                            <a href="{% url 'add_po_second' %}" class="btn btn-success">Next</a>
+                            <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
                         </div>
-                    </div>  
-                </main>
-            </form>
+                    </div>
+                </fieldset>
+            </div>
 
-        </div>
+            <!-- Second Tab: Product Selection -->
+            <div id="step2" style="display: none;">
+                <div class="container-fluid">
+                    <legend>Products Selection</legend>
+
+                    <!-- Buttons: back and cancel -->
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="d-flex justify-content-center">
+                            <!-- Left column for Products Ordered -->
+                            <div class="col-md-6" style="padding-right: 2%;">
+                                <h5>Products Ordered:</h5>
+                                <div class="container mt-2">
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless text-center">
+                                            <thead class="border-bottom border-dark">
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>ID</th>
+                                                    <th>Price</th>
+                                                    <th>Quantity</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="product-list">
+                                                <!-- Products will be appended here as rows -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right column for Product List -->
+                            <div class="col-md-6" style="border-left: 2px solid gray; padding-left: 2%;">
+                                <div class="row mb-3">
+                                    <h5>List of Products:</h5>
+                                    <div class="input-group mb-4 mr-3">
+                                        <input type="text" class="form-control" id="search-input" placeholder="Search products..." aria-label="Search products" aria-describedby="search-button">
+                                    </div>
+                                </div>
+                                <div class="row mx-4" id="product-list">
+                                    {% for p in products %}
+                                        <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
+                                            <!-- Product information -->
+                                            <div class="col">
+                                                {% if p.Picture %}
+                                                    <!-- Image -->
+                                                    <img src="{{ p.Picture.url }}" width="120" class="mr-3">
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="col">
+                                                <!-- Product details -->
+                                                <h5>{{ p.Name }}</h5>
+                                                <p>ID: {{ p.EAS_Product_ID }}</p>
+                                                <p class="product-price">Php {{ p.Price }}</p>
+                                            </div>
+
+                                            <div class="col">
+                                                <!-- Add to Cart button -->
+                                                <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
-
     <script>
+        // "Add to Cart" 
+        var addToCartButtons = document.querySelectorAll('.add-to-cart');
+        addToCartButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var productName = button.getAttribute('data-name');
+                var productId = button.parentNode.parentNode.dataset.id;
+                var productPrice = button.closest('.product-item').querySelector('.product-price').textContent.trim();
+                addToCart(productName, productId, productPrice);
+            });
+        });
+        
+        // add a product to the cart
+        function addToCart(productName, productId, productPrice) {
+            // get the table body where products will be appended
+            var productList = document.getElementById("product-list");
+            
+            // create a new row for the product
+            var newRow = document.createElement("tr");
+            
+            // populate the row with product information
+            newRow.innerHTML = `
+                <td>${productName}</td>
+                <td>${productId}</td>
+                <td>${productPrice}</td>
+                <td><input type="number" class="form-control text-center" style="width: 100px;" value="1"></td>
+                <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
+            `;
+            
+            // append the new row to the table body
+            productList.appendChild(newRow);
+            
+            // hide the product in the right column list
+            hideProduct(productId);
+        }
+    
+        //  remove a product from the cart
+        function removeFromCart(row) {
+            // get the reference to the row and remove it
+            var productId = row.parentNode.parentNode.children[1].textContent;
+            row.parentNode.parentNode.remove();
+            
+            // unhide the product in the right column list
+            unhideProduct(productId);
+        }
+    
+        // hide a product in the right column list
+        function hideProduct(productId) {
+            var productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
+            if (productItem) {
+                productItem.style.display = 'none';
+            }
+        }
+    
+        // unhide a product in the right column list
+        function unhideProduct(productId) {
+            var productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
+            if (productItem) {
+                productItem.style.display = '';
+            }
+        }
+    
+        var currentStep = 1;
+    
+        function nextStep() {
+            if (currentStep === 1) {
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+                currentStep = 2;
+            }
+        }
+    
+        function prevStep() {
+            if (currentStep === 2) {
+                document.getElementById('step1').style.display = 'block';
+                document.getElementById('step2').style.display = 'none';
+                currentStep = 1;
+            }
+        }
+    
         function toggleFields() {
             var customerType = document.getElementById("customer_type").value;
             var orderMethodField = document.getElementById("order_method");
@@ -151,7 +303,7 @@
             var barangayField = document.getElementById("barangay");
             var zipCodeField = document.getElementById("zip_code");
             var notesField = document.getElementById("c_notes");
-            
+    
             if (customerType === "") {
                 orderMethodField.disabled = true;
                 emailField.disabled = true;
@@ -179,22 +331,62 @@
                 zipCodeField.disabled = false;
                 notesField.disabled = false;
             }
-            
+    
             if (customerType === "Direct") {
                 emailField.value = "";
                 emailField.disabled = true;
                 emergencyContactField.value = "";
                 emergencyContactField.disabled = true;
             }
-
+    
             if (customerType === "Consignee") {
                 orderMethodField.selectedIndex = 0;
                 orderMethodField.disabled = true;
             }
         }
-        
-        // Call toggleFields() on page load
+    
+        // call toggleFields() on page load
         window.onload = toggleFields;
+
+        // search bar
+        function filterProducts() {
+            var searchInput = document.getElementById("search-input").value.toLowerCase();
+            var productItems = document.querySelectorAll(".product-item");
+            var productList = document.getElementById("product-list");
+
+            productItems.forEach(function(item) {
+                var productName = item.querySelector("h5").textContent.toLowerCase();
+                var productId = item.dataset.id;
+
+                // check if the product is not already added to the left column table
+                if (!isProductAdded(productId)) {
+                    // hide or show the product based on the search input
+                    if (productName.includes(searchInput)) {
+                        item.style.display = "";
+                    } else {
+                        item.style.display = "none";
+                    }
+                } else {
+                    // hide the product if its already added to the left column table
+                    item.style.display = "none";
+                }
+            });
+        }
+
+        // check if a product is already added to the left column table
+        function isProductAdded(productId) {
+            var productRows = document.querySelectorAll("#product-list tr");
+
+            for (var i = 0; i < productRows.length; i++) {
+                if (productRows[i].querySelectorAll("td")[1].textContent === productId) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // event listener for search input field
+        document.getElementById("search-input").addEventListener("input", filterProducts);
     </script>
 </body>
 {% endblock %}

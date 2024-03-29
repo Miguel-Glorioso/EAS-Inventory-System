@@ -221,6 +221,7 @@ def purchase_order_list(request):
     return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
 
 def add_purchase_order(request):
+    products = Product.objects.all()
     if request.method == 'POST':
         print("start")
         Requested_Date = request.POST.get('requested_date')
@@ -334,7 +335,7 @@ def add_purchase_order(request):
         return redirect('current_pos')
 
     else:
-        return render(request, 'inventoryapp/add_po.html')
+        return render(request, 'inventoryapp/add_po.html', {'products': products})
 
 def add_po_second(request):
     products = Product.objects.all()
