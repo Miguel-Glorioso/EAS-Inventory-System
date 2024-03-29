@@ -91,20 +91,13 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="id_consignment_period_start" class="form-label custom-text">Consignment Period Start:</label>
-                        <input type="date" name="consignment_period_start" class="form-control" required id="id_consignment_period_start" value="{{ consignee.Consignment_Period_Start }}">
+                        <input type="date" name="consignment_period_start" class="form-control" required id="id_consignment_period_start" value="{{ Start_date_string }}">
                     </div>
                 </div>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var inputDate = document.getElementById('id_consignment_period_start');
-                        var today = new Date().toISOString().split('T')[0];
-                        inputDate.setAttribute('min', today);
-                    });
-                </script>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="id_consignment_period_end" class="form-label custom-text">Consignment Period End:</label>
-                        <input type="date" name="consignment_period_end" class="form-control" required id="id_consignment_period_end" value="{{ consignee.Consignment_Period_End }}">
+                        <input type="date" name="consignment_period_end" class="form-control" required id="id_consignment_period_end" value="{{ End_date_string }}">
                     </div>
                 </div>
                 <script>
@@ -124,13 +117,13 @@
             </div>
             <div class="input-group mb-3">
                 <label for="colorpicker">Tag Color Picker:</label>
-                <input type="color" id="colorpicker" value="{{ consignee.Tag_Hex_Color_ID }}">
+                <input type="color" id="tag_hex_color_id" name="tag_hex_color_id"  value="{{ consignee.Tag_Hex_Color_ID }}">
                 <div id="colorDisplay">{{ consignee.Tag_Hex_Color_ID }}</div>
             </div>
             
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
-                    var colorPicker = document.getElementById('colorpicker');
+                    var colorPicker = document.getElementById('tag_hex_color_id');
                     var colorDisplay = document.getElementById('colorDisplay');
                     function updateColorDisplay() {
                         colorDisplay.textContent = colorPicker.value;

@@ -4,9 +4,8 @@ from django.http import  JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files import File
 from django.utils import timezone
-from django.http import HttpResponse
+import datetime
 from itertools import chain
-from operator import attrgetter
 from django.contrib.auth import authenticate, login, logout
 
 
@@ -479,8 +478,8 @@ def create_consignee(request):
             error_msg = 'Consignee Already Exists'
             return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
 
-        # If consignee doesn't exist, create a new one
-        else:
+
+        else:   
             # Create a new consignee object
             Consignee.objects.create(
                 Consignee_Tag_ID=Consignee_Tag_ID,
@@ -575,7 +574,11 @@ def update_direct_customer(request, pk):
     
 def update_consignee(request, pk):
     consignee = get_object_or_404(Consignee, pk=pk)
-    
+    Start_date = consignee.Consignment_Period_Start
+    End_date = consignee.Consignment_Period_End
+
+    Start_date_string = Start_date.strftime('%Y-%m-%d')
+    End_date_string = End_date.strftime('%Y-%m-%d')
     if request.method == 'POST':
         Consignee_Tag_ID = request.POST.get('consignee_tag_id')
         Consignee_Name = request.POST.get('consignee_name')
@@ -606,6 +609,7 @@ def update_consignee(request, pk):
         consignee.Consignment_Period_End = Consignment_Period_End
         consignee.Emergency_Contact_Number = Emergency_Contact_Number
         consignee.Email_Address = Email_Address
+        print(Tag_Hex_Color_ID,'CHECKIS')
         consignee.Tag_Hex_Color_ID = Tag_Hex_Color_ID
 
         consignee.save()
@@ -613,4 +617,4 @@ def update_consignee(request, pk):
         return redirect('current_customers')
 
     else:
-        return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee})
+        return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string})

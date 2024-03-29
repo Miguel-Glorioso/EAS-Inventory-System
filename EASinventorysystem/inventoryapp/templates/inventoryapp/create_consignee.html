@@ -107,13 +107,13 @@
             </div>
             <div class="input-group mb-3">
                 <label for="colorpicker">Tag Color Picker:</label>
-                <input type="color" id="colorpicker" value="#000000">
+                <input type="color" id="tag_hex_color_id" name="tag_hex_color_id" value="#000000">
                 <div id="colorDisplay">#000000</div>
             </div>
             
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
-                    var colorPicker = document.getElementById('colorpicker');
+                    var colorPicker = document.getElementById('tag_hex_color_id');
                     var colorDisplay = document.getElementById('colorDisplay');
                     function updateColorDisplay() {
                         colorDisplay.textContent = colorPicker.value;
