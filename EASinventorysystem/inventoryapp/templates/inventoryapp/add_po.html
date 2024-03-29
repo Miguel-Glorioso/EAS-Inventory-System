@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
@@ -137,7 +138,7 @@
                             <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button type="submit" class="btn btn-success">Submit</button>
+                            <button type="submit" class="btn btn-success" id="submit_po">Submit</button>
                         </div>
                     </div>
 
@@ -148,7 +149,7 @@
                                 <h5>Products Ordered:</h5>
                                 <div class="container mt-2">
                                     <div class="table-responsive">
-                                        <table class="table table-borderless text-center">
+                                        <table class="table table-borderless text-center" id="PO_products">
                                             <thead class="border-bottom border-dark">
                                                 <tr>
                                                     <th>Name</th>
@@ -162,6 +163,8 @@
                                                 <!-- Products will be appended here as rows -->
                                             </tbody>
                                         </table>
+                                        <input type="hidden" name="all_products" id="all_products" value="">  
+                                        <input type="hidden" name="total_price" id="total_price" value="">  
                                     </div>
                                 </div>
                             </div>
@@ -190,6 +193,7 @@
                                                 <h5>{{ p.Name }}</h5>
                                                 <p>ID: {{ p.EAS_Product_ID }}</p>
                                                 <p class="product-price">Php {{ p.Price }}</p>
+                                                <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
                                             </div>
 
                                             <div class="col">
@@ -216,13 +220,14 @@
             button.addEventListener('click', function() {
                 var productName = button.getAttribute('data-name');
                 var productId = button.parentNode.parentNode.dataset.id;
+                var productPK = button.closest('.product-item').querySelector('.product_pk').value;
                 var productPrice = button.closest('.product-item').querySelector('.product-price').textContent.trim();
-                addToCart(productName, productId, productPrice);
+                addToCart(productName, productId, productPK, productPrice);
             });
         });
         
         // add a product to the cart
-        function addToCart(productName, productId, productPrice) {
+        function addToCart(productName, productId, productPK, productPrice) {
             // get the table body where products will be appended
             var productList = document.getElementById("product-list");
             
@@ -234,7 +239,8 @@
                 <td>${productName}</td>
                 <td>${productId}</td>
                 <td>${productPrice}</td>
-                <td><input type="number" class="form-control text-center" style="width: 100px;" value="1"></td>
+                <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value="1"></td>
+                <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
             `;
             
@@ -387,6 +393,28 @@
 
         // event listener for search input field
         document.getElementById("search-input").addEventListener("input", filterProducts);
+
+        $(document).ready(function() {
+            var totalPrice = 0;
+
+            $('#submit_po').click(function() {
+                $('#PO_products tbody tr').each(function(i) {
+                    var productId = $(this).find('.product_pk').val();
+                    var productPriceText = $(this).find("td:eq(2)").text().trim();
+                    var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
+
+                    var productQuantity = $(this).find(".quantity-input").val();
+
+                    var subtotal = productPriceNumeric * productQuantity; // Calculate subtotal for the row
+                    totalPrice += subtotal;
+
+                    var comb = productId + ':' + productQuantity;
+                    $('#all_products').val($('#all_products').val() + comb + '-');
+                });
+
+                $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
+            });
+        });
     </script>
 </body>
 {% endblock %}

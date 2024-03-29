@@ -4,7 +4,7 @@ from django.http import  JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files import File
 from django.utils import timezone
-import datetime
+from datetime import datetime
 from itertools import chain
 from django.contrib.auth import authenticate, login, logout
 
@@ -223,7 +223,6 @@ def purchase_order_list(request):
 def add_purchase_order(request):
     products = Product.objects.all()
     if request.method == 'POST':
-        print("start")
         Requested_Date = request.POST.get('requested_date')
         Customer_Type = request.POST.get('customer_type')
         Name = request.POST.get('customer_name')
@@ -238,15 +237,14 @@ def add_purchase_order(request):
         Barangay = request.POST.get('barangay')
         Zip_Code = request.POST.get('zip_code')
         Notes = request.POST.get('c_notes')
-        #Products = request.POST.getlist('sampleproduct') This should contain the list of product ids in the PO and quantity split by -
-        #product and quantity can also be shown in a diff way this is just the first one i thought of
+        Products = request.POST.get('all_products')
+        Total_Price = request.POST.get('total_price')
         PO_customer = None
         PO_consignee = None
+        print(Products, Total_Price)
 
         #Checks customer type
-        print(Customer_Type)
         if Customer_Type == "Consignee":
-            print('Ctypecheck: CON')
             existing_consignee = Consignee.objects.filter(
                 Consignee_Name = Name,
                 Primary_Contact_Number = Primary_Contact,
@@ -280,7 +278,6 @@ def add_purchase_order(request):
                 )
 
         elif Customer_Type == 'Direct':
-            print('Ctypecheck: DIR')
             existing_customer = Customer.objects.filter(
                 Customer_Name = Name,
                 Primary_Contact_Number = Primary_Contact,
@@ -293,11 +290,9 @@ def add_purchase_order(request):
 
             #Checks if customer already exists
             if existing_customer:
-                print('CUSTExistCHECK: YES')
                 PO_customer = existing_customer.first()
                 
             else:
-                print('CUSTExistCHECK: NO')
                 PO_customer = Customer.objects.create(
                     Customer_Name = Name,
                     Primary_Contact_Number = Primary_Contact,
@@ -309,8 +304,8 @@ def add_purchase_order(request):
                     Zip_Code = Zip_Code,
                     Notes = Notes
                 )
-        print("create po")  
         current_date = timezone.now()
+
         PO = Purchase_Order.objects.create(
                 Requested_Date=Requested_Date,
                 Creation_Date = current_date,
@@ -319,19 +314,24 @@ def add_purchase_order(request):
                 Consignee_ID=PO_consignee,
                 Customer_ID=PO_customer,
                 #Account_ID=PO_account,
-                Total_Due=10000,
+                Total_Due=Total_Price,
                 Notes=Notes,
                 )
         
-        # this is to make the associative entities Product_Ordered
-        #for p_id in Products:
-        #    p_id.split('-')
-        #    p = Product.objects.get(pk=p_id[0])
-        #    Product_Ordered.objects.create(
-        #        Purchase_Order_ID = PO,
-        #        Product_ID = p,
-        #        quantity = p_id[1]
-        #    )
+        Products = Products[:-1]
+        Ordered_Products= Products.split("-")
+
+        for op in Ordered_Products:
+            values = op.split(":")
+            product_object = Product.objects.get(Product_ID = values[0])
+            print(product_object, product_object.Reserved_Inventory_Count)
+
+            product_object.Reserved_Inventory_Count += int(values[1])
+            product_object.save()
+
+
+            Product_Ordered.objects.create(Product_ID = product_object, Purchase_Order_ID = PO, Quantity = values[1])
+
         return redirect('current_pos')
 
     else:
@@ -545,8 +545,6 @@ def view_customer(request, customer_type, customer_id):
     
 def update_direct_customer(request, pk):
     customer = get_object_or_404(Customer, Customer_ID=pk)
-    print(customer)
-    error_msg = None
 
     if request.method == 'POST':
         customer_name = request.POST.get('customer_name')
@@ -571,7 +569,7 @@ def update_direct_customer(request, pk):
 
         return redirect('current_customers')
     else:
-        return render(request, 'inventoryapp/update_direct_customer.html', {'customer': customer, 'error_msg': error_msg})
+        return render(request, 'inventoryapp/update_direct_customer.html', {'customer': customer})
     
 def update_consignee(request, pk):
     consignee = get_object_or_404(Consignee, pk=pk)
