@@ -164,7 +164,8 @@
                       <p><strong>Tag Hex Color ID:</strong> ${response.tag_hex_color_id}</p>
                   `}
               `);
-              $('#customerModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_direct_customer/' + response.customer_id + '/');
+              var url = isDirectCustomer ? '/update_direct_customer/' : '/update_consignee/';
+              $('#customerModal').find('.modal-footer').find('a.btn-primary').attr('href', url + response.customer_id + '/');
               
               $('#customerModal').modal('show');
           },

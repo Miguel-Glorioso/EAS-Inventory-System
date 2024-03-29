@@ -572,3 +572,45 @@ def update_direct_customer(request, pk):
         return redirect('current_customers')
     else:
         return render(request, 'inventoryapp/update_direct_customer.html', {'customer': customer, 'error_msg': error_msg})
+    
+def update_consignee(request, pk):
+    consignee = get_object_or_404(Consignee, pk=pk)
+    
+    if request.method == 'POST':
+        Consignee_Tag_ID = request.POST.get('consignee_tag_id')
+        Consignee_Name = request.POST.get('consignee_name')
+        Address_Line_1 = request.POST.get('address_line_1')
+        Barangay = request.POST.get('barangay')
+        Municipality = request.POST.get('municipality')
+        Province = request.POST.get('province')
+        Zip_Code = request.POST.get('zip_code')
+        Primary_Contact_Number = request.POST.get('primary_contact_number')
+        Notes = request.POST.get('notes')
+        Consignment_Period_Start = request.POST.get('consignment_period_start')
+        Consignment_Period_End = request.POST.get('consignment_period_end')
+        Emergency_Contact_Number = request.POST.get('emergency_contact_number')
+        Email_Address = request.POST.get('email_address')
+        Tag_Hex_Color_ID = request.POST.get('tag_hex_color_id')
+
+        # Update the consignee object
+        consignee.Consignee_Tag_ID = Consignee_Tag_ID
+        consignee.Consignee_Name = Consignee_Name
+        consignee.Address_Line_1 = Address_Line_1
+        consignee.Barangay = Barangay
+        consignee.Municipality = Municipality
+        consignee.Province = Province
+        consignee.Zip_Code = Zip_Code
+        consignee.Primary_Contact_Number = Primary_Contact_Number
+        consignee.Notes = Notes
+        consignee.Consignment_Period_Start = Consignment_Period_Start
+        consignee.Consignment_Period_End = Consignment_Period_End
+        consignee.Emergency_Contact_Number = Emergency_Contact_Number
+        consignee.Email_Address = Email_Address
+        consignee.Tag_Hex_Color_ID = Tag_Hex_Color_ID
+
+        consignee.save()
+
+        return redirect('current_customers')
+
+    else:
+        return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee})
