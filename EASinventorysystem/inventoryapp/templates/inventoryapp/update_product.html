@@ -109,8 +109,13 @@
                 <input type="number" name="product_price" step="0.01" min="0" id="id_Price" class="form-control" value="{{ p.Price }}">
             </div>
             <div class="col-md-6">
+                {% if p.Product_Low_Stock_Threshold %}
+                    <label for="id_Stock_Level_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
+                    <input type="number" name="product_stock_level_threshold" class="form-control" id="id_Stock_Level_Threshold" value="{{ p.Product_Low_Stock_Threshold }}">
+                {% else %}
                 <label for="id_Stock_Level_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
-                <input type="number" name="product_stock_level_threshold" class="form-control" id="id_Stock_Level_Threshold" value="{{ p.Product_Low_Stock_Threshold }}">
+                <input type="number" name="product_stock_level_threshold" class="form-control" id="id_Stock_Level_Threshold" value="0">
+                {% endif %}
             </div>
         </div>
 

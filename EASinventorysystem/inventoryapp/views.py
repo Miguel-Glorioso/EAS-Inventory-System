@@ -67,8 +67,26 @@ def add_product(request):
         Product_Category = request.POST.get('product_category')
         Product_Consignees = request.POST.getlist('product_consignees')
 
-        if Product_Stock_threshold == 0:
-              Product_Stock_threshold = None
+        product_category = get_object_or_404(Category, pk=Product_Category)
+
+        if int(Product_Stock_threshold) == 0:
+            print('no prod stock')
+            Product_Stock_threshold = None
+
+            if int(Product_Initial_Count) == 0:
+                Stock_Status = 'No Stock'
+            elif int(Product_Initial_Count) < int(product_category.Category_Product_Low_Stock_Threshold):
+                Stock_Status = 'Low Stock'
+            else:
+                Stock_Status = 'Regular Stock'
+        else:
+            print('yes prod stock')
+            if int(Product_Initial_Count) == 0:
+                Stock_Status = 'No Stock'
+            elif int(Product_Initial_Count) < int(Product_Stock_threshold):
+                Stock_Status = 'Low Stock'
+            else:
+                Stock_Status = 'Regular Stock'
         
         existing_product_name = Product.objects.filter(
             Name = Product_Name
@@ -87,13 +105,6 @@ def add_product(request):
            
         else:
             
-            if int(Product_Initial_Count) == 0:
-                Stock_Status = 'No Stock'
-            elif int(Product_Initial_Count) < int(Product_Stock_threshold):
-                Stock_Status = 'Low Stock'
-            else:
-                Stock_Status = 'Regular Stock'
-            
             product = Product.objects.create(
                 EAS_Product_ID = EAS_Product_ID,
                 Name = Product_Name,
@@ -106,7 +117,7 @@ def add_product(request):
                 Visibility = True,
                 Product_Low_Stock_Threshold = Product_Stock_threshold, 
                 Product_Stock_Status = Stock_Status,
-                Category = get_object_or_404(Category, pk=Product_Category)
+                Category = product_category
             )
 
             if Product_Consignees:
@@ -161,9 +172,8 @@ def update_product(request, pk):
         Product_Stock_threshold = request.POST.get("product_stock_level_threshold")
         Product_Visibility = request.POST.get('product_visibility')
         Product_Consignees = request.POST.getlist('product_consignees')
-        if Product_Stock_threshold == 0:
-              Product_Stock_threshold = None
 
+        category = Category.objects.get(Category_ID = Product_Category)
         product = Product.objects.get(pk=pk)
         if Image_removed == 'removed':
             previous_picture_filename = product.Picture.name
@@ -188,6 +198,23 @@ def update_product(request, pk):
         else:
             Stock_Status = 'Regular Stock'
 
+        if int(Product_Stock_threshold) == 0:
+            Product_Stock_threshold = None
+
+            if int(product.Actual_Inventory_Count) == 0:
+                Stock_Status = 'No Stock'
+            elif int(product.Actual_Inventory_Count) < int(category.Category_Product_Low_Stock_Threshold):
+                Stock_Status = 'Low Stock'
+            else:
+                Stock_Status = 'Regular Stock'
+        else:
+            if int(product.Actual_Inventory_Count) == 0:
+                Stock_Status = 'No Stock'
+            elif int(product.Actual_Inventory_Count) < int(Product_Stock_threshold):
+                Stock_Status = 'Low Stock'
+            else:
+                Stock_Status = 'Regular Stock'
+
         Product.objects.filter(pk=pk).update(
             EAS_Product_ID=EAS_Product_ID,
             Name=Product_Name,
@@ -196,7 +223,7 @@ def update_product(request, pk):
             Visibility=Product_Visibility,
             Product_Low_Stock_Threshold=Product_Stock_threshold,
             Product_Stock_Status=Stock_Status,
-            Category= Product_Category
+            Category= category  
         )
 
         for consignee_id in Product_Consignees:
@@ -324,9 +351,9 @@ def add_purchase_order(request):
         for op in Ordered_Products:
             values = op.split(":")
             product_object = Product.objects.get(Product_ID = values[0])
-            print(product_object, product_object.Reserved_Inventory_Count)
-
+            
             product_object.Reserved_Inventory_Count += int(values[1])
+            print(product_object, product_object.Reserved_Inventory_Count)
             product_object.save()
 
 
@@ -357,10 +384,19 @@ def close_po(request, pk):
             product_listing.Reserved_Inventory_Count -= product.Quantity #product reserved invetory count gets deducted
 
             #have not yet been checked
-            if int(product_listing.Actual_Inventory_Count) == 0: 
-                product_listing.Product_Stock_Status = 'No Stock'
-            elif int(product_listing.Actual_Inventory_Count) < int(product_listing.Product_Low_Stock_Threshold):
-                product_listing.Product_Stock_Status = 'Low Stock'
+            if product_listing.Product_Low_Stock_Threshold:
+
+                if int(product_listing.Actual_Inventory_Count) == 0: 
+                    product_listing.Product_Stock_Status = 'No Stock'
+                elif int(product_listing.Actual_Inventory_Count) < int(product_listing.Product_Low_Stock_Threshold):
+                    product_listing.Product_Stock_Status = 'Low Stock'
+
+            else:
+                if int(product_listing.Actual_Inventory_Count) == 0: 
+                    product_listing.Product_Stock_Status = 'No Stock'
+                elif int(product_listing.Actual_Inventory_Count) < int(product_listing.Category.Category_Product_Low_Stock_Threshold):
+                    product_listing.Product_Stock_Status = 'Low Stock'
+            
             print(product_listing.Product_Stock_Status)
 
             product_listing.save()
