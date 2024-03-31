@@ -548,24 +548,44 @@ def requisition_order_list(request):
     return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
 
 def add_requisition_order(request):
+    products = Product.objects.all()
     if request.method == 'POST':
-        Estimated_Receiving_Date = request.POST.get('estimated_receiving_date')
-        PRO_Manufacturer = request.POST.get('manufacturer_name')
-        Total_Cost =  request.POST.get('total_cost')
-        PRO_Notes = request.POST.get('pro_notes')
+        estimated_receiving_date = request.POST.get('estimated_receiving_date')
+        manufacturer_name = request.POST.get('manufacturer_name')
+        total_cost =  request.POST.get('total_cost')
+        pro_notes = request.POST.get('pro_notes')
+        all_products = request.POST.get('all_products')
         
         current_date = timezone.now()
         
-        Product_Requisition_Order.objects.create(
-            Estimated_Receiving_Date = Estimated_Receiving_Date,
-            Creation_Date = current_date,
-            PRO_Manufacturer = PRO_Manufacturer,
-            Total_Cost = Total_Cost,
-            Notes = PRO_Notes,
+        pro = Product_Requisition_Order.objects.create(
+            Estimated_Receiving_Date=estimated_receiving_date,
+            Creation_Date=current_date,
+            PRO_Manufacturer=manufacturer_name,
+            Total_Cost=total_cost,
+            Notes=pro_notes,
         )
+        all_products = all_products[:-1]
+        ordered_products = all_products.split("-")
+
+        for op in ordered_products:
+            values = op.split(":")
+            product_id = values[0]
+            quantity = int(values[1])
+
+            # Retrieve the product object
+            product_object = Product.objects.get(Product_ID=product_id)
+
+            # Update the reserved inventory count
+            product_object.Reserved_Inventory_Count += quantity
+            product_object.save()
+
+            # Create Product_Ordered object
+            Product_Ordered.objects.create(Product_ID=product_object, Product_Requisition_ID=pro, Quantity=quantity)
+
         return redirect('current_pros')
     else:
-        return render(request, 'inventoryapp/add_pro.html')
+        return render(request, 'inventoryapp/add_pro.html', {'products': products})
     
 def view_pro(request, pk):
     product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
