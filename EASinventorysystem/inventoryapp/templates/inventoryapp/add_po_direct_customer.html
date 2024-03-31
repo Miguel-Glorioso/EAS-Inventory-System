@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
@@ -13,7 +14,7 @@
         </div>
 
         
-        <form method="POST" action="{% url 'add_po_consignee' %}">
+        <form method="POST" action="{% url 'add_po_direct_customer' %}">
             <!-- First Tab: Customer Information -->
             <div id="step1">
             
@@ -48,11 +49,11 @@
                     <div class="row">
                         <div class="col">
                             <label for="customer_name">Customer Name:</label><br>
-                            <input type="text" id="customer_name" name="customer_name" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
+                            <input type="text" id="customer_name" name="customer_name" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;" required><br><br>
                         </div>
                         <div class="col">
                             <label for="contact_info">Contact Info:</label><br>
-                            <input type="tel" id="contact_info" name="contact_info" class="form-control rounded-10 border-0" maxlength="11" style="background-color: #E5E4E2;"><br><br>
+                            <input type="tel" id="contact_info" name="contact_info" class="form-control rounded-10 border-0" maxlength="11" style="background-color: #E5E4E2;" required><br><br>
                         </div>
                         
                         <div class="col">
@@ -75,7 +76,7 @@
                         </div>
                         <div class="col">
                             <label for="order_method">Order Method:</label><br>
-                            <select id="order_method" name="order_method" class="form-select rounded-10 border-0" style="background-color: #E5E4E2;">
+                            <select id="order_method" name="order_method" class="form-select rounded-10 border-0" style="background-color: #E5E4E2;" required>
                                 <option value="No selected order method" selected disabled>Select Order Method</option>
                                 <option value="Walk-in">Walk-in</option>
                                 <option value="Lazada">Lazada</option>
@@ -114,11 +115,11 @@
                     <div class="row">
                         <div class="col">
                             <label for="order_notes">Customer Notes:</label><br>
-                            <textarea id="order_notes" name="order_notes" rows="4" cols="50" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"></textarea><br><br>
+                            <textarea id="customer_notes" name="customer_notes" rows="4" cols="50" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"></textarea><br><br>
                         </div>
                         <div class="col">
                             <label for="customer_notes">Order Notes:</label><br>
-                            <textarea id="customer_notes" name="customer_notes" rows="4" cols="50" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"></textarea><br><br>
+                            <textarea id="order_notes" name="order_notes" rows="4" cols="50" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"></textarea><br><br>
                         </div>
                     </div>
                 </fieldset>
@@ -146,7 +147,7 @@
                                 <h5>Products Ordered:</h5>
                                 <div class="container mt-2">
                                     <div class="table-responsive">
-                                        <table class="table table-borderless text-center">
+                                        <table class="table table-borderless text-center" id="PO_products">
                                             <thead class="border-bottom border-dark">
                                                 <tr>
                                                     <th>Name</th>
@@ -160,6 +161,8 @@
                                                 <!-- Products will be appended here as rows -->
                                             </tbody>
                                         </table>
+                                        <input type="hidden" name="all_products" id="all_products" value="">  
+                                        <input type="hidden" name="total_price" id="total_price" value="">  
                                     </div>
                                 </div>
                             </div>
@@ -188,6 +191,8 @@
                                                 <h5>{{ p.Name }}</h5>
                                                 <p>ID: {{ p.EAS_Product_ID }}</p>
                                                 <p class="product-price">Php {{ p.Price }}</p>
+                                                <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
+                                                <input type="hidden" class="product_count" value="{{ p.Actual_Inventory_Count }}">
                                             </div>
 
                                             <div class="col">
@@ -214,7 +219,7 @@
                             <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button type="submit" class="btn btn-success">Submit</button>
+                            <button type="submit" class="btn btn-success" id="submit_po">Submit</button>
                         </div>
                     </div>
                     
@@ -269,13 +274,15 @@
             button.addEventListener('click', function() {
                 var productName = button.getAttribute('data-name');
                 var productId = button.parentNode.parentNode.dataset.id;
+                var productPK = button.closest('.product-item').querySelector('.product_pk').value;
+                var productCount = button.closest('.product-item').querySelector('.product_count').value; 
                 var productPrice = button.closest('.product-item').querySelector('.product-price').textContent.trim();
-                addToCart(productName, productId, productPrice);
+                addToCart(productName, productId, productPK,productCount, productPrice);
             });
         });
         
         // add a product to the cart
-        function addToCart(productName, productId, productPrice) {
+        function addToCart(productName, productId, productPK,productCount, productPrice) {
             // get the table body where products will be appended
             var productList = document.getElementById("product-list");
             
@@ -287,7 +294,8 @@
                 <td>${productName}</td>
                 <td>${productId}</td>
                 <td>${productPrice}</td>
-                <td><input type="number" class="form-control text-center" style="width: 100px;" value="1"></td>
+                <td><input type="number" class="form-control text-center quantity-input" min="0" max=${productCount} style="width: 100px;" value="0"></td>
+                <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
             `;
             
@@ -344,8 +352,8 @@
                 document.getElementById('direct_customer_address_line1').textContent = document.getElementById('address_line1').value;
                 document.getElementById('direct_customer_barangay_municipality_province').textContent = document.getElementById('barangay').value + ", " + document.getElementById('municipality').value + ", " + document.getElementById('province').value;
                 document.getElementById('direct_customer_zip_code').textContent = document.getElementById('zip_code').value;
-                document.getElementById('order_notes_summary').textContent = orderNotes = document.getElementById('order_notes').value;
-                document.getElementById('customer_notes_summary').textContent = orderNotes = document.getElementById('customer_notes').value;
+                document.getElementById('customer_notes_summary').textContent = orderNotes = document.getElementById('order_notes').value;
+                document.getElementById('order_notes_summary').textContent = orderNotes = document.getElementById('customer_notes').value;
 
 
                 // Collect selected products
@@ -404,6 +412,29 @@
                 currentStep = 1;
             }
         }
+
+        
+        $(document).ready(function() {
+            var totalPrice = 0;
+
+            $('#submit_po').click(function() {
+                $('#PO_products tbody tr').each(function(i) {
+                    var productId = $(this).find('.product_pk').val();
+                    var productPriceText = $(this).find("td:eq(2)").text().trim();
+                    var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
+
+                    var productQuantity = $(this).find(".quantity-input").val();
+
+                    var subtotal = productPriceNumeric * productQuantity; // Calculate subtotal for the row
+                    totalPrice += subtotal;
+
+                    var comb = productId + ':' + productQuantity;
+                    $('#all_products').val($('#all_products').val() + comb + '-');
+                });
+
+                $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
+            });
+        });
     </script>
 </body>
 

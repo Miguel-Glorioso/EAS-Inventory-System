@@ -345,15 +345,6 @@ def purchase_order_list(request):
 #         Products = Products[:-1]
 #         Ordered_Products= Products.split("-")
 
-<<<<<<< Updated upstream
-        for op in Ordered_Products:
-            values = op.split(":")
-            product_object = Product.objects.get(Product_ID = values[0])
-            
-            product_object.Reserved_Inventory_Count += int(values[1])
-            print(product_object, product_object.Reserved_Inventory_Count)
-            product_object.save()
-=======
 #         for op in Ordered_Products:
 #             values = op.split(":")
 #             product_object = Product.objects.get(Product_ID = values[0])
@@ -361,7 +352,6 @@ def purchase_order_list(request):
 
 #             product_object.Reserved_Inventory_Count += int(values[1])
 #             product_object.save()
->>>>>>> Stashed changes
 
 
 #             Product_Ordered.objects.create(Product_ID = product_object, Purchase_Order_ID = PO, Quantity = values[1])
@@ -377,7 +367,88 @@ def add_purchase_order_consignee(request):
 
 def add_purchase_order_direct_customer(request):
     products = Product.objects.all()
-    return render(request, 'inventoryapp/add_po_direct_customer.html', {'products': products})
+    if request.method == 'POST':
+        Requested_Date = request.POST.get('requested_date')
+        Customer_Name = request.POST.get('customer_name')
+        Shipping_Method = request.POST.get('shipping_method')
+        Order_Method = request.POST.get('order_method')
+        Primary_Contact = request.POST.get('contact_info')
+        Address_Line1 = request.POST.get('address_line1')
+        Province = request.POST.get('province')
+        Municipality = request.POST.get('municipality')
+        Barangay = request.POST.get('barangay')
+        Zip_Code = request.POST.get('zip_code')
+        Customer_Notes = request.POST.get('customer_notes')
+        Order_Notes = request.POST.get('order_notes')
+        Products = request.POST.get('all_products')
+        Total_Price = request.POST.get('total_price')
+
+        existing_customer = Customer.objects.filter(
+                Customer_Name = Customer_Name,
+                Primary_Contact_Number = Primary_Contact,
+                Address_Line_1 = Address_Line1,
+                Province = Province,
+                Municipality = Municipality,
+                Barangay = Barangay,
+                Zip_Code = Zip_Code
+            )
+
+        #Checks if customer already exists
+        if existing_customer:
+            existing_customer.Notes = Customer_Notes
+            existing_customer.save()
+            PO_customer = existing_customer.first()
+            
+        else:
+        #creates a new direct customer
+            PO_customer = Customer.objects.create(
+                Customer_Name = Customer_Name,
+                Primary_Contact_Number = Primary_Contact,
+                Customer_Type = 'Direct',
+                Address_Line_1 = Address_Line1,
+                Province = Province,
+                Municipality = Municipality,
+                Barangay = Barangay,
+                Zip_Code = Zip_Code,
+                Notes = Customer_Notes
+                )
+        
+        # PO creation
+        current_date = timezone.now()
+        if Requested_Date == '':
+            Requested_Date = None
+
+        if Order_Method == None:
+            Order_Method = "No selected order method"
+
+        print(Requested_Date, 'date')
+        PO = Purchase_Order.objects.create(
+                Requested_Date=Requested_Date,
+                Creation_Date=current_date,
+                Shipping_Method=Shipping_Method,
+                Order_Method=Order_Method,
+                Customer_ID=PO_customer,
+                # Account_ID=PO_account,
+                Total_Due=Total_Price,
+                Notes=Order_Notes,
+                )
+        
+        Products = Products[:-1]
+        Ordered_Products= Products.split("-")
+
+        for op in Ordered_Products:
+            values = op.split(":")
+            product_object = Product.objects.get(Product_ID=values[0])
+
+            product_object.Reserved_Inventory_Count += int(values[1])
+            product_object.save()
+
+            Product_Ordered.objects.create(Product_ID=product_object, Purchase_Order_ID=PO, Quantity=values[1])
+
+        return redirect('current_pos')
+    else:
+
+        return render(request, 'inventoryapp/add_po_direct_customer.html', {'products': products})
 
 
 # def add_po_second(request):
