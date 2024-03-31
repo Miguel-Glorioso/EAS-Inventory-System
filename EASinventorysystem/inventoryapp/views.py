@@ -362,8 +362,56 @@ def purchase_order_list(request):
 #         return render(request, 'inventoryapp/add_po.html', {'products': products})
 
 def add_purchase_order_consignee(request):
-    products = Product.objects.all()
-    return render(request, 'inventoryapp/add_po_consignee.html', {'products': products})
+    all_products = Product.objects.all()
+    all_consignees = Consignee.objects.all()
+    if request.method == 'POST':
+        Requested_Date = request.POST.get('requested_date')
+        Order_Notes = request.POST.get('order_notes')
+        Products = request.POST.get('all_products')
+        Total_Price = request.POST.get('total_price')
+        Shipping_Method = request.POST.get('shipping_method')
+        Order_Method = request.POST.get('order_method')
+        Consignee = request.POST.get('consignee') #depends whats the input getting if the whole consignee or just the Consignee_ID
+        
+        #if the whole consignee
+        PO_Consignee = Consignee
+
+        #if just the Consignee_ID
+        #PO_Consignee = get_object_or_404(Consignee, Consignee_ID=Consignee)
+
+        if Requested_Date == '':
+            Requested_Date = None
+
+        if Order_Method == None:
+            Order_Method = "No selected order method"
+        
+        current_date = timezone.now()
+        PO = Purchase_Order.objects.create(
+            Requested_Date=Requested_Date,
+            Creation_Date=current_date,
+            Shipping_Method=Shipping_Method,
+            Order_Method=Order_Method,
+            Customer_ID=PO_Consignee,
+            # Account_ID=PO_account,
+            Total_Due=Total_Price,
+            Notes=Order_Notes,
+            )
+        
+        Products = Products[:-1]
+        Ordered_Products= Products.split("-")
+
+        for op in Ordered_Products:
+            values = op.split(":")
+            product_object = Product.objects.get(Product_ID=values[0])
+
+            product_object.Reserved_Inventory_Count += int(values[1])
+            product_object.save()
+
+            Product_Ordered.objects.create(Product_ID=product_object, Purchase_Order_ID=PO, Quantity=values[1])
+
+        return redirect('current_pos')
+    else:
+        return render(request, 'inventoryapp/add_po_consignee.html', {'products': all_products, 'consignees':all_consignees})
 
 def add_purchase_order_direct_customer(request):
     products = Product.objects.all()
@@ -382,7 +430,7 @@ def add_purchase_order_direct_customer(request):
         Order_Notes = request.POST.get('order_notes')
         Products = request.POST.get('all_products')
         Total_Price = request.POST.get('total_price')
-
+        
         existing_customer = Customer.objects.filter(
                 Customer_Name = Customer_Name,
                 Primary_Contact_Number = Primary_Contact,
