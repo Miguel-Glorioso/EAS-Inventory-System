@@ -26,7 +26,6 @@ def account_login(request):
     else:
         return render(request, 'inventoryapp/login.html')
 
-
 def inventory_list(request):
     all_inventory = Product.objects.all()
     all_consignee_products = Consignee_Product.objects.all()
@@ -50,7 +49,6 @@ def inventory_list(request):
         product_ids = consignee_products.values_list('Product_ID', flat=True)
         all_inventory = all_inventory.filter(Product_ID__in=product_ids)
     return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products})
-
 
 def add_product(request):
     categories = Category.objects.all()
@@ -133,7 +131,6 @@ def add_product(request):
             return redirect('current_inventory')
     else:
         return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees})
-
 
 def view_product(request, product_pk):
     try:
@@ -247,107 +244,108 @@ def purchase_order_list(request):
     all_purchase_orders = Purchase_Order.objects.all()
     return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
 
-def add_purchase_order(request):
-    products = Product.objects.all()
-    if request.method == 'POST':
-        Requested_Date = request.POST.get('requested_date')
-        Customer_Type = request.POST.get('customer_type')
-        Name = request.POST.get('customer_name')
-        Shipping_Method = request.POST.get('shipping_method')
-        Order_Method = request.POST.get('order_method')
-        Primary_Contact = request.POST.get('primary_contact')
-        Email_Address = request.POST.get('email_address')
-        Emergency_Contact = request.POST.get('emergency_contact')
-        Address_Line1 = request.POST.get('address_line1')
-        Province = request.POST.get('province')
-        Municipality = request.POST.get('municipality')
-        Barangay = request.POST.get('barangay')
-        Zip_Code = request.POST.get('zip_code')
-        Notes = request.POST.get('c_notes')
-        Products = request.POST.get('all_products')
-        Total_Price = request.POST.get('total_price')
-        PO_customer = None
-        PO_consignee = None
-        print(Products, Total_Price)
+# def add_purchase_order(request):
+#     products = Product.objects.all()
+#     if request.method == 'POST':
+#         Requested_Date = request.POST.get('requested_date')
+#         Customer_Type = request.POST.get('customer_type')
+#         Name = request.POST.get('customer_name')
+#         Shipping_Method = request.POST.get('shipping_method')
+#         Order_Method = request.POST.get('order_method')
+#         Primary_Contact = request.POST.get('primary_contact')
+#         Email_Address = request.POST.get('email_address')
+#         Emergency_Contact = request.POST.get('emergency_contact')
+#         Address_Line1 = request.POST.get('address_line1')
+#         Province = request.POST.get('province')
+#         Municipality = request.POST.get('municipality')
+#         Barangay = request.POST.get('barangay')
+#         Zip_Code = request.POST.get('zip_code')
+#         Notes = request.POST.get('c_notes')
+#         Products = request.POST.get('all_products')
+#         Total_Price = request.POST.get('total_price')
+#         PO_customer = None
+#         PO_consignee = None
+#         print(Products, Total_Price)
 
-        #Checks customer type
-        if Customer_Type == "Consignee":
-            existing_consignee = Consignee.objects.filter(
-                Consignee_Name = Name,
-                Primary_Contact_Number = Primary_Contact,
-                Email_Address = Email_Address,
-                Emergency_Contact_Number = Emergency_Contact,
-                Address_Line_1 = Address_Line1,
-                Province = Province,
-                Municipality = Municipality,
-                Barangay = Barangay,
-                Zip_Code = Zip_Code
-            )
-            #Checks if consignee already exists
-            if existing_consignee:
-                print('CONexistCHECK: yes')
-                PO_consignee = existing_consignee.first()
+#         #Checks customer type
+#         if Customer_Type == "Consignee":
+#             existing_consignee = Consignee.objects.filter(
+#                 Consignee_Name = Name,
+#                 Primary_Contact_Number = Primary_Contact,
+#                 Email_Address = Email_Address,
+#                 Emergency_Contact_Number = Emergency_Contact,
+#                 Address_Line_1 = Address_Line1,
+#                 Province = Province,
+#                 Municipality = Municipality,
+#                 Barangay = Barangay,
+#                 Zip_Code = Zip_Code
+#             )
+#             #Checks if consignee already exists
+#             if existing_consignee:
+#                 print('CONexistCHECK: yes')
+#                 PO_consignee = existing_consignee.first()
 
-            else:
-                print('CONexistCHECK: no')
-                PO_consignee = Consignee.objects.create(
-                    Consignee_Name = Name,
-                    Primary_Contact_Number = Primary_Contact,
-                    Customer_Type = Customer_Type,
-                    Email_Address = Email_Address,
-                    Emergency_Contact_Number = Emergency_Contact,
-                    Address_Line_1 = Address_Line1,
-                    Province = Province,
-                    Municipality = Municipality,
-                    Barangay = Barangay,
-                    Zip_Code = Zip_Code,
-                    Notes = Notes
-                )
+#             else:
+#                 print('CONexistCHECK: no')
+#                 PO_consignee = Consignee.objects.create(
+#                     Consignee_Name = Name,
+#                     Primary_Contact_Number = Primary_Contact,
+#                     Customer_Type = Customer_Type,
+#                     Email_Address = Email_Address,
+#                     Emergency_Contact_Number = Emergency_Contact,
+#                     Address_Line_1 = Address_Line1,
+#                     Province = Province,
+#                     Municipality = Municipality,
+#                     Barangay = Barangay,
+#                     Zip_Code = Zip_Code,
+#                     Notes = Notes
+#                 )
 
-        elif Customer_Type == 'Direct':
-            existing_customer = Customer.objects.filter(
-                Customer_Name = Name,
-                Primary_Contact_Number = Primary_Contact,
-                Address_Line_1 = Address_Line1,
-                Province = Province,
-                Municipality = Municipality,
-                Barangay = Barangay,
-                Zip_Code = Zip_Code
-            )
+#         elif Customer_Type == 'Direct':
+#             existing_customer = Customer.objects.filter(
+#                 Customer_Name = Name,
+#                 Primary_Contact_Number = Primary_Contact,
+#                 Address_Line_1 = Address_Line1,
+#                 Province = Province,
+#                 Municipality = Municipality,
+#                 Barangay = Barangay,
+#                 Zip_Code = Zip_Code
+#             )
 
-            #Checks if customer already exists
-            if existing_customer:
-                PO_customer = existing_customer.first()
+#             #Checks if customer already exists
+#             if existing_customer:
+#                 PO_customer = existing_customer.first()
                 
-            else:
-                PO_customer = Customer.objects.create(
-                    Customer_Name = Name,
-                    Primary_Contact_Number = Primary_Contact,
-                    Customer_Type = Customer_Type,
-                    Address_Line_1 = Address_Line1,
-                    Province = Province,
-                    Municipality = Municipality,
-                    Barangay = Barangay,
-                    Zip_Code = Zip_Code,
-                    Notes = Notes
-                )
-        current_date = timezone.now()
+#             else:
+#                 PO_customer = Customer.objects.create(
+#                     Customer_Name = Name,
+#                     Primary_Contact_Number = Primary_Contact,
+#                     Customer_Type = Customer_Type,
+#                     Address_Line_1 = Address_Line1,
+#                     Province = Province,
+#                     Municipality = Municipality,
+#                     Barangay = Barangay,
+#                     Zip_Code = Zip_Code,
+#                     Notes = Notes
+#                 )
+#         current_date = timezone.now()
 
-        PO = Purchase_Order.objects.create(
-                Requested_Date=Requested_Date,
-                Creation_Date = current_date,
-                Shipping_Method=Shipping_Method,
-                Order_Method=Order_Method,
-                Consignee_ID=PO_consignee,
-                Customer_ID=PO_customer,
-                #Account_ID=PO_account,
-                Total_Due=Total_Price,
-                Notes=Notes,
-                )
+#         PO = Purchase_Order.objects.create(
+#                 Requested_Date=Requested_Date,
+#                 Creation_Date = current_date,
+#                 Shipping_Method=Shipping_Method,
+#                 Order_Method=Order_Method,
+#                 Consignee_ID=PO_consignee,
+#                 Customer_ID=PO_customer,
+#                 #Account_ID=PO_account,
+#                 Total_Due=Total_Price,
+#                 Notes=Notes,
+#                 )
         
-        Products = Products[:-1]
-        Ordered_Products= Products.split("-")
+#         Products = Products[:-1]
+#         Ordered_Products= Products.split("-")
 
+<<<<<<< Updated upstream
         for op in Ordered_Products:
             values = op.split(":")
             product_object = Product.objects.get(Product_ID = values[0])
@@ -355,18 +353,36 @@ def add_purchase_order(request):
             product_object.Reserved_Inventory_Count += int(values[1])
             print(product_object, product_object.Reserved_Inventory_Count)
             product_object.save()
+=======
+#         for op in Ordered_Products:
+#             values = op.split(":")
+#             product_object = Product.objects.get(Product_ID = values[0])
+#             print(product_object, product_object.Reserved_Inventory_Count)
+
+#             product_object.Reserved_Inventory_Count += int(values[1])
+#             product_object.save()
+>>>>>>> Stashed changes
 
 
-            Product_Ordered.objects.create(Product_ID = product_object, Purchase_Order_ID = PO, Quantity = values[1])
+#             Product_Ordered.objects.create(Product_ID = product_object, Purchase_Order_ID = PO, Quantity = values[1])
 
-        return redirect('current_pos')
+#         return redirect('current_pos')
 
-    else:
-        return render(request, 'inventoryapp/add_po.html', {'products': products})
+#     else:
+#         return render(request, 'inventoryapp/add_po.html', {'products': products})
 
-def add_po_second(request):
+def add_purchase_order_consignee(request):
     products = Product.objects.all()
-    return render(request, 'inventoryapp/add_po_second.html', {'products': products})
+    return render(request, 'inventoryapp/add_po_consignee.html', {'products': products})
+
+def add_purchase_order_direct_customer(request):
+    products = Product.objects.all()
+    return render(request, 'inventoryapp/add_po_direct_customer.html', {'products': products})
+
+
+# def add_po_second(request):
+#     products = Product.objects.all()
+#     return render(request, 'inventoryapp/add_po_second.html', {'products': products})
 
 def view_po(request, pk):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
@@ -411,7 +427,6 @@ def close_po(request, pk):
 def requisition_order_list(request):
     all_requisition_orders = Product_Requisition_Order.objects.all()
     return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
-
 
 def add_requisition_order(request):
     if request.method == 'POST':
@@ -541,7 +556,6 @@ def create_consignee(request):
 
     else:
         return render(request, 'inventoryapp/create_consignee.html')
-    
 
 def view_customer(request, customer_type, customer_id):
     try:

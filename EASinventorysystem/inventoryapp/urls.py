@@ -26,8 +26,11 @@ urlpatterns = [
     path('view_product/<int:product_pk>/', views.view_product, name='view_product'),
     path('update_product/<int:pk>/', views.update_product, name='update_product'),
     path('current_pos', views.purchase_order_list, name='current_pos'),
-    path('add_po', views.add_purchase_order, name='add_po'),
-    path('add_po_second', views.add_po_second, name='add_po_second'), # timmy added
+    # path('add_po', views.add_purchase_order, name='add_po'),
+    # path('add_po_second', views.add_po_second, name='add_po_second'), 
+    path('add_po_direct_customer', views.add_purchase_order_direct_customer, name='add_po_direct_customer'),
+    path('add_po_consignee', views.add_purchase_order_consignee, name='add_po_consignee'),
+    
     path('view_po/<int:pk>/', views.view_po, name='view_po'), 
     path('close_po/<int:pk>/', views.close_po, name='close_po'),
     path('current_customers', views.customer_list, name='current_customers'),
