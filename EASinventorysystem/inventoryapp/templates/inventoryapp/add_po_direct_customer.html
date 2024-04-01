@@ -136,14 +136,14 @@
                             <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
+                            <button type="button" class="btn btn-success" onclick="validateQuantityAndNext()">Next</button>
                         </div>
                     </div>
 
                     <div class="row mt-4">
                         <div class="d-flex justify-content-center">
                             <!-- Left column for Products Ordered -->
-                            <div class="col-md-6" style="padding-right: 2%;">
+                            <div class="col-md-6" style="padding-right: 2%; overflow-y: auto; height: 630px;">
                                 <h5>Products Ordered:</h5>
                                 <div class="container mt-2">
                                     <div class="table-responsive">
@@ -176,7 +176,7 @@
                                         <input type="text" class="form-control" id="search-input" placeholder="Search products..." aria-label="Search products" aria-describedby="search-button">
                                     </div>
                                 </div>
-                                <div class="row mx-4" id="product-list">
+                                <div class="row mx-4" id="product-list" style="overflow-y: auto; height: 520px;">
                                     {% for p in products %}
                                         <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
                                             <!-- Product information -->
@@ -296,8 +296,12 @@
                 <td>${productName}</td>
                 <td>${productId}</td>
                 <td>${productPrice}</td>
+<<<<<<< Updated upstream
                 <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value="0"></td>
                 <td>${productCount}</td>
+=======
+                <td><input type="number" class="form-control text-center quantity-input" min="1" max=${productCount} style="width: 100px;" value="1"></td>
+>>>>>>> Stashed changes
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
             `;
@@ -340,11 +344,11 @@
         function nextStep() {
             if (currentStep === 1) {
                 document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
+                document.getElementById('step2').style.display = '';
                 currentStep = 2;
             } else if (currentStep === 2) {
                 document.getElementById('step2').style.display = 'none';
-                document.getElementById('step3').style.display = 'block';
+                document.getElementById('step3').style.display = '';
                 currentStep = 3;
                 
                 // Collect consignee information
@@ -407,11 +411,11 @@
         function prevStep() {
             if (currentStep === 3) {
                 document.getElementById('step3').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
+                document.getElementById('step2').style.display = '';
                 currentStep = 2;
             } else if (currentStep === 2) {
                 document.getElementById('step2').style.display = 'none';
-                document.getElementById('step1').style.display = 'block';
+                document.getElementById('step1').style.display = '';
                 currentStep = 1;
             }
         }
@@ -438,6 +442,51 @@
                 $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
             });
         });
+
+
+        // Function to filter products as user types in the search bar
+        document.getElementById("search-input").addEventListener("input", function() {
+            var searchValue = this.value.trim().toLowerCase();
+            var productItems = document.querySelectorAll(".product-item");
+            var addedProductIds = getAddedProductIds(); // Get product IDs already added to the left column
+            productItems.forEach(function(item) {
+                var productId = item.dataset.id; // Get the product ID from dataset
+                var productName = item.querySelector("h5").textContent.trim().toLowerCase();
+                if (!addedProductIds.includes(productId) && productName.includes(searchValue)) {
+                    item.style.display = ""; // Show the product item if not already added and matches search
+                } else {
+                    item.style.display = "none"; // Hide the product item otherwise
+                }
+            });
+        });
+
+        // Function to retrieve product IDs already added to the left column
+        function getAddedProductIds() {
+            var addedProductIds = [];
+            var productListRows = document.querySelectorAll("#PO_products tbody tr");
+            productListRows.forEach(function(row) {
+                var productId = row.cells[1].textContent.trim(); // Get product ID from the table cell
+                addedProductIds.push(productId);
+            });
+            return addedProductIds;
+        }
+
+        function validateQuantityAndNext() {
+            var quantityInputs = document.querySelectorAll('.quantity-input');
+            var isValid = true;
+
+            quantityInputs.forEach(function(input) {
+                if (parseInt(input.value) < 1) {
+                    isValid = false;
+                    // Show error message or handle invalid input as desired
+                    alert("Quantity must be 1 or greater.");
+                }
+            });
+
+            if (isValid) {
+                nextStep(); // Proceed to the next step if all quantities are valid
+            }
+        }
     </script>
 </body>
 
