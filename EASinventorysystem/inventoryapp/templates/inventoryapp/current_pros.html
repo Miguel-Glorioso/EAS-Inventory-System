@@ -59,7 +59,7 @@
                         <a href="#" type="button" class="btn btn-danger">Delete</button>
                     </td>   
                     <td> 
-                      <a href="#" type="button" class="btn btn-primary">Close</button>
+                      <a href="{% url 'close_pro' pk=pro.pk %}" type="button" class="btn btn-primary">Close</button>
                     </td>   
                     <td> 
                       <a href="{% url 'view_pro' pk=pro.pk %}" type="button" class="btn btn-primary">View</a>

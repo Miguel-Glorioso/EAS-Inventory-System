@@ -73,7 +73,7 @@ def add_product(request):
 
             if int(Product_Initial_Count) == 0:
                 Stock_Status = 'No Stock'
-            elif int(Product_Initial_Count) < int(product_category.Category_Product_Low_Stock_Threshold):
+            elif int(Product_Initial_Count) <= int(product_category.Category_Product_Low_Stock_Threshold):
                 Stock_Status = 'Low Stock'
             else:
                 Stock_Status = 'Regular Stock'
@@ -81,7 +81,7 @@ def add_product(request):
             print('yes prod stock')
             if int(Product_Initial_Count) == 0:
                 Stock_Status = 'No Stock'
-            elif int(Product_Initial_Count) < int(Product_Stock_threshold):
+            elif int(Product_Initial_Count) <= int(Product_Stock_threshold):
                 Stock_Status = 'Low Stock'
             else:
                 Stock_Status = 'Regular Stock'
@@ -190,7 +190,7 @@ def update_product(request, pk):
         
         if int(product.Actual_Inventory_Count) == 0:
             Stock_Status = 'No Stock'
-        elif int(product.Actual_Inventory_Count) < int(Product_Stock_threshold):
+        elif int(product.Actual_Inventory_Count) <= int(Product_Stock_threshold):
             Stock_Status = 'Low Stock'
         else:
             Stock_Status = 'Regular Stock'
@@ -200,14 +200,14 @@ def update_product(request, pk):
 
             if int(product.Actual_Inventory_Count) == 0:
                 Stock_Status = 'No Stock'
-            elif int(product.Actual_Inventory_Count) < int(category.Category_Product_Low_Stock_Threshold):
+            elif int(product.Actual_Inventory_Count) <= int(category.Category_Product_Low_Stock_Threshold):
                 Stock_Status = 'Low Stock'
             else:
                 Stock_Status = 'Regular Stock'
         else:
             if int(product.Actual_Inventory_Count) == 0:
                 Stock_Status = 'No Stock'
-            elif int(product.Actual_Inventory_Count) < int(Product_Stock_threshold):
+            elif int(product.Actual_Inventory_Count) <= int(Product_Stock_threshold):
                 Stock_Status = 'Low Stock'
             else:
                 Stock_Status = 'Regular Stock'
@@ -523,13 +523,13 @@ def close_po(request, pk):
 
                 if int(product_listing.Actual_Inventory_Count) == 0: 
                     product_listing.Product_Stock_Status = 'No Stock'
-                elif int(product_listing.Actual_Inventory_Count) < int(product_listing.Product_Low_Stock_Threshold):
+                elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Product_Low_Stock_Threshold):
                     product_listing.Product_Stock_Status = 'Low Stock'
 
             else:
                 if int(product_listing.Actual_Inventory_Count) == 0: 
                     product_listing.Product_Stock_Status = 'No Stock'
-                elif int(product_listing.Actual_Inventory_Count) < int(product_listing.Category.Category_Product_Low_Stock_Threshold):
+                elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Category.Category_Product_Low_Stock_Threshold):
                     product_listing.Product_Stock_Status = 'Low Stock'
             
             print(product_listing.Product_Stock_Status)
@@ -554,10 +554,31 @@ def add_requisition_order(request):
         manufacturer_name = request.POST.get('manufacturer_name')
         total_cost =  request.POST.get('total_cost')
         pro_notes = request.POST.get('pro_notes')
-        all_products = request.POST.get('all_products')
+        Products = request.POST.get('all_products')
         
-        print(all_products, 'checker', total_cost)
+        print(Products, 'checker', total_cost)
 
+        current_date = timezone.now()
+        
+        PRO = Product_Requisition_Order.objects.create(
+            Estimated_Receiving_Date=estimated_receiving_date,
+            Creation_Date=current_date,
+            PRO_Manufacturer=manufacturer_name,
+            Total_Cost=total_cost,
+            Notes=pro_notes,
+        )
+
+        Products = Products[:-1]
+        Ordered_Products= Products.split("-")
+
+        for op in Ordered_Products:
+            values = op.split(":")
+            product_object = Product.objects.get(Product_ID=values[0])
+
+            product_object.To_Be_Received_Inventory_Count += int(values[1])
+            product_object.save()
+
+            Stock_Ordered.objects.create(Product_ID=product_object, Product_Requisition_ID=PRO, Quantity=values[1])
 
         return redirect('current_pros')
     else:
@@ -569,6 +590,43 @@ def view_pro(request, pk):
     stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID = pk)
     print(stocks_ordered)
     return render(request, 'inventoryapp/view_pro.html', {'pro':product_requisition_order, 'stocks':stocks_ordered})
+
+def close_pro(request, pk):
+    requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+    if requisition_order.PRO_Status != 'Closed':
+        stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+
+        for stock in stocks_ordered:
+            stock_listing = Product.objects.get(Product_ID=stock.Product_ID.Product_ID) #this is the actual product not the product ordered
+            stock_listing.Actual_Inventory_Count += stock.Quantity #product inventory count gets deducted
+            stock_listing.To_Be_Received_Inventory_Count -= stock.Quantity #product reserved invetory count gets deducted
+
+            #have not yet been checked
+            if stock_listing.Product_Low_Stock_Threshold:
+
+                if int(stock_listing.Actual_Inventory_Count) <= int(stock_listing.Product_Low_Stock_Threshold):
+                    stock_listing.Product_Stock_Status = 'Low Stock'
+                else:
+                    stock_listing.Product_Stock_Status = 'Regular Stock'
+
+            else:
+                if int(stock_listing.Actual_Inventory_Count) <= int(stock_listing.Category.Category_Product_Low_Stock_Threshold):
+                    stock_listing.Product_Stock_Status = 'Low Stock'
+                else:
+                    stock_listing.Product_Stock_Status = 'Regular Stock'
+                    
+            
+            print(stock_listing.Product_Stock_Status)
+
+            stock_listing.save()
+
+        requisition_order.Received_Date = timezone.now()
+        requisition_order.PRO_Status = 'Closed'
+        requisition_order.Progress = 'To be Picked Up'
+        requisition_order.save()
+    
+    return redirect('current_pros')
+
 
 def customer_list(request):
     all_direct = Customer.objects.all()

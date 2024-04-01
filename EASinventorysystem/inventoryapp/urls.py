@@ -33,6 +33,7 @@ urlpatterns = [
     
     path('view_po/<int:pk>/', views.view_po, name='view_po'), 
     path('close_po/<int:pk>/', views.close_po, name='close_po'),
+    path('close_pro/<int:pk>/', views.close_pro, name='close_pro'),
     path('current_customers', views.customer_list, name='current_customers'),
     path('current_pros', views.requisition_order_list, name='current_pros'),
     path('add_pro', views.add_requisition_order, name='add_pro'),
