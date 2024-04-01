@@ -556,32 +556,8 @@ def add_requisition_order(request):
         pro_notes = request.POST.get('pro_notes')
         all_products = request.POST.get('all_products')
         
-        current_date = timezone.now()
-        
-        pro = Product_Requisition_Order.objects.create(
-            Estimated_Receiving_Date=estimated_receiving_date,
-            Creation_Date=current_date,
-            PRO_Manufacturer=manufacturer_name,
-            Total_Cost=total_cost,
-            Notes=pro_notes,
-        )
-        all_products = all_products[:-1]
-        ordered_products = all_products.split("-")
+        print(all_products, 'checker', total_cost)
 
-        for op in ordered_products:
-            values = op.split(":")
-            product_id = values[0]
-            quantity = int(values[1])
-
-            # Retrieve the product object
-            product_object = Product.objects.get(Product_ID=product_id)
-
-            # Update the reserved inventory count
-            product_object.Reserved_Inventory_Count += quantity
-            product_object.save()
-
-            # Create Product_Ordered object
-            Product_Ordered.objects.create(Product_ID=product_object, Product_Requisition_ID=pro, Quantity=quantity)
 
         return redirect('current_pros')
     else:

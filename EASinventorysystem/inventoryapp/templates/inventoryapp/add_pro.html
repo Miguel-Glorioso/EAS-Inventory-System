@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
@@ -95,7 +97,6 @@
                                             </tbody>
                                         </table>
                                         <input type="hidden" name="all_products" id="all_products" value="">  
-                                        <input type="hidden" name="total_price" id="total_price" value="">  
                                     </div>
                                 </div>
                             </div>
@@ -157,18 +158,16 @@
                     </div>
                     
                     <!-- Customer Information update this~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-                    <h5>Customer Information:</h5>
+                    <h5>Product Requisition Information:</h5>
                     <div class="row mb-3">
                         <div class="col">
-                            <p><strong>Product Requisition Order No.:</strong> <span id=""></span></p> 
-                            <p><strong>Creation Date:</strong> <span id=""></span></p>
-                            <p><strong>Estimated Receiving Date:</strong> <span id=""></span></p>
-                            <p><strong>Manufacturer:</strong> <span id=""></span></p>
-                            <p><strong>Total Cost:</strong> <span id=""></span></p>
+                            <p><strong>Estimated Receiving Date:</strong> <span id=estimated_receiving_date_summary></span></p>
+                            <p><strong>Manufacturer:</strong> <span id="manufacturer_name_summary"></span></p>
+                            <p><strong>Total Cost:</strong> <span id="total_cost_summary"></span></p>
                         </div>
                     </div>
                     <h5> Notes:</h5>
-                    <p id="customer_notes_summary"></p>
+                    <p id="pro_notes_summary"></p>
                     
                     <!-- Products Table -->
                     <h5>Products Selected:</h5>
@@ -219,7 +218,7 @@
                 <td>${productName}</td>
                 <td>${productId}</td>
                 <td>${productPrice}</td>
-                <td><input type="number" class="form-control text-center quantity-input" min="0" max=${productCount} style="width: 100px;" value="0"></td>
+                <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value="0"></td>
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
             `;
@@ -260,61 +259,61 @@
         var currentStep = 1;
     
         function nextStep() {
-    if (currentStep === 1) {
-        document.getElementById('step1').style.display = 'none';
-        document.getElementById('step2').style.display = 'block';
-        currentStep = 2;
-    } else if (currentStep === 2) {
-        document.getElementById('step2').style.display = 'none';
-        document.getElementById('step3').style.display = 'block';
-        currentStep = 3;
+            if (currentStep === 1) {
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+                currentStep = 2;
+            } else if (currentStep === 2) {
+                document.getElementById('step2').style.display = 'none';
+                document.getElementById('step3').style.display = 'block';
+                currentStep = 3;
 
-        // Populate customer information fields UPDATE THIS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        document.getElementById('estimated_receiving_date').textContent = document.getElementById('estimated_receiving_date').value;
-        document.getElementById('manufacturer_name').textContent = document.getElementById('manufacturer_name').value;
-        document.getElementById('total_cost').textContent = document.getElementById('total_cost').value;
-        document.getElementById('pro_notes').textContent = document.getElementById('pro_notes').value;
+                // Populate customer information fields UPDATE THIS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                document.getElementById('estimated_receiving_date_summary').textContent = document.getElementById('estimated_receiving_date').value;
+                document.getElementById('manufacturer_name_summary').textContent = document.getElementById('manufacturer_name').value;
+                document.getElementById('total_cost_summary').textContent = document.getElementById('total_cost').value;
+                document.getElementById('pro_notes_summary').textContent = document.getElementById('pro_notes').value;
 
-        // Collect selected products
-        var selectedProducts = [];
-        var productRows = document.querySelectorAll("#product-list tr");
-        productRows.forEach(function(row) {
-            var name = row.cells[0].textContent;
-            var id = row.cells[1].textContent;
-            var price = row.cells[2].textContent;
-            var quantity = row.cells[3].querySelector('input').value;
-            selectedProducts.push({ name: name, id: id, price: price, quantity: quantity });
-        });
+                // Collect selected products
+                var selectedProducts = [];
+                var productRows = document.querySelectorAll("#product-list tr");
+                productRows.forEach(function(row) {
+                    var name = row.cells[0].textContent;
+                    var id = row.cells[1].textContent;
+                    var price = row.cells[2].textContent;
+                    var quantity = row.cells[3].querySelector('input').value;
+                    selectedProducts.push({ name: name, id: id, price: price, quantity: quantity });
+                });
 
-        // Retrieve PRO_Notes and Total_Cost from the form elements
-        var proNotes = document.getElementById('pro_notes').value;
-        var totalCost = document.getElementById('total_cost').value;
+                // Retrieve PRO_Notes and Total_Cost from the form elements
+                var proNotes = document.getElementById('pro_notes').value;
+                var totalCost = document.getElementById('total_cost').value;
+
+                // Render selected products along with additional information
+                renderSummary(selectedProducts, proNotes, totalCost);
+            }
+        }
+
 
         // Render selected products along with additional information
-        renderSummary(selectedProducts, proNotes, totalCost);
-    }
-}
+        function renderSummary(selectedProducts, proNotes, totalCost) {
+            var selectedProductsTable = document.getElementById("selected-products-table");
+            selectedProductsTable.innerHTML = "";
+            selectedProducts.forEach(function(product) {
+                var row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.id}</td>
+                    <td>${product.price}</td>
+                    <td>${product.quantity}</td>
+                `;
+                selectedProductsTable.appendChild(row);
+            });
 
-
-// Render selected products along with additional information
-function renderSummary(selectedProducts, proNotes, totalCost) {
-    var selectedProductsTable = document.getElementById("selected-products-table");
-    selectedProductsTable.innerHTML = "";
-    selectedProducts.forEach(function(product) {
-        var row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${product.name}</td>
-            <td>${product.id}</td>
-            <td>${product.price}</td>
-            <td>${product.quantity}</td>
-        `;
-        selectedProductsTable.appendChild(row);
-    });
-
-    // Display additional information
-    document.getElementById('pro_notes_summary').textContent = proNotes;
-    document.getElementById('total_cost_summary').textContent = totalCost;
-}
+            // Display additional information
+            document.getElementById('pro_notes_summary').textContent = proNotes;
+            document.getElementById('total_cost_summary').textContent = totalCost;
+        }
 
         // Render consignee information and selected products
         function renderSummary(selectedProducts) {
@@ -359,24 +358,17 @@ function renderSummary(selectedProducts, proNotes, totalCost) {
 
         
         $(document).ready(function() {
-            var totalPrice = 0;
 
             $('#submit_pro').click(function() {
                 $('#PRO_products tbody tr').each(function(i) {
                     var productId = $(this).find('.product_pk').val();
-                    var productPriceText = $(this).find("td:eq(2)").text().trim();
-                    var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
 
                     var productQuantity = $(this).find(".quantity-input").val();
-
-                    var subtotal = productPriceNumeric * productQuantity; // Calculate subtotal for the row
-                    totalPrice += subtotal;
 
                     var comb = productId + ':' + productQuantity;
                     $('#all_products').val($('#all_products').val() + comb + '-');
                 });
 
-                $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
             });
         });
     </script>
