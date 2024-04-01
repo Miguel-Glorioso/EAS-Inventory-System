@@ -13,7 +13,8 @@
             <div class="login-container">
                 <h2 class="login-title">Sign in</h2>
                       
-                <form method=POST action="{% url 'account_login' %}">{% csrf_token %}
+                <form method=POST action="{% url 'account_login' %}">
+                    {% csrf_token %}
                     <div class="input-group success">
                         <label for="user_name">Your username</label>
                         <input type="text" class="form-control" id="user_name" name="user_name" required>

@@ -241,7 +241,7 @@ def update_product(request, pk):
         return render(request, 'inventoryapp/update_product.html', {'p':p, 'con_p':con_p, 'con_p_ids':con_p_ids, 'categories': categories,  'consignees': consignees})
     
 def purchase_order_list(request):
-    all_purchase_orders = Purchase_Order.objects.all()
+    all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
     return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
 
 # def add_purchase_order(request):
@@ -513,34 +513,47 @@ def close_po(request, pk):
     if purchase_order.PO_Status != 'Closed':
         products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
 
+        Sufficient_Stock = True
         for product in products_ordered:
-            product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID) #this is the actual product not the product ordered
-            product_listing.Actual_Inventory_Count -= product.Quantity #product inventory count gets deducted
-            product_listing.Reserved_Inventory_Count -= product.Quantity #product reserved invetory count gets deducted
+            product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID)
+            if product_listing.Actual_Inventory_Count < product.Quantity:
+                Sufficient_Stock = False
+        
+        if Sufficient_Stock:
 
-            #have not yet been checked
-            if product_listing.Product_Low_Stock_Threshold:
+            for product in products_ordered:
+                product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID) #this is the actual product not the product ordered
+                product_listing.Actual_Inventory_Count -= product.Quantity #product inventory count gets deducted
+                product_listing.Reserved_Inventory_Count -= product.Quantity #product reserved invetory count gets deducted
 
-                if int(product_listing.Actual_Inventory_Count) == 0: 
-                    product_listing.Product_Stock_Status = 'No Stock'
-                elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Product_Low_Stock_Threshold):
-                    product_listing.Product_Stock_Status = 'Low Stock'
+                #have not yet been checked
+                if product_listing.Product_Low_Stock_Threshold:
 
-            else:
-                if int(product_listing.Actual_Inventory_Count) == 0: 
-                    product_listing.Product_Stock_Status = 'No Stock'
-                elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Category.Category_Product_Low_Stock_Threshold):
-                    product_listing.Product_Stock_Status = 'Low Stock'
+                    if int(product_listing.Actual_Inventory_Count) == 0: 
+                        product_listing.Product_Stock_Status = 'No Stock'
+                    elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Product_Low_Stock_Threshold):
+                        product_listing.Product_Stock_Status = 'Low Stock'
+
+                else:
+                    if int(product_listing.Actual_Inventory_Count) == 0: 
+                        product_listing.Product_Stock_Status = 'No Stock'
+                    elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Category.Category_Product_Low_Stock_Threshold):
+                        product_listing.Product_Stock_Status = 'Low Stock'
+                
+                print(product_listing.Product_Stock_Status)
+
+                product_listing.save()
+
+            purchase_order.Fulfilled_Date = timezone.now()
+            purchase_order.PO_Status = 'Closed'
+            purchase_order.Progress = 'Shipped'
+            purchase_order.save()
+        
+        else:
+            error_msg = 'Sufficient Stock for Purchase Order'
+            all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+            return render(request, 'inventoryapp/current_pos.html', {'error_msg':error_msg, 'purchase_orders':all_purchase_orders})
             
-            print(product_listing.Product_Stock_Status)
-
-            product_listing.save()
-
-        purchase_order.Fulfilled_Date = timezone.now()
-        purchase_order.PO_Status = 'Closed'
-        purchase_order.Progress = 'Shipped'
-        purchase_order.save()
-    
     return redirect('current_pos')
 
 def requisition_order_list(request):

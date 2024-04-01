@@ -18,13 +18,17 @@
         <h4 class="m-0 mr-3">Current Purchase Orders</h4>
       </div>
     </div>
-
+    {% if error_msg %}
+    <div class="alert alert-danger" role="alert">
+        {{ error_msg }}
+    </div>
+    {% endif %}
     <!-- Buttons row -->
     <div class="row mt-3">
       <!-- Buttons column -->
       <div class="col-md-auto">
         <div class="dropdown">
-
+          
           <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             Add Purchase Order
           </button>
