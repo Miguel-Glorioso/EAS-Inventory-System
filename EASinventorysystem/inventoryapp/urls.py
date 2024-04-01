@@ -31,13 +31,17 @@ urlpatterns = [
     path('add_po_direct_customer', views.add_purchase_order_direct_customer, name='add_po_direct_customer'),
     path('add_po_consignee', views.add_purchase_order_consignee, name='add_po_consignee'),
     
+    path('current_pros', views.requisition_order_list, name='current_pros'),
     path('view_po/<int:pk>/', views.view_po, name='view_po'), 
     path('close_po/<int:pk>/', views.close_po, name='close_po'),
     path('close_pro/<int:pk>/', views.close_pro, name='close_pro'),
-    path('current_customers', views.customer_list, name='current_customers'),
-    path('current_pros', views.requisition_order_list, name='current_pros'),
     path('add_pro', views.add_requisition_order, name='add_pro'),
     path('view_pro/<int:pk>/', views.view_pro, name='view_pro'), 
+    path('update_pro/<int:pk>/', views.update_pro, name='update_pro'),
+
+    path('current_customers', views.customer_list, name='current_customers'),
+    
+    
     path('create_direct_customer', views.create_direct_customer, name='create_direct_customer'),
     path('create_consignee', views.create_consignee, name='create_consignee'),
     path('view_customer/<str:customer_type>/<int:customer_id>/', views.view_customer, name='view_customer'),

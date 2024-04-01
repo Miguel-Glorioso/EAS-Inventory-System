@@ -596,6 +596,52 @@ def add_requisition_order(request):
         return redirect('current_pros')
     else:
         return render(request, 'inventoryapp/add_pro.html', {'products': products})
+
+def update_pro(request, pk):
+    # Retrieve the existing requisition order object
+    requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+    products = Product.objects.all()
+    
+    if request.method == 'POST':
+        estimated_receiving_date = request.POST.get('estimated_receiving_date')
+        manufacturer_name = request.POST.get('manufacturer_name')
+        total_cost =  request.POST.get('total_cost')
+        pro_notes = request.POST.get('pro_notes')
+        Products = request.POST.get('all_products')
+        
+        current_date = timezone.now()
+        
+        # Update the requisition order object with the new data
+        requisition_order.Estimated_Receiving_Date = estimated_receiving_date
+        requisition_order.Creation_Date = current_date
+        requisition_order.PRO_Manufacturer = manufacturer_name
+        requisition_order.Total_Cost = total_cost
+        requisition_order.Notes = pro_notes
+        
+        requisition_order.save()
+
+        # Process the ordered products
+        Products = Products[:-1]
+        Ordered_Products = Products.split("-")
+        for op in Ordered_Products:
+            values = op.split(":")
+            product_object = Product.objects.get(Product_ID=values[0])
+
+            # Update To_Be_Received_Inventory_Count for the product
+            product_object.To_Be_Received_Inventory_Count += int(values[1])
+            product_object.save()
+
+            # Update or create a Stock_Ordered object for the product requisition order
+            stock_ordered, _ = Stock_Ordered.objects.get_or_create(
+                Product_ID=product_object,
+                Product_Requisition_ID=requisition_order
+            )
+            stock_ordered.Quantity = values[1]
+            stock_ordered.save()
+
+        return redirect('current_pros')
+    else:
+        return render(request, 'inventoryapp/update_pro.html', {'requisition_order': requisition_order, 'products': products})
     
 def view_pro(request, pk):
     product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
