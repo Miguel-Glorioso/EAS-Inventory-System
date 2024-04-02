@@ -383,8 +383,8 @@ def add_purchase_order_consignee(request):
         if Requested_Date == '':
             Requested_Date = None
 
-        if Order_Method == None:
-            Order_Method = "No selected order method"
+        # if Order_Method == None:
+        #     Order_Method = "No selected order method"
         
         current_date = timezone.now()
         PO = Purchase_Order.objects.create(
