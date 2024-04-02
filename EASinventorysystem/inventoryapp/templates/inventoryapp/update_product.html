@@ -36,15 +36,15 @@
         </div> -->
         <div class="row mb-3">
             <div class="col-md-4">
-                <label for="id_EAS_Product_ID" class="form-label custom-text">EAS Product ID:</label>
+                <label class="required" for="id_EAS_Product_ID" class="form-label custom-text">EAS Product ID:</label>
                 <input type="text" name="eas_id" class="form-control" maxlength="32" id="id_EAS_Product_ID" value="{{ p.EAS_Product_ID }}">
             </div>
             <div class="col-md-4">
-                <label for="id_Name" class="form-label custom-text">Name:</label>
+                <label class="required" class="required"for="id_Name" class="form-label custom-text">Name:</label>
                 <input type="text" name="product_name" class="form-control" maxlength="64" id="id_Name" value="{{ p.Name }}">
             </div>
             <div class="col-md-4">
-                <label for="id_SKU" class="form-label custom-text">SKU:</label>
+                <label class="required" for="id_SKU" class="form-label custom-text">SKU:</label>
                 <input type="text" name="product_sku" class="form-control" maxlength="64" id="id_SKU" value="{{ p.SKU }}">
             </div>
         </div>
@@ -53,7 +53,7 @@
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="id_Price" class="form-label custom-text">Price:</label>
+                <label class="required" for="id_Price" class="form-label custom-text">Price:</label>
                 <input type="number" name="product_price" step="0.01" min="0" id="id_Price" class="form-control" value="{{ p.Price }}">
             </div>
             <div class="col-md-6">
@@ -72,11 +72,13 @@
                 <input type="hidden" name="product_visibility" value="False" />
                 <label><input type="checkbox" name="product_visibility" value="True" id="id_Visibility" {% if p.Visibility %}checked{% endif %}>Visibility</label>
             </div>
-        </div> -->
+        </div> 
+    -->
+        
         <div class="mb-3">
             <div class="row">
                 <div class="col-md-4">
-                    <label for="id_Category" class="form-label custom-text">Category:</label>
+                    <label class="required" for="id_Category" class="form-label custom-text">Category:</label>
             <select name="product_category" class="form-select" id="id_Category" required>
                 <option value="{{ p.Category.Category_ID }}">{{ p.Category }}</option>
                 {% for cat in categories %}
@@ -146,6 +148,10 @@
         </div>
         
         <style>
+                    .required:after {
+                      content:" *";
+                      color: red;
+                    }
             .pill-shape {
                 display: inline-block;
                 padding: .25em .6em;

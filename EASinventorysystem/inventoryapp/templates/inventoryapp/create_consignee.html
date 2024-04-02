@@ -5,6 +5,12 @@
 
 {% block content %}
 <body>
+    <style>
+        .required:after {
+          content:" *";
+          color: red;
+        }
+      </style>
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
             <div class="col-md-auto d-flex align-items-center">
@@ -19,58 +25,83 @@
         <form method="POST" action="{% url 'create_consignee' %}">
             {% csrf_token %}
             <legend>Consignee Information</legend>
-            <div class="mb-3">
-                <label for="id_consignee_name" class="form-label custom-text">Consignee Name:</label>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_consignee_name" class="form-label custom-text">Consignee Name:</label>
+                        <input type="text" name="consignee_name" class="form-control" maxlength="32" required id="id_consignee_name" placeholder="Consignee Name">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_consignee_name" class="form-label custom-text">Consignee Tag ID:</label>
+                        <input type="text" name="consignee_tag_id" class="form-control" maxlength="16" required id="id_consignee_tag_id" placeholder="Consignee Tag ID">
+                    </div>
+                </div>
+                </div>
+            <!-- <div class="mb-3">
+                <label class="required" for="id_consignee_name" class="form-label custom-text">Consignee Name:</label>
                 <input type="text" name="consignee_name" class="form-control" maxlength="32" required id="id_consignee_name" placeholder="Consignee Name">
             </div>
             <div class="mb-3">
-                <label for="id_consignee_name" class="form-label custom-text">Consignee Tag ID:</label>
+                <label class="required" for="id_consignee_name" class="form-label custom-text">Consignee Tag ID:</label>
                 <input type="text" name="consignee_tag_id" class="form-control" maxlength="16" required id="id_consignee_tag_id" placeholder="Consignee Tag ID">
-            </div>
+            </div> -->
             <div class="mb-3">
-                <label for="id_address_line_1" class="form-label custom-text">Address Line 1:</label>
+                <label class="required" for="id_address_line_1" class="form-label custom-text">Address Line 1:</label>
                 <input type="text" name="address_line_1" class="form-control" maxlength="128" required id="id_address_line_1" placeholder="Address Line 1">
             </div>
             <div class="row">
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_province" class="form-label custom-text">Province:</label>
+                        <label class="required" for="id_province" class="form-label custom-text">Province:</label>
                         <input type="text" name="province" class="form-control" maxlength="64" required id="id_province" placeholder="Province">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_municipality" class="form-label custom-text">Municipality:</label>
+                        <label class="required" for="id_municipality" class="form-label custom-text">Municipality:</label>
                         <input type="text" name="municipality" class="form-control" maxlength="64" required id="id_municipality" placeholder="Municipality">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_barangay" class="form-label custom-text">Barangay:</label>
+                        <label class="required" for="id_barangay" class="form-label custom-text">Barangay:</label>
                         <input type="text" name="barangay" class="form-control" maxlength="64" required id="id_barangay" placeholder="Barangay">
                     </div>
                 </div>
             </div>
             <div class="mb-3">
-                <label for="id_zip_code" class="form-label custom-text">Zip Code:</label>
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-md-4">
+                        <label class="required" for="id_zip_code" class="form-label custom-text">Zip Code:</label>
+                        <input type="tel" name="zip_code" class="form-control" maxlength="4" required id="id_zip_code" placeholder="Zip Code">
+                </select>
+                        <div class="col-md-3"></div> <!-- Invisible column -->
+                        <div class="col-md-3"></div> <!-- Invisible column -->
+                    </div>
+                </div>
+            <!-- <div class="mb-3">
+                <label class="required" for="id_zip_code" class="form-label custom-text">Zip Code:</label>
                 <input type="text" name="zip_code" class="form-control" maxlength="4" required id="id_zip_code" placeholder="Zip Code">
-            </div>
+            </div> -->
             <div class="row">
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                        <input type="tel" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" placeholder="Primary Contact Number">
+                        <label class="required" for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
+                        <input type="tel" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" inputmode="numeric" placeholder="Primary Contact Number">
                     </div>
                 </div>
+
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_email_address" class="form-label custom-text">Email Address:</label>
+                        <label class="required" for="id_email_address" class="form-label custom-text">Email Address:</label>
                         <input type="email" name="email_address" class="form-control" maxlength="128" required id="id_email_address" placeholder="Email Address">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_emergency_contact_number" class="form-label custom-text">Emergency Contact Number:</label>
+                        <label class="required" for="id_emergency_contact_number" class="form-label custom-text">Emergency Contact Number:</label>
                         <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" required id="id_emergency_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" placeholder="Emergency Contact Number">
                     </div>
                 </div>
@@ -78,20 +109,13 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="id_consignment_period_start" class="form-label custom-text">Consignment Period Start:</label>
+                        <label class="required" for="id_consignment_period_start" class="form-label custom-text">Consignment Period Start:</label>
                         <input type="date" name="consignment_period_start" class="form-control" required id="id_consignment_period_start">
                     </div>
                 </div>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var inputDate = document.getElementById('id_consignment_period_start');
-                        var today = new Date().toISOString().split('T')[0];
-                        inputDate.setAttribute('min', today);
-                    });
-                </script>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="id_consignment_period_end" class="form-label custom-text">Consignment Period End:</label>
+                        <label class="required" for="id_consignment_period_end" class="form-label custom-text">Consignment Period End:</label>
                         <input type="date" name="consignment_period_end" class="form-control" required id="id_consignment_period_end">
                     </div>
                 </div>
@@ -111,7 +135,7 @@
                 </script>
             </div>
             <div class="input-group mb-3">
-                <label for="colorpicker">Tag Color Picker:</label>
+                <label class="required" for="colorpicker">Tag Color Picker:</label>
                 <input type="color" id="tag_hex_color_id" name="tag_hex_color_id" value="#000000">
                 <div id="colorDisplay">#000000</div>
             </div>
@@ -135,10 +159,18 @@
                 <label for="id_notes" class="form-label custom-text">Notes:</label>
                 <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea>
             </div>
-            <div class="col">
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-6">
+                    <a href="{% url 'current_customers' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button type="submit" class="btn btn-success" name="Add" onclick="return confirm('Are you sure you want to create this consignee?')">Create</button>
+                </div>
+            </div>
+            <!-- <div class="col">
                 <a href="{% url 'current_customers' %}" class="btn btn-danger">Cancel</a>
                 <button type="submit" class="btn btn-primary">Create Consignee</button>
-            </div>
+            </div> -->
         </form>
     </div>
     
