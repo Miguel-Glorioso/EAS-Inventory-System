@@ -119,11 +119,11 @@
                                 </div>
                               </div> -->
 
-                            <label for="id_Category" class="form-label custom-text">Consignee Name</label>
-                            <select name="product_category" class="form-select" id="id_Category" required>
+                            <label for="consignee" class="form-label custom-text">Consignee Name</label>
+                            <select name="consignee" class="form-select" id="consignee" required>
                                 <option value="" disabled selected>Select a Consignee</option>
-                                {% for cat in categories %}
-                                <option value="{{ cat.Category_ID }}">{{ cat.Category_Name }}</option>
+                                {% for c in consignees %}
+                                <option value="{{ c.Consignee_ID }}">{{ c.Consignee_Name }}</option>
                                 {% endfor %}
                             </select>
                             
@@ -142,6 +142,13 @@
                         </div>
 
                         <div class="col">
+                            <label for="order_method">Order Method:</label><br>
+                            <select id="order_method" name="order_method" class="form-select" required>
+                                <option value="No selected order method" selected disabled>Select Order Method</option>
+                                <option value="Walk-in">Walk-in</option>
+                                <option value="Lazada">Lazada</option>
+                                <option value="Shopee">Shopee</option>
+                            </select><br><br>
                         </div>
                     </div>
 
@@ -551,27 +558,6 @@
             }
         }
 
-        $(document).ready(function () {
-            var totalPrice = 0;
-
-            $('#submit_po').click(function () {
-                $('#PO_products tbody tr').each(function (i) {
-                    var productId = $(this).find('.product_pk').val();
-                    var productPriceText = $(this).find("td:eq(2)").text().trim();
-                    var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
-
-                    var productQuantity = $(this).find(".quantity-input").val();
-
-                    var subtotal = productPriceNumeric * productQuantity; // Calculate subtotal for the row
-                    totalPrice += subtotal;
-
-                    var comb = productId + ':' + productQuantity;
-                    $('#all_products').val($('#all_products').val() + comb + '-');
-                });
-
-                $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
-            });
-        });
 
         // Function to filter products as user types in the search bar
         document.getElementById("search-input").addEventListener("input", function () {
@@ -657,6 +643,27 @@
             }
         });
 
+        $(document).ready(function () {
+            var totalPrice = 0;
+
+            $('#submit_po').click(function () {
+                $('#PO_products tbody tr').each(function (i) {
+                    var productId = $(this).find('.product_pk').val();
+                    var productPriceText = $(this).find("td:eq(2)").text().trim();
+                    var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
+
+                    var productQuantity = $(this).find(".quantity-input").val();
+
+                    var subtotal = productPriceNumeric * productQuantity; // Calculate subtotal for the row
+                    totalPrice += subtotal;
+
+                    var comb = productId + ':' + productQuantity;
+                    $('#all_products').val($('#all_products').val() + comb + '-');
+                });
+
+                $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
+            });
+        });
     </script>
 </body>
 

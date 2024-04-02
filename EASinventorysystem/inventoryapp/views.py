@@ -373,12 +373,8 @@ def add_purchase_order_consignee(request):
         Shipping_Method = request.POST.get('shipping_method')
         Order_Method = request.POST.get('order_method')
         PO_Consignee = request.POST.get('consignee') #depends whats the input getting if the whole consignee or just the Consignee_ID
-        
-        #if the whole consignee
-        # PO_Consignee = Consignee
-
-        #if just the Consignee_ID
-        #PO_Consignee = get_object_or_404(Consignee, Consignee_ID=Consignee)
+        print(PO_Consignee)
+        PO_Consignee = get_object_or_404(Consignee, Consignee_ID=PO_Consignee)
 
         if Requested_Date == '':
             Requested_Date = None
@@ -392,7 +388,7 @@ def add_purchase_order_consignee(request):
             Creation_Date=current_date,
             Shipping_Method=Shipping_Method,
             Order_Method=Order_Method,
-            Customer_ID=PO_Consignee,
+            Consignee_ID=PO_Consignee,
             # Account_ID=PO_account,
             Total_Due=Total_Price,
             Notes=Order_Notes,
@@ -411,6 +407,7 @@ def add_purchase_order_consignee(request):
             Product_Ordered.objects.create(Product_ID=product_object, Purchase_Order_ID=PO, Quantity=values[1])
 
         return redirect('current_pos')
+    
     else:
         return render(request, 'inventoryapp/add_po_consignee.html', {'products': all_products, 'consignees':all_consignees})
 
