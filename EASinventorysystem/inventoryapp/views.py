@@ -364,7 +364,6 @@ def purchase_order_list(request):
 def add_purchase_order_consignee(request):
     all_products = Product.objects.all()
     all_consignees = Consignee.objects.all()
-    # all_consignees = Consignee.objects.all()
     if request.method == 'POST':
         Requested_Date = request.POST.get('requested_date')
         Order_Notes = request.POST.get('order_notes')
@@ -372,10 +371,10 @@ def add_purchase_order_consignee(request):
         Total_Price = request.POST.get('total_price')
         Shipping_Method = request.POST.get('shipping_method')
         Order_Method = request.POST.get('order_method')
-        PO_Consignee = request.POST.get('consignee') #depends whats the input getting if the whole consignee or just the Consignee_ID
+        Consignee = request.POST.get('consignee') #depends whats the input getting if the whole consignee or just the Consignee_ID
         
         #if the whole consignee
-        # PO_Consignee = Consignee
+        PO_Consignee = Consignee
 
         #if just the Consignee_ID
         #PO_Consignee = get_object_or_404(Consignee, Consignee_ID=Consignee)
