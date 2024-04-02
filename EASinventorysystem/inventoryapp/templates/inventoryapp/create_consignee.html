@@ -5,8 +5,12 @@
 
 {% block content %}
 <body>
-    <div class="container">
-        <h1 class="mt-4 mb-4">Create Consignee</h1>
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">Create Consignee</h4>
+            </div>
+        </div>
         {% if error_msg %}
             <div class="alert alert-danger" role="alert">
                 {{ error_msg }}
@@ -14,6 +18,7 @@
         {% endif %}
         <form method="POST" action="{% url 'create_consignee' %}">
             {% csrf_token %}
+            <legend>Consignee Information</legend>
             <div class="mb-3">
                 <label for="id_consignee_name" class="form-label custom-text">Consignee Name:</label>
                 <input type="text" name="consignee_name" class="form-control" maxlength="32" required id="id_consignee_name" placeholder="Consignee Name">

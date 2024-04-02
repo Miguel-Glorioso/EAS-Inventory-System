@@ -5,8 +5,12 @@
 {% block content %}
 <body>
 
-    <div class="container">
-        <h1 class="mt-4 mb-4">Create Direct Customer</h1>
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">Create Direct Customer</h4>
+            </div>
+        </div>
         {% if error_msg %}
             <div class="alert alert-danger" role="alert">
                 {{ error_msg }}
@@ -14,6 +18,7 @@
         {% endif %}
         <form method="POST" action="{% url 'create_direct_customer' %}">
             {% csrf_token %}
+            <legend>Direct Customer Information</legend>
             <div class="mb-3">
                 <label for="id_customer_name" class="form-label custom-text">Customer Name:</label>
                 <input type="text" name="customer_name" class="form-control" maxlength="64" required id="id_customer_name" placeholder="Customer Name">

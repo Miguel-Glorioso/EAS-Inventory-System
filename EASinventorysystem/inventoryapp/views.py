@@ -599,10 +599,10 @@ def add_requisition_order(request):
         return render(request, 'inventoryapp/add_pro.html', {'products': products})
 
 def update_pro(request, pk):
-    # Retrieve the existing requisition order object
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
     products = Product.objects.all()
-    
+    stock_ordered_items = Stock_Ordered.objects.filter(Product_Requisition_ID=requisition_order)
+
     if request.method == 'POST':
         estimated_receiving_date = request.POST.get('estimated_receiving_date')
         manufacturer_name = request.POST.get('manufacturer_name')
@@ -642,7 +642,7 @@ def update_pro(request, pk):
 
         return redirect('current_pros')
     else:
-        return render(request, 'inventoryapp/update_pro.html', {'requisition_order': requisition_order, 'products': products})
+        return render(request, 'inventoryapp/update_pro.html', {'requisition_order': requisition_order, 'products': products, 'stock_ordered_items': stock_ordered_items})
     
 def view_pro(request, pk):
     product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)

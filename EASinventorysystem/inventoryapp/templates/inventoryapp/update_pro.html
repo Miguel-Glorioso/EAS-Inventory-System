@@ -169,6 +169,7 @@
                     <p id="pro_notes_summary"></p>
                     
                     <!-- Products Table -->
+                    <!-- Products Table -->
                     <h5>Products Selected:</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered">
@@ -180,7 +181,14 @@
                                 </tr>
                             </thead>
                             <tbody id="selected-products-table">
-                                <!-- Selected products will be dynamically filled here -->
+                                <!-- Loop through stock_ordered_items and display the stock ordered -->
+                                {% for stock_ordered_item in stock_ordered_items %}
+                                <tr>
+                                    <td>{{ stock_ordered_item.Product_ID.Name }}</td>
+                                    <td>{{ stock_ordered_item.Product_ID.EAS_Product_ID }}</td>
+                                    <td>{{ stock_ordered_item.Quantity }}</td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
