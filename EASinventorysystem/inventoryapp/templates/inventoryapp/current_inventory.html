@@ -108,44 +108,44 @@
           </thead>
           <tbody>
             {% for p in products %}
-                {% if p.Visibility %}
-                <tr>  
-                  <td class="iname" style="text-align: center;">{{ p.Name }}</td>
-                  <td class="iid" style="text-align: center;">{{ p.EAS_Product_ID }}</td>    
-                  <td class="ipicture" style="text-align: center;">         
-                    {% if p.Picture %}
-                      <img src="{{ p.Picture.url }}" width="50">
-                    {% endif %}
-                  </td> 
-                  {% if p.Product_Stock_Status == 'Low Stock' %}
-                    <td class="iact_inv_cnt" style="text-align: center;">
-                      {{ p.Actual_Inventory_Count }}
-                      <img src="{% static 'images/low_product_threshold.png' %}" style="width: 20px; height: 20px;">
-                    </td>
-                  {% elif p.Product_Stock_Status == 'No Stock' %}
-                    <td class="iact_inv_cnt" style="text-align: center;">
-                      {{ p.Actual_Inventory_Count }}
-                      <img src="{% static 'images/no_stock.png' %}" style="width: 25px; height:30px;">
-                    </td>
-                  {% elif p.Product_Stock_Status == 'Regular Stock' %}
-                    <td class="iact_inv_cnt" style="text-align: center;">{{ p.Actual_Inventory_Count }}</td>
+            {% if p.Visibility %}
+              <tr>  
+                <td class="iname" style="text-align: center;">{{ p.Name }}</td>
+                <td class="iid" style="text-align: center;">{{ p.EAS_Product_ID }}</td>    
+                <td class="ipicture" style="text-align: center;">         
+                  {% if p.Picture %}
+                    <img src="{{ p.Picture.url }}" width="50">
                   {% endif %}
-                  <td class="irsrvd_cnt" style="text-align: center;">{{ p.Reserved_Inventory_Count }}</td>
-                  <td class="ito_be_rcvd_cnt" style="text-align: center;">{{ p.To_Be_Received_Inventory_Count }}</td>    
-                  <td class="icategories" style="text-align: center;">{{ p.Category }}</td>    
-                  <td class="iconsignee" style="text-align: center;">
-                    {% for c in consignee_products %}
-                      {% if c.Product_ID.Product_ID == p.Product_ID %}
-                        {{ c.Consignee_ID.Consignee_Tag_ID }}
-                      {% endif %}
-                    {% endfor %}
-                  </td>  
-                  <!-- Updated View button trigger -->
-                  <td> 
-                    <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#productModal" data-product-pk="{{ p.Product_ID }}">View</button>
-                  </td>     
-                </tr>
-              {% endif %}
+                </td> 
+                {% if p.Product_Stock_Status == 'Low Stock' %}
+                  <td class="iact_inv_cnt" style="text-align: center;">
+                    {{ p.Actual_Inventory_Count }}
+                    <img src="{% static 'images/low_product_threshold.png' %}" style="width: 20px; height: 20px;">
+                  </td>
+                {% elif p.Product_Stock_Status == 'No Stock' %}
+                  <td class="iact_inv_cnt" style="text-align: center;">
+                    {{ p.Actual_Inventory_Count }}
+                    <img src="{% static 'images/no_stock.png' %}" style="width: 25px; height:30px;">
+                  </td>
+                {% elif p.Product_Stock_Status == 'Regular Stock' %}
+                  <td class="iact_inv_cnt" style="text-align: center;">{{ p.Actual_Inventory_Count }}</td>
+                {% endif %}
+                <td class="irsrvd_cnt" style="text-align: center;">{{ p.Reserved_Inventory_Count }}</td>
+                <td class="ito_be_rcvd_cnt" style="text-align: center;">{{ p.To_Be_Received_Inventory_Count }}</td>    
+                <td class="icategories" style="text-align: center;">{{ p.Category }}</td>    
+                <td class="iconsignee" style="text-align: center;">
+                  {% for c in consignee_products %}
+                    {% if c.Product_ID.Product_ID == p.Product_ID %}
+                      {{ c.Consignee_ID.Consignee_Tag_ID }}
+                    {% endif %}
+                  {% endfor %}
+                </td>  
+                <!-- Updated View button trigger -->
+                <td> 
+                  <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#productModal" data-product-pk="{{ p.Product_ID }}">View</button>
+                </td>     
+              </tr>
+            {% endif %}
             {% endfor %}
           </tbody>
         </table>

@@ -4,6 +4,7 @@
 {% load static %}
 
 {% block content %}
+
 <body>
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
@@ -12,14 +13,120 @@
             </div>
         </div>
 
-        
         <form method="POST" action="{% url 'add_po_consignee' %}">
             <!-- First Tab: Consignee Information -->
             <div id="step1">
-            
+
                 {% csrf_token %}
                 <fieldset>
                     <legend>Consignee Information</legend>
+
+                    <!-- Rows for Consignee Information -->
+                    <!-- Row 1: Requested Date -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="requested_date">Requested Date:</label><br>
+                            <input type="date" id="requested_date" name="requested_date"
+                                class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
+                        </div>
+
+                        <div class="col">
+                        </div>
+                        <div class="col">
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Consignee Name, Shipping Method  -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="consignee_name">Consignee Name:</label><br>
+                            <input type="text" id="consignee_name" name="consignee_name"
+                                class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="shipping_method">Shipping Method:</label><br>
+                            <select id="shipping_method" name="shipping_method" class="form-select rounded-10 border-0"
+                                style="background-color: #E5E4E2;">
+                                <option value="" selected disabled>Select Shipping Method</option>
+                                <option value="Grab">Grab</option>
+                                <option value="Lalamove">Lalamove</option>
+                                <!-- NOTE: value has no "_" for display purposes on third step, notify timmy if there's issue with this -->
+                                <option value="Direct Delivery">Direct Delivery</option>
+                                <option value="Lazada">Lazada</option>
+                                <option value="Shopee">Shopee</option>
+                            </select><br><br>
+                        </div>
+
+                        <div class="col">
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Primary Contact Info, Email Address, and Emergency Contact Info -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="primary_contact">Primary Contact Info:</label><br>
+                            <input type="tel" id="primary_contact" name="primary_contact"
+                                class="form-control rounded-10 border-0" maxlength="11"
+                                style="background-color: #E5E4E2;"><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="email_address">Email Address:</label><br>
+                            <input type="email" id="email_address" name="email_address"
+                                class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="emergency_contact">Emergency Contact Info:</label><br>
+                            <input type="tel" id="emergency_contact" name="emergency_contact"
+                                class="form-control rounded-10 border-0" maxlength="11"
+                                style="background-color: #E5E4E2;"><br><br>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Address Line 1, Province, Municipality, Barangay, and Zip Code -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="address_line1">Address Line 1:</label><br>
+                            <input type="text" id="address_line1" name="address_line1"
+                                class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="province">Province:</label><br>
+                            <input type="text" id="province" name="province" class="form-control rounded-10 border-0"
+                                style="background-color: #E5E4E2;"><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="municipality">Municipality:</label><br>
+                            <input type="text" id="municipality" name="municipality"
+                                class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="barangay">Barangay:</label><br>
+                            <input type="text" id="barangay" name="barangay" class="form-control rounded-10 border-0"
+                                style="background-color: #E5E4E2;"><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="zip_code">Zip Code:</label><br>
+                            <input type="text" id="zip_code" name="zip_code" class="form-control rounded-10 border-0"
+                                style="background-color: #E5E4E2;"><br><br>
+                        </div>
+                    </div>
+
+                    <!-- Row 5: Consignee & Order Notes -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="consignee_notes">Consignee Notes:</label><br>
+                            <textarea id="consignee_notes" name="consignee_notes" rows="4" cols="50"
+                                class="form-control rounded-10 border-0"
+                                style="background-color: #E5E4E2;"></textarea><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="order_notes">Order Notes:</label><br>
+                            <textarea id="order_notes" name="order_notes" rows="4" cols="50"
+                                class="form-control rounded-10 border-0"
+                                style="background-color: #E5E4E2;"></textarea><br><br>
+                        </div>
+                    </div>
+
                     <!-- Buttons for navigation -->
                     <div class="row mb-3">
                         <div class="col">
@@ -27,91 +134,6 @@
                         </div>
                         <div class="col text-end">
                             <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- Rows for Consignee Information -->
-                    <!-- Row 1: Requested Date -->
-                    <div class="row">
-                        <div class="col">
-                            <label for="requested_date">Requested Date:</label><br>
-                            <input type="date" id="requested_date" name="requested_date" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                        
-                        <div class="col">
-                        </div>
-                        <div class="col">
-                        </div>
-                    </div>
-                    
-                    <!-- Row 2: Consignee Name, Shipping Method  -->
-                    <div class="row">
-                        <div class="col">
-                            <label for="consignee_name">Consignee Name:</label><br>
-                            <input type="text" id="consignee_name" name="consignee_name" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                        <div class="col">
-                            <label for="shipping_method">Shipping Method:</label><br>
-                            <select id="shipping_method" name="shipping_method" class="form-select rounded-10 border-0" style="background-color: #E5E4E2;">
-                                <option value="" selected disabled>Select Shipping Method</option>
-                                <option value="Grab">Grab</option>
-                                <option value="Lalamove">Lalamove</option>
-                                <!-- NOTE: value has no "_" for display purposes on third step, notify timmy if there's issue with this -->
-                                <option value="Direct Delivery">Direct Delivery</option> 
-                                <option value="Lazada">Lazada</option>
-                                <option value="Shopee">Shopee</option>
-                            </select><br><br>
-                        </div>
-                        
-                        <div class="col">
-                        </div>
-                    </div>
-                    
-                    <!-- Row 3: Primary Contact Info, Email Address, and Emergency Contact Info -->
-                    <div class="row">
-                        <div class="col">
-                            <label for="primary_contact">Primary Contact Info:</label><br>
-                            <input type="tel" id="primary_contact" name="primary_contact" class="form-control rounded-10 border-0" maxlength="11" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                        <div class="col">
-                            <label for="email_address">Email Address:</label><br>
-                            <input type="email" id="email_address" name="email_address" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                        <div class="col">
-                            <label for="emergency_contact">Emergency Contact Info:</label><br>
-                            <input type="tel" id="emergency_contact" name="emergency_contact" class="form-control rounded-10 border-0" maxlength="11" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                    </div>
-                    
-                    <!-- Row 4: Address Line 1, Province, Municipality, Barangay, and Zip Code -->
-                    <div class="row">
-                        <div class="col">
-                            <label for="address_line1">Address Line 1:</label><br>
-                            <input type="text" id="address_line1" name="address_line1" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                        <div class="col">
-                            <label for="province">Province:</label><br>
-                            <input type="text" id="province" name="province" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                        <div class="col">
-                            <label for="municipality">Municipality:</label><br>
-                            <input type="text" id="municipality" name="municipality" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                        <div class="col">
-                            <label for="barangay">Barangay:</label><br>
-                            <input type="text" id="barangay" name="barangay" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                        <div class="col">
-                            <label for="zip_code">Zip Code:</label><br>
-                            <input type="text" id="zip_code" name="zip_code" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"><br><br>
-                        </div>
-                    </div>
-                    
-                    <!-- Row 5: Notes -->
-                    <div class="row">
-                        <div class="col">
-                            <label for="order_notes">Order Notes:</label><br>
-                            <textarea id="order_notes" name="order_notes" rows="4" cols="50" class="form-control rounded-10 border-0" style="background-color: #E5E4E2;"></textarea><br><br>
                         </div>
                     </div>
                 </fieldset>
@@ -122,20 +144,10 @@
                 <div class="container-fluid">
                     <legend>Products Selection</legend>
 
-                    <!-- Buttons: back and cancel -->
-                    <div class="row mt-2">
-                        <div class="col-md-6">
-                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
-                        </div>
-                    </div>
-
-                    <div class="row mt-4">
+                    <div class="row mt-4 mb-3">
                         <div class="d-flex justify-content-center">
                             <!-- Left column for Products Ordered -->
-                            <div class="col-md-6" style="padding-right: 2%;">
+                            <div class="col-md-6" style="padding-right: 2%; overflow-y: auto; height: 630px;">
                                 <h5>Products Ordered:</h5>
                                 <div class="container mt-2">
                                     <div class="table-responsive">
@@ -153,8 +165,8 @@
                                                 <!-- Products will be appended here as rows -->
                                             </tbody>
                                         </table>
-                                        <input type="hidden" name="all_products" id="all_products" value="">  
-                                        <input type="hidden" name="total_price" id="total_price" value="">  
+                                        <input type="hidden" name="all_products" id="all_products" value="">
+                                        <input type="hidden" name="total_price" id="total_price" value="">
                                     </div>
                                 </div>
                             </div>
@@ -164,37 +176,56 @@
                                 <div class="row mb-3">
                                     <h5>List of Products:</h5>
                                     <div class="input-group mb-4 mr-3">
-                                        <input type="text" class="form-control" id="search-input" placeholder="Search products..." aria-label="Search products" aria-describedby="search-button">
+                                        <input type="text" class="form-control" id="search-input"
+                                            placeholder="Search products..." aria-label="Search products"
+                                            aria-describedby="search-button">
                                     </div>
                                 </div>
-                                <div class="row mx-4" id="product-list">
+                                <div class="row mx-4" id="product-list" style="overflow-y: auto; height: 520px;">
                                     {% for p in products %}
-                                        <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
-                                            <!-- Product information -->
-                                            <div class="col">
-                                                {% if p.Picture %}
+                                    <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}">
+                                        <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}">
+                                            <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}">
+                                                <!-- Product information -->
+                                                <div class="col">
+                                                    {% if p.Picture %}
                                                     <!-- Image -->
                                                     <img src="{{ p.Picture.url }}" width="120" class="mr-3">
-                                                {% endif %}
-                                            </div>
+                                                    {% endif %}
+                                                </div>
 
-                                            <div class="col">
-                                                <!-- Product details -->
-                                                <h5>{{ p.Name }}</h5>
-                                                <p>ID: {{ p.EAS_Product_ID }}</p>
-                                                <p class="product-price">Php {{ p.Price }}</p>
-                                                <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
-                                                <input type="hidden" class="product_count" value="{{ p.Actual_Inventory_Count }}">
-                                            </div>
+                                                <div class="col">
+                                                    <!-- Product details -->
+                                                    <h5>{{ p.Name }}</h5>
+                                                    <p>ID: {{ p.EAS_Product_ID }}</p>
+                                                    <p class="product-price">Php {{ p.Price }}</p>
+                                                    <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
+                                                    <input type="hidden" class="product_count"
+                                                        value="{{ p.Actual_Inventory_Count }}">
+                                                </div>
 
-                                            <div class="col">
-                                                <!-- Add to Cart button -->
-                                                <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
+                                                <div class="col">
+                                                    <!-- Add to Cart button -->
+                                                    <button type="button" class="btn btn-primary add-to-cart"
+                                                        data-name="{{ p.Name }}">Add to Cart</button>
+                                                </div>
                                             </div>
+                                            {% endfor %}
                                         </div>
-                                    {% endfor %}
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons: back and cancel -->
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button type="button" class="btn btn-success"
+                                onclick="validateQuantityAndNext()">Next</button>
                         </div>
                     </div>
                 </div>
@@ -214,29 +245,35 @@
                             <button type="submit" class="btn btn-success" id="submit_po">Submit</button>
                         </div>
                     </div>
-                    
+
                     <!-- Consignee Information -->
                     <h5>Consignee Information:</h5>
                     <div class="row mb-3">
                         <div class="col">
                             <p><strong>Consignee Name:</strong> <span id="consignee_customer_name"></span></p>
                             <p><strong>Email:</strong> <span id="consignee_email"></span></p>
-                            <p><strong>Primary Contact:</strong> <span id="consignee_primary_contact"></span></p>
-                            <p><strong>Emergency Contact:</strong> <span id="consignee_emergency_contact"></span></p>
-                            <p><strong>Selected Shipping Method:</strong> <span id="selected_shipping_method"></span></p>
+                            <p><strong>Primary Contact:</strong> <span id="consignee_primary_contact"></span>
+                            </p>
+                            <p><strong>Emergency Contact:</strong> <span
+                                    id="consignee_emergency_contact"></span></p>
+                            <p><strong>Selected Shipping Method:</strong> <span
+                                    id="selected_shipping_method"></span>
+                            </p>
                         </div>
                         <div class="col">
                             <p><strong>Address:</strong><br>
                                 <span id="consignee_address_line1"></span><br>
                                 <span id="consignee_barangay_municipality_province"></span><br>
-                                <span id="consignee_zip_code"></span></p>
+                                <span id="consignee_zip_code"></span>
+                            </p>
                         </div>
                     </div>
                     <h5>Order Notes:</h5>
                     <p id="order_notes_summary"></p>
-                    
+
                     <!-- Products Table -->
-                    <h5>Products Selected:</h5>
+                    <h5>Products Selected:</h5><br>
+                    <p><strong>Total Price:</strong> <span id="total_price_summary"></span></p>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
@@ -260,52 +297,62 @@
     <script>
         // "Add to Cart" 
         var addToCartButtons = document.querySelectorAll('.add-to-cart');
-        addToCartButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
+        addToCartButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
                 var productName = button.getAttribute('data-name');
                 var productId = button.parentNode.parentNode.dataset.id;
-                var productCount = button.closest('.product-item').querySelector('.product_count').value; 
+                var productCount = button.closest('.product-item').querySelector('.product_count').value;
                 var productPK = button.closest('.product-item').querySelector('.product_pk').value;
                 var productPrice = button.closest('.product-item').querySelector('.product-price').textContent.trim();
                 addToCart(productName, productId, productPK, productCount, productPrice);
+                renderTotalPrice();
             });
         });
-        
+
         // add a product to the cart
         function addToCart(productName, productId, productPK, productCount, productPrice) {
             // get the table body where products will be appended
             var productList = document.getElementById("product-list");
-            
+
             // create a new row for the product
             var newRow = document.createElement("tr");
-            
+
             // populate the row with product information
             newRow.innerHTML = `
                 <td>${productName}</td>
                 <td>${productId}</td>
                 <td>${productPrice}</td> 
-                <td><input type="number" class="form-control text-center quantity-input" min="0" max=${productCount} style="width: 100px;" value="1"></td>
+                <td><input type="number" class="form-control text-center quantity-input" min="1" max=${productCount} style="width: 100px;" value="1"></td>
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
             `;
-            
+
             // append the new row to the table body
             productList.appendChild(newRow);
-            
+
             // hide the product in the right column list
             hideProduct(productId);
         }
-    
-        //  remove a product from the cart
+
+        // remove a product from the cart
         function removeFromCart(row) {
-            // get the reference to the row and remove it
-            var productId = row.parentNode.parentNode.children[1].textContent;
+
+            // Get the price and quantity of the product being removed
+            var price = parseFloat(row.parentNode.parentNode.cells[2].textContent.replace('Php ', '').replace(',', ''));
+            var quantity = parseInt(row.parentNode.parentNode.cells[3].querySelector('.quantity-input').value);
+
+            // Remove the product from the DOM
             row.parentNode.parentNode.remove();
-            
-            // unhide the product in the right column list
-            unhideProduct(productId);
+
+            // Update the total price by subtracting the price of the removed product
+            var totalPriceSummary = document.getElementById("total_price_summary");
+            var currentTotalPrice = parseFloat(totalPriceSummary.textContent.replace('Php ', '').replace(',', ''));
+            var newTotalPrice = currentTotalPrice - (price * quantity);
+
+            // Set the new total price in the summary
+            totalPriceSummary.textContent = "Php " + newTotalPrice.toFixed(2);
         }
-    
+
         // hide a product in the right column list
         function hideProduct(productId) {
             var productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
@@ -313,7 +360,7 @@
                 productItem.style.display = 'none';
             }
         }
-    
+
         // unhide a product in the right column list
         function unhideProduct(productId) {
             var productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
@@ -321,19 +368,19 @@
                 productItem.style.display = '';
             }
         }
-    
+
         var currentStep = 1;
-    
+
         function nextStep() {
             if (currentStep === 1) {
                 document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
+                document.getElementById('step2').style.display = '';
                 currentStep = 2;
             } else if (currentStep === 2) {
                 document.getElementById('step2').style.display = 'none';
-                document.getElementById('step3').style.display = 'block';
+                document.getElementById('step3').style.display = '';
                 currentStep = 3;
-                
+
                 // Collect consignee information
                 document.getElementById('consignee_customer_name').textContent = document.getElementById('consignee_name').value;
                 document.getElementById('consignee_email').textContent = document.getElementById('email_address').value;
@@ -348,7 +395,7 @@
                 // Collect selected products
                 var selectedProducts = [];
                 var productRows = document.querySelectorAll("#product-list tr");
-                productRows.forEach(function(row) {
+                productRows.forEach(function (row) {
                     var name = row.cells[0].textContent;
                     var id = row.cells[1].textContent;
                     var price = row.cells[2].textContent;
@@ -365,7 +412,7 @@
         function renderSummary(selectedProducts) {
             var selectedProductsTable = document.getElementById("selected-products-table");
             selectedProductsTable.innerHTML = "";
-            selectedProducts.forEach(function(product) {
+            selectedProducts.forEach(function (product) {
                 var row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${product.name}</td>
@@ -393,20 +440,20 @@
         function prevStep() {
             if (currentStep === 3) {
                 document.getElementById('step3').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
+                document.getElementById('step2').style.display = '';
                 currentStep = 2;
             } else if (currentStep === 2) {
                 document.getElementById('step2').style.display = 'none';
-                document.getElementById('step1').style.display = 'block';
+                document.getElementById('step1').style.display = '';
                 currentStep = 1;
             }
         }
-        
-        $(document).ready(function() {
+
+        $(document).ready(function () {
             var totalPrice = 0;
 
-            $('#submit_po').click(function() {
-                $('#PO_products tbody tr').each(function(i) {
+            $('#submit_po').click(function () {
+                $('#PO_products tbody tr').each(function (i) {
                     var productId = $(this).find('.product_pk').val();
                     var productPriceText = $(this).find("td:eq(2)").text().trim();
                     var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
@@ -423,10 +470,96 @@
                 $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
             });
         });
+
+        // Function to filter products as user types in the search bar
+        document.getElementById("search-input").addEventListener("input", function () {
+            var searchValue = this.value.trim().toLowerCase();
+            var productItems = document.querySelectorAll(".product-item");
+            var addedProductIds = getAddedProductIds(); // Get product IDs already added to the left column
+            productItems.forEach(function (item) {
+                var productId = item.dataset.id; // Get the product ID from dataset
+                var productName = item.querySelector("h5").textContent.trim().toLowerCase();
+                if (!addedProductIds.includes(productId) && productName.includes(searchValue)) {
+                    item.style.display = ""; // Show the product item if not already added and matches search
+                } else {
+                    item.style.display = "none"; // Hide the product item otherwise
+                }
+            });
+        });
+
+        // Function to retrieve product IDs already added to the left column
+        function getAddedProductIds() {
+            var addedProductIds = [];
+            var productListRows = document.querySelectorAll("#PO_products tbody tr");
+            productListRows.forEach(function (row) {
+                var productId = row.cells[1].textContent.trim(); // Get product ID from the table cell
+                addedProductIds.push(productId);
+            });
+            return addedProductIds;
+        }
+
+        function validateQuantityAndNext() {
+            var quantityInputs = document.querySelectorAll('.quantity-input');
+            var isValid = true;
+
+            quantityInputs.forEach(function (input) {
+                if (parseInt(input.value) < 1) {
+                    isValid = false;
+                    // Show error message or handle invalid input as desired
+                    alert("Quantity must be 1 or greater.");
+                }
+            });
+
+            if (isValid) {
+                nextStep(); // Proceed to the next step if all quantities are valid
+            }
+        }
+
+
+
+
+
+        // Total price
+
+        // Function to calculate total price
+        function calculateTotalPrice() {
+            var total = 0;
+            var selectedProducts = document.querySelectorAll("#PO_products tbody tr");
+
+            selectedProducts.forEach(function (product) {
+                var price = parseFloat(product.cells[2].textContent.replace('Php ', '').replace(',', ''));
+                var quantity = parseInt(product.cells[3].querySelector('.quantity-input').value); // Convert to integer
+                total += price * quantity;
+            });
+
+            return total.toFixed(2);
+        }
+
+        // Function to render total price on summary page
+        function renderTotalPrice() {
+            var totalPriceSummary = document.getElementById("total_price_summary");
+            var totalPrice = calculateTotalPrice();
+            totalPriceSummary.textContent = "Php " + totalPrice;
+        }
+
+        // Call renderTotalPrice() when the page loads and when a product is added or removed
+        document.addEventListener("DOMContentLoaded", function () {
+            renderTotalPrice();
+        });
+
+        // Function to update total price whenever there's a change in product quantity
+        document.addEventListener("input", function (event) {
+            var target = event.target;
+            if (target && target.classList.contains("quantity-input")) {
+                renderTotalPrice();
+            }
+        });
+
     </script>
 </body>
 
-<div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel" aria-hidden="true">
+<div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
