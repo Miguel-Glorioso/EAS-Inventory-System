@@ -105,7 +105,7 @@
                             <!-- <label for="consignee_name">Consignee Name:</label><br>
                             <input type="text" id="consignee_name" name="consignee_name" class="form-control"><br><br> -->
 
-                            <div class="dropdown">
+                            <!-- <div class="dropdown">
                                 <button onclick="myFunction()" class="dropbtn">Choose a Consignee</button>
                                 <div id="myDropdown" class="dropdown-content">
                                   <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
@@ -117,7 +117,15 @@
                                   <a href="#">Support</a>
                                   <a href="#">Tools</a>
                                 </div>
-                              </div>
+                              </div> -->
+
+                            <label for="id_Category" class="form-label custom-text">Consignee Name</label>
+                            <select name="product_category" class="form-select" id="id_Category" required>
+                                <option value="" disabled selected>Select a Consignee</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.Category_ID }}">{{ cat.Category_Name }}</option>
+                                {% endfor %}
+                            </select>
                             
                         </div>
                         <div class="col">
@@ -362,25 +370,25 @@
 
         /* When the user clicks on the button,
         toggle between hiding and showing the dropdown content */
-        function myFunction() {
-        document.getElementById("myDropdown").classList.toggle("show");
-        }
+        // function myFunction() {
+        // document.getElementById("myDropdown").classList.toggle("show");
+        // }
 
-        function filterFunction() {
-        var input, filter, ul, li, a, i;
-        input = document.getElementById("myInput");
-        filter = input.value.toUpperCase();
-        div = document.getElementById("myDropdown");
-        a = div.getElementsByTagName("a");
-        for (i = 0; i < a.length; i++) {
-            txtValue = a[i].textContent || a[i].innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            a[i].style.display = "";
-            } else {
-            a[i].style.display = "none";
-            }
-        }
-        }
+        // function filterFunction() {
+        // var input, filter, ul, li, a, i;
+        // input = document.getElementById("myInput");
+        // filter = input.value.toUpperCase();
+        // div = document.getElementById("myDropdown");
+        // a = div.getElementsByTagName("a");
+        // for (i = 0; i < a.length; i++) {
+        //     txtValue = a[i].textContent || a[i].innerText;
+        //     if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        //     a[i].style.display = "";
+        //     } else {
+        //     a[i].style.display = "none";
+        //     }
+        // }
+        // }
 
         // "Add to Cart" 
         var addToCartButtons = document.querySelectorAll('.add-to-cart');
