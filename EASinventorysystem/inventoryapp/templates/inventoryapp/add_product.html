@@ -22,19 +22,25 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="mb-3">
-                    <label for="id_Name" class="form-label custom-text">Product Name:</label>
+                    <label class="required" for="id_Name" class="form-label custom-text">Product Name:</label>
                     <input type="text" name="product_name" class="form-control" maxlength="64" required id="id_Name" placeholder="Product Name">
                 </div>
+                <style>
+                    .required:after {
+                      content:" *";
+                      color: red;
+                    }
+                  </style>
             </div>
             <div class="col-md-4">
                 <div class="mb-3">
-                    <label for="id_EAS_Product_ID" class="form-label custom-text">EAS Product ID:</label>
+                    <label class="required" for="id_EAS_Product_ID" class="form-label custom-text">EAS Product ID:</label>
                     <input type="text" name="eas_id" class="form-control" maxlength="32" required id="id_EAS_Product_ID" placeholder="Product ID">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="mb-3">
-                    <label for="id_Sku" class="form-label custom-text">SKU:</label>
+                    <label class="required" for="id_Sku" class="form-label custom-text">SKU:</label>
                     <input type="text" name="product_sku" class="form-control" maxlength="64" required id="id_Sku" placeholder="SKU">
                 </div>
             </div>
@@ -42,7 +48,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="mb-3">
-                    <label for="id_Price" class="form-label custom-text">Price:</label>
+                    <label class="required" for="id_Price" class="form-label custom-text">Price:</label>
                     <div class="input-group">
                         <span class="input-group-text">PHP</span>
                         <input type="number" name="product_price" step="1" min="0" max="99999.99" maxlength="9" class="form-control" required id="id_Price" placeholder="0.00">
@@ -77,7 +83,7 @@
         <div class="mb-3">
             <div class="row">
                 <div class="col-md-4">
-                    <label for="id_Category" class="form-label custom-text">Category:</label>
+                    <label class="required" for="id_Category" class="form-label custom-text">Category:</label>
                     <select name="product_category" class="form-select" id="id_Category" required>
                         <option value="" disabled selected>Select category</option>
                         {% for cat in categories %}

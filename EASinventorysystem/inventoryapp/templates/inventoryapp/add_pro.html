@@ -7,6 +7,12 @@
 {% block content %}
 
 </head>
+<style>
+    .required:after {
+      content:" *";
+      color: red;
+    }
+  </style>
 <body class="bg-light" style="background-color: #eee;">
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
@@ -26,15 +32,15 @@
                             <!-- Row 1: Estimated Receiving Date, Manufacturer, Total Cost -->
                             <div class="row">
                                 <div class="col">
-                                    <label for="estimated_receiving_date">Estimated Receiving Date:</label><br>
+                                    <label class="required" for="estimated_receiving_date">Estimated Receiving Date:</label><br>
                                     <input type="date" id="estimated_receiving_date" name="estimated_receiving_date" class="form-control rounded-10"><br><br>
                                 </div>
                                 <div class="col">
-                                    <label for="manufacturer_name">Manufacturer:</label><br>
+                                    <label class="required" for="manufacturer_name">Manufacturer:</label><br>
                                     <input type="text" id="manufacturer_name" name="manufacturer_name" class="form-control rounded-10"><br><br>
                                 </div>
                                 <div class="col">
-                                    <label for="total_cost">Total Cost:</label><br>
+                                    <label class="required" for="total_cost">Total Cost:</label><br>
                                     <div class="input-group">
                                         <span class="input-group-text">PHP</span>
                                         <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="99999.99" maxlength="9" class="form-control rounded-10"><br><br>
