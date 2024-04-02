@@ -89,7 +89,31 @@
                     <div class="col-md-3"></div> <!-- Invisible column -->
                 </div>
             </div>
-        
+<!-- 
+            <div class="mb-3">
+                <label for="id_Consignees" class="form-label custom-text">Consignee:</label>
+                <div class="border p-3" style="max-height: 200px; overflow-y: auto;">
+                    {% for cp in con_p %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ cp.Consignee_ID.Consignee_ID }}" id="consignee_{{ cp.Consignee_ID.Consignee_ID }}" checked>
+                        <label class="form-check-label" for="consignee_{{ cp.Consignee_ID.Consignee_ID }}">
+                            {{ cp.Consignee_ID }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                    {% for con in consignees %}
+                        {% if con.Consignee_ID not in con_p_ids %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="consignee_{{ con.Consignee_ID }}">
+                            <label class="form-check-label" for="consignee_{{ con.Consignee_ID }}">
+                                {{ con.Consignee_Name }}
+                            </label>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+             -->
         <div class="mb-3">
             <div class="row">
                 <div class="col-md-4">
