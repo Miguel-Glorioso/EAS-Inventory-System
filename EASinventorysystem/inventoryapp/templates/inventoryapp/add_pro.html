@@ -64,21 +64,10 @@
             <div id="step2" style="display: none;">
                 <div class="container-fluid">
                     <legend>Products Selection</legend>
-
-                    <!-- Buttons: back and cancel -->
-                    <div class="row mt-2">
-                        <div class="col-md-6">
-                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
-                        </div>
-                    </div>
-
                     <div class="row mt-4">
                         <div class="d-flex justify-content-center">
                             <!-- Left column for Products Ordered -->
-                            <div class="col-md-6" style="padding-right: 2%;">
+                            <div class="col-md-6" style="padding-right: 2%; overflow-y: auto; height: 630px;">
                                 <h5>Products Ordered:</h5>
                                 <div class="container mt-2">
                                     <div class="table-responsive">
@@ -109,7 +98,7 @@
                                         <input type="text" class="form-control" id="search-input" placeholder="Search products..." aria-label="Search products" aria-describedby="search-button">
                                     </div>
                                 </div>
-                                <div class="row mx-4" id="product-list">
+                                <div class="row mx-4" id="product-list" style="overflow-y: auto; height: 520px;">
                                     {% for p in products %}
                                         <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
                                             <!-- Product information -->
@@ -139,6 +128,15 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Buttons: back and cancel -->
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -146,17 +144,6 @@
             <div id="step3" style="display: none;">
                 <div class="container-fluid">
                     <legend>Summary</legend>
-
-                    <!-- Buttons: back and submit -->
-                    <div class="row my-3">
-                        <div class="col-md-6">
-                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <button type="submit" class="btn btn-success" id="submit_pro">Submit</button>
-                        </div>
-                    </div>
-                    
                     <!-- Customer Information update this~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
                     <h5>Product Requisition Information:</h5>
                     <div class="row mb-3">
@@ -184,6 +171,15 @@
                                 <!-- Selected products will be dynamically filled here -->
                             </tbody>
                         </table>
+                    </div>
+                    <!-- Buttons: back and submit -->
+                    <div class="row my-3">
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button type="submit" class="btn btn-success" id="submit_pro">Submit</button>
+                        </div>
                     </div>
                 </div>
             </div>
