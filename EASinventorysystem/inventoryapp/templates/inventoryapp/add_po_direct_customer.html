@@ -233,11 +233,17 @@
                                 <span id="direct_customer_zip_code"></span></p>
                         </div>
                     </div>
-                    <h5>Customer Notes:</h5>
-                    <p id="customer_notes_summary"></p>
-                    <h5>Order Notes:</h5>
-                    <p id="order_notes_summary"></p>
-                    
+                    <div class="row mb-1">
+                        <div class="col">
+                            <h5>Customer Notes:</h5>
+                            <p id="customer_notes_summary"></p>
+                        </div>
+                        <div class="col">
+                            <h5>Order Notes:</h5>
+                            <p id="order_notes_summary"></p>
+                        </div>
+                    </div>
+
                     <!-- Products Table -->
                     <h5>Products Selected:</h5>
                     <p><strong>Total Price:</strong> <span id="total_price_summary"></span></p>
@@ -271,7 +277,7 @@
     </div>
 
     <script>
-        // "Add to Cart" 
+        // Add to Cart"
         var addToCartButtons = document.querySelectorAll('.add-to-cart');
         addToCartButtons.forEach(function(button) {
             button.addEventListener('click', function() {
@@ -280,9 +286,6 @@
                 var productPK = button.closest('.product-item').querySelector('.product_pk').value;
                 var productCount = button.closest('.product-item').querySelector('.product_count').textContent.trim(); 
                 var productPrice = button.closest('.product-item').querySelector('.product-price').textContent.trim();
-
-                // <p>Stock: {{ p.Actual_Inventory_Count }}</p>
-
                 addToCart(productName, productId, productPK, productCount, productPrice);
                 renderTotalPrice();
             });

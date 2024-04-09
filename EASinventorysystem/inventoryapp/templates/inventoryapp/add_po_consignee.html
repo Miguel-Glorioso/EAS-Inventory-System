@@ -9,63 +9,70 @@
 <style>
     /* Dropdown Button */
     .dropbtn {
-    background-color: #04AA6D;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
+        background-color: #04AA6D;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
     }
 
     /* Dropdown button on hover & focus */
-    .dropbtn:hover, .dropbtn:focus {
-    background-color: #3e8e41;
+    .dropbtn:hover,
+    .dropbtn:focus {
+        background-color: #3e8e41;
     }
 
     /* The search field */
     #myInput {
-    box-sizing: border-box;
-    background-image: url('searchicon.png');
-    background-position: 14px 12px;
-    background-repeat: no-repeat;
-    font-size: 16px;
-    padding: 14px 20px 12px 45px;
-    border: none;
-    border-bottom: 1px solid #ddd;
+        box-sizing: border-box;
+        background-image: url('searchicon.png');
+        background-position: 14px 12px;
+        background-repeat: no-repeat;
+        font-size: 16px;
+        padding: 14px 20px 12px 45px;
+        border: none;
+        border-bottom: 1px solid #ddd;
     }
 
     /* The search field when it gets focus/clicked on */
-    #myInput:focus {outline: 3px solid #ddd;}
+    #myInput:focus {
+        outline: 3px solid #ddd;
+    }
 
     /* The container <div> - needed to position the dropdown content */
     .dropdown {
-    position: relative;
-    display: inline-block;
+        position: relative;
+        display: inline-block;
     }
 
     /* Dropdown Content (Hidden by Default) */
     .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f6f6f6;
-    min-width: 230px;
-    border: 1px solid #ddd;
-    z-index: 1;
+        display: none;
+        position: absolute;
+        background-color: #f6f6f6;
+        min-width: 230px;
+        border: 1px solid #ddd;
+        z-index: 1;
     }
 
     /* Links inside the dropdown */
     .dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
     }
 
     /* Change color of dropdown links on hover */
-    .dropdown-content a:hover {background-color: #f1f1f1}
+    .dropdown-content a:hover {
+        background-color: #f1f1f1
+    }
 
     /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-    .show {display:block;}
+    .show {
+        display: block;
+    }
 </style>
 
 <body>
@@ -126,7 +133,7 @@
                                 <option value="{{ c.Consignee_ID }}">{{ c.Consignee_Name }}</option>
                                 {% endfor %}
                             </select>
-                            
+
                         </div>
                         <div class="col">
                             <label for="shipping_method">Shipping Method:</label><br>
@@ -156,15 +163,15 @@
                     <div class="row">
                         <div class="col">
                             <label for="primary_contact">Primary Contact Info:</label><br>
-                            <input type="tel" id="primary_contact" name="primary_contact" class="form-control" maxlength="11"><br><br>
+                            <input type="tel" id="primary_contact" name="primary_contact" class="form-control" maxlength="11" disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="email_address">Email Address:</label><br>
-                            <input type="email" id="email_address" name="email_address" class="form-control"><br><br>
+                            <input type="email" id="email_address" name="email_address" class="form-control" disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="emergency_contact">Emergency Contact Info:</label><br>
-                            <input type="tel" id="emergency_contact" name="emergency_contact" class="form-control" maxlength="11"><br><br>
+                            <input type="tel" id="emergency_contact" name="emergency_contact" class="form-control" maxlength="11" disabled><br><br>
                         </div>
                     </div>
 
@@ -172,23 +179,23 @@
                     <div class="row">
                         <div class="col">
                             <label for="address_line1">Address Line 1:</label><br>
-                            <input type="text" id="address_line1" name="address_line1" class="form-control"><br><br>
+                            <input type="text" id="address_line1" name="address_line1" class="form-control" disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="province">Province:</label><br>
-                            <input type="text" id="province" name="province" class="form-control"><br><br>
+                            <input type="text" id="province" name="province" class="form-control" disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="municipality">Municipality:</label><br>
-                            <input type="text" id="municipality" name="municipality" class="form-control"><br><br>
+                            <input type="text" id="municipality" name="municipality" class="form-control" disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="barangay">Barangay:</label><br>
-                            <input type="text" id="barangay" name="barangay" class="form-control"><br><br>
+                            <input type="text" id="barangay" name="barangay" class="form-control" disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="zip_code">Zip Code:</label><br>
-                            <input type="text" id="zip_code" name="zip_code" class="form-control"><br><br>
+                            <input type="text" id="zip_code" name="zip_code" class="form-control" disabled><br><br>
                         </div>
                     </div>
 
@@ -237,7 +244,7 @@
                                                     <th>ID</th>
                                                     <th>Price</th>
                                                     <th>Quantity</th>
-                                                    <th>Action</th>
+                                                    <th>Stock</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="product-list">
@@ -375,36 +382,14 @@
 
     <script>
 
-        /* When the user clicks on the button,
-        toggle between hiding and showing the dropdown content */
-        // function myFunction() {
-        // document.getElementById("myDropdown").classList.toggle("show");
-        // }
-
-        // function filterFunction() {
-        // var input, filter, ul, li, a, i;
-        // input = document.getElementById("myInput");
-        // filter = input.value.toUpperCase();
-        // div = document.getElementById("myDropdown");
-        // a = div.getElementsByTagName("a");
-        // for (i = 0; i < a.length; i++) {
-        //     txtValue = a[i].textContent || a[i].innerText;
-        //     if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        //     a[i].style.display = "";
-        //     } else {
-        //     a[i].style.display = "none";
-        //     }
-        // }
-        // }
-
-        // "Add to Cart" 
+        // Add to Cart"
         var addToCartButtons = document.querySelectorAll('.add-to-cart');
         addToCartButtons.forEach(function (button) {
             button.addEventListener('click', function () {
                 var productName = button.getAttribute('data-name');
                 var productId = button.parentNode.parentNode.dataset.id;
-                var productCount = button.closest('.product-item').querySelector('.product_count').value;
                 var productPK = button.closest('.product-item').querySelector('.product_pk').value;
+                var productCount = button.closest('.product-item').querySelector('.product_count').textContent.trim();
                 var productPrice = button.closest('.product-item').querySelector('.product-price').textContent.trim();
                 addToCart(productName, productId, productPK, productCount, productPrice);
                 renderTotalPrice();
@@ -480,7 +465,25 @@
 
         var currentStep = 1;
 
+        // Function to handle transition from the second step to the third step
         function nextStep() {
+            // Transition to the third step (add_po_direct_customer does)
+            if (currentStep === 2) {
+                // Collect selected products
+                var selectedProducts = [];
+                var productRows = document.querySelectorAll("#product-list tr");
+                productRows.forEach(function (row) {
+                    var name = row.cells[0].textContent;
+                    var id = row.cells[1].textContent;
+                    var price = row.cells[2].textContent;
+                    var quantity = row.cells[3].querySelector('input').value;
+                    selectedProducts.push({ name: name, id: id, price: price, quantity: quantity });
+                });
+
+                // Render consignee information and selected products
+                renderSummary(selectedProducts);
+            }
+
             if (currentStep === 1) {
                 document.getElementById('step1').style.display = 'none';
                 document.getElementById('step2').style.display = '';
@@ -501,20 +504,6 @@
                 document.getElementById('consignee_zip_code').textContent = document.getElementById('zip_code').value;
                 document.getElementById('order_notes_summary').textContent = orderNotes = document.getElementById('order_notes').value;
                 document.getElementById('consignee_notes_summary').textContent = orderNotes = document.getElementById('consignee_notes').value;
-
-                // Collect selected products
-                var selectedProducts = [];
-                var productRows = document.querySelectorAll("#product-list tr");
-                productRows.forEach(function (row) {
-                    var name = row.cells[0].textContent;
-                    var id = row.cells[1].textContent;
-                    var price = row.cells[2].textContent;
-                    var quantity = row.cells[3].querySelector('input').value;
-                    selectedProducts.push({ name: name, id: id, price: price, quantity: quantity });
-                });
-
-                // Render consignee information and selected products
-                renderSummary(selectedProducts);
             }
         }
 
@@ -558,6 +547,28 @@
                 currentStep = 1;
             }
         }
+
+        $(document).ready(function () {
+            var totalPrice = 0;
+
+            $('#submit_po').click(function () {
+                $('#PO_products tbody tr').each(function (i) {
+                    var productId = $(this).find('.product_pk').val();
+                    var productPriceText = $(this).find("td:eq(2)").text().trim();
+                    var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
+
+                    var productQuantity = $(this).find(".quantity-input").val();
+
+                    var subtotal = productPriceNumeric * productQuantity; // Calculate subtotal for the row
+                    totalPrice += subtotal;
+
+                    var comb = productId + ':' + productQuantity;
+                    $('#all_products').val($('#all_products').val() + comb + '-');
+                });
+
+                $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
+            });
+        });
 
 
         // Function to filter products as user types in the search bar
@@ -639,28 +650,6 @@
             if (target && target.classList.contains("quantity-input")) {
                 renderTotalPrice();
             }
-        });
-
-        $(document).ready(function () {
-            var totalPrice = 0;
-
-            $('#submit_po').click(function () {
-                $('#PO_products tbody tr').each(function (i) {
-                    var productId = $(this).find('.product_pk').val();
-                    var productPriceText = $(this).find("td:eq(2)").text().trim();
-                    var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
-
-                    var productQuantity = $(this).find(".quantity-input").val();
-
-                    var subtotal = productPriceNumeric * productQuantity; // Calculate subtotal for the row
-                    totalPrice += subtotal;
-
-                    var comb = productId + ':' + productQuantity;
-                    $('#all_products').val($('#all_products').val() + comb + '-');
-                });
-
-                $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
-            });
         });
     </script>
 </body>
