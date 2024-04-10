@@ -6,74 +6,6 @@
 
 {% block content %}
 
-<style>
-    /* Dropdown Button */
-    .dropbtn {
-        background-color: #04AA6D;
-        color: white;
-        padding: 16px;
-        font-size: 16px;
-        border: none;
-        cursor: pointer;
-    }
-
-    /* Dropdown button on hover & focus */
-    .dropbtn:hover,
-    .dropbtn:focus {
-        background-color: #3e8e41;
-    }
-
-    /* The search field */
-    #myInput {
-        box-sizing: border-box;
-        background-image: url('searchicon.png');
-        background-position: 14px 12px;
-        background-repeat: no-repeat;
-        font-size: 16px;
-        padding: 14px 20px 12px 45px;
-        border: none;
-        border-bottom: 1px solid #ddd;
-    }
-
-    /* The search field when it gets focus/clicked on */
-    #myInput:focus {
-        outline: 3px solid #ddd;
-    }
-
-    /* The container <div> - needed to position the dropdown content */
-    .dropdown {
-        position: relative;
-        display: inline-block;
-    }
-
-    /* Dropdown Content (Hidden by Default) */
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #f6f6f6;
-        min-width: 230px;
-        border: 1px solid #ddd;
-        z-index: 1;
-    }
-
-    /* Links inside the dropdown */
-    .dropdown-content a {
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-    }
-
-    /* Change color of dropdown links on hover */
-    .dropdown-content a:hover {
-        background-color: #f1f1f1
-    }
-
-    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-    .show {
-        display: block;
-    }
-</style>
 
 <body>
     <div class="container-fluid">
@@ -112,25 +44,21 @@
                             <!-- <label for="consignee_name">Consignee Name:</label><br>
                             <input type="text" id="consignee_name" name="consignee_name" class="form-control"><br><br> -->
 
-                            <!-- <div class="dropdown">
-                                <button onclick="myFunction()" class="dropbtn">Choose a Consignee</button>
-                                <div id="myDropdown" class="dropdown-content">
-                                  <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
-                                  <a href="#">Co</a>
-                                  <a href="#">Base</a>
-                                  <a href="#">Blog</a>
-                                  <a href="#">Contact</a>
-                                  <a href="#">Custom</a>
-                                  <a href="#">Support</a>
-                                  <a href="#">Tools</a>
-                                </div>
-                              </div> -->
-
                             <label for="consignee" class="form-label custom-text">Consignee Name</label>
-                            <select name="consignee" class="form-select" id="consignee" required>
+                            <select name="consignee" class="form-select" id="consignee" required onchange="fillInputs()">
                                 <option value="" disabled selected>Select a Consignee</option>
                                 {% for c in consignees %}
-                                <option value="{{ c.Consignee_ID }}">{{ c.Consignee_Name }}</option>
+                                <option value="{{ c.Consignee_ID }}"
+                                    data-email="{{ c.Email_Address }}"
+                                    data-primary-contact="{{ c.Primary_Contact_Number }}"
+                                    data-emergency-contact="{{ c.Emergency_Contact_Number }}"
+                                    data-address-line1="{{ c.Address_Line_1 }}"
+                                    data-province="{{ c.Province }}"
+                                    data-municipality="{{ c.Municipality }}"
+                                    data-barangay="{{ c.Barangay }}"
+                                    data-zip-code="{{ c.Zip_Code }}">
+                                    {{ c.Consignee_Name }}
+                                </option>
                                 {% endfor %}
                             </select>
 
@@ -141,7 +69,7 @@
                                 <option value="" selected disabled>Select Shipping Method</option>
                                 <option value="Grab">Grab</option>
                                 <option value="Lalamove">Lalamove</option>
-                                <!-- NOTE: value has no "_" for display purposes on third step, notify timmy if there's issue with this -->
+                                <!-- NOTE: value has no "_" for display purposes on third step -->
                                 <option value="Direct Delivery">Direct Delivery</option>
                                 <option value="Lazada">Lazada</option>
                                 <option value="Shopee">Shopee</option>
@@ -283,9 +211,8 @@
                                             <h5>{{ p.Name }}</h5>
                                             <p>ID: {{ p.EAS_Product_ID }}</p>
                                             <p class="product-price">Php {{ p.Price }}</p>
+                                            <p><strong>Stock: </strong><span class="product_count">{{ p.Actual_Inventory_Count }}</span></p>
                                             <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
-                                            <input type="hidden" class="product_count"
-                                                value="{{ p.Actual_Inventory_Count }}">
                                         </div>
 
                                         <div class="col">
@@ -381,6 +308,44 @@
     </div>
 
     <script>
+        function fillInputs() {
+            var selectElement = document.getElementById("consignee");
+            var selectedOption = selectElement.options[selectElement.selectedIndex];
+            
+            // Set Consignee's primary contact number
+            var primaryContact = selectedOption.getAttribute("data-primary-contact");
+            document.getElementById("primary_contact").value = primaryContact;
+
+            // Set Consignee's email address
+            var email = selectedOption.getAttribute("data-email");
+            document.getElementById("email_address").value = email;
+
+            // Set Consignee's emergency contact number
+            var emergencyContact = selectedOption.getAttribute("data-emergency-contact");
+            document.getElementById("emergency_contact").value = emergencyContact;
+
+            // Set Consignee's address details
+            var addressLine1 = selectedOption.getAttribute("data-address-line1");
+            var province = selectedOption.getAttribute("data-province");
+            var municipality = selectedOption.getAttribute("data-municipality");
+            var barangay = selectedOption.getAttribute("data-barangay");
+            var zipCode = selectedOption.getAttribute("data-zip-code");
+
+            document.getElementById("address_line1").value = addressLine1;
+            document.getElementById("province").value = province;
+            document.getElementById("municipality").value = municipality;
+            document.getElementById("barangay").value = barangay;
+            document.getElementById("zip_code").value = zipCode;
+
+            // Update Consignee Information in Step 3 Summary
+            document.getElementById('consignee_customer_name').textContent = selectedOption.textContent;
+            document.getElementById('consignee_email').textContent = email;
+            document.getElementById('consignee_primary_contact').textContent = primaryContact;
+            document.getElementById('consignee_emergency_contact').textContent = emergencyContact;
+            document.getElementById('consignee_address_line1').textContent = addressLine1;
+            document.getElementById('consignee_barangay_municipality_province').textContent = barangay + ", " + municipality + ", " + province;
+            document.getElementById('consignee_zip_code').textContent = zipCode;
+        }
 
         // Add to Cart"
         var addToCartButtons = document.querySelectorAll('.add-to-cart');
@@ -494,16 +459,17 @@
                 currentStep = 3;
 
                 // Collect consignee information
-                document.getElementById('consignee_customer_name').textContent = document.getElementById('consignee_name').value;
-                document.getElementById('consignee_email').textContent = document.getElementById('email_address').value;
-                document.getElementById('consignee_primary_contact').textContent = document.getElementById('primary_contact').value;
+                var selectedConsigneeOption = document.getElementById("consignee").options[document.getElementById("consignee").selectedIndex];
+                document.getElementById('consignee_customer_name').textContent = selectedConsigneeOption.textContent;
+                document.getElementById('consignee_email').textContent = selectedConsigneeOption.getAttribute("data-email");
+                document.getElementById('consignee_primary_contact').textContent = selectedConsigneeOption.getAttribute("data-primary-contact");
                 document.getElementById('selected_shipping_method').textContent = document.getElementById('shipping_method').value;
-                document.getElementById('consignee_emergency_contact').textContent = document.getElementById('emergency_contact').value;
-                document.getElementById('consignee_address_line1').textContent = document.getElementById('address_line1').value;
-                document.getElementById('consignee_barangay_municipality_province').textContent = document.getElementById('barangay').value + ", " + document.getElementById('municipality').value + ", " + document.getElementById('province').value;
-                document.getElementById('consignee_zip_code').textContent = document.getElementById('zip_code').value;
-                document.getElementById('order_notes_summary').textContent = orderNotes = document.getElementById('order_notes').value;
-                document.getElementById('consignee_notes_summary').textContent = orderNotes = document.getElementById('consignee_notes').value;
+                document.getElementById('consignee_emergency_contact').textContent = selectedConsigneeOption.getAttribute("data-emergency-contact");
+                document.getElementById('consignee_address_line1').textContent = selectedConsigneeOption.getAttribute("data-address-line1");
+                document.getElementById('consignee_barangay_municipality_province').textContent = selectedConsigneeOption.getAttribute("data-barangay") + ", " + selectedConsigneeOption.getAttribute("data-municipality") + ", " + selectedConsigneeOption.getAttribute("data-province");
+                document.getElementById('consignee_zip_code').textContent = selectedConsigneeOption.getAttribute("data-zip-code");
+                document.getElementById('order_notes_summary').textContent = document.getElementById('order_notes').value;
+                document.getElementById('consignee_notes_summary').textContent = document.getElementById('consignee_notes').value;
             }
         }
 
