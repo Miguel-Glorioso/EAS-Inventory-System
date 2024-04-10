@@ -54,7 +54,7 @@ class Category(models.Model):
 class Purchase_Order(models.Model):
     Purchase_Order_ID = models.AutoField(primary_key=True)
     Creation_Date = models.DateTimeField()
-    Requested_Date = models.DateField(null=True, blank=True)
+    Requested_Date = models.DateField()
     Fulfilled_Date = models.DateTimeField(null=True, blank=True)
     Total_Due = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0)])
     Notes = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)
@@ -80,7 +80,7 @@ class Product_Ordered(models.Model):
 class Product_Requisition_Order(models.Model):
     Product_Requisition_ID = models.AutoField(primary_key=True)
     Creation_Date = models.DateTimeField()
-    Estimated_Receiving_Date = models.DateField( null=True, blank=True)
+    Estimated_Receiving_Date = models.DateField()
     Received_Date = models.DateTimeField(null=True, blank=True)
     PRO_Manufacturer = models.CharField(max_length=32)
     Total_Cost = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0)])

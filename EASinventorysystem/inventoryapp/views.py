@@ -461,13 +461,7 @@ def add_purchase_order_direct_customer(request):
         
         # PO creation
         current_date = timezone.now()
-        if Requested_Date == '':
-            Requested_Date = None
-
-        if Order_Method == None:
-            Order_Method = "No selected order method"
-
-        print(Requested_Date, 'date')
+        
         PO = Purchase_Order.objects.create(
                 Requested_Date=Requested_Date,
                 Creation_Date=current_date,
