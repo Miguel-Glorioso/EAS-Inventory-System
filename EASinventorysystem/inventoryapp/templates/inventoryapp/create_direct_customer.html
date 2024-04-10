@@ -9,6 +9,11 @@
           content:" *";
           color: red;
         }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
       </style>
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
@@ -34,7 +39,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="required" for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                        <input type="text" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" placeholder="Primary Contact Number">
+                        <input type="number" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" placeholder="Primary Contact Number">
                     </div>
                 </div>
                 </div>

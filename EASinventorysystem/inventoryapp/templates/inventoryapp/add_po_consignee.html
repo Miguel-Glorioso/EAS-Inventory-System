@@ -8,6 +8,17 @@
 
 
 <body>
+    <style>
+        .required:after {
+          content:" *";
+          color: red;
+        }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
             <div class="col-md-auto d-flex align-items-center">
@@ -28,8 +39,8 @@
                     <!-- Row 1: Requested Date -->
                     <div class="row">
                         <div class="col">
-                            <label for="requested_date">Requested Date:</label><br>
-                            <input type="date" id="requested_date" name="requested_date" class="form-control"><br><br>
+                            <label class="required" for="requested_date">Requested Date:</label><br>
+                            <input type="date" id="requested_date" name="requested_date" class="form-control" required><br><br>
                         </div>
 
                         <div class="col">
@@ -41,10 +52,7 @@
                     <!-- Row 2: Consignee Name, Shipping Method  -->
                     <div class="row">
                         <div class="col">
-                            <!-- <label for="consignee_name">Consignee Name:</label><br>
-                            <input type="text" id="consignee_name" name="consignee_name" class="form-control"><br><br> -->
-
-                            <label for="consignee" class="form-label custom-text">Consignee Name</label>
+                            <label class="required" for="consignee" class="form-label custom-text">Consignee Name</label>
                             <select name="consignee" class="form-select" id="consignee" required onchange="fillInputs()">
                                 <option value="" disabled selected>Select a Consignee</option>
                                 {% for c in consignees %}
@@ -56,7 +64,8 @@
                                     data-province="{{ c.Province }}"
                                     data-municipality="{{ c.Municipality }}"
                                     data-barangay="{{ c.Barangay }}"
-                                    data-zip-code="{{ c.Zip_Code }}">
+                                    data-zip-code="{{ c.Zip_Code }}"
+                                    data-consignee-notes="{{ c.Notes }}">
                                     {{ c.Consignee_Name }}
                                 </option>
                                 {% endfor %}
@@ -64,8 +73,8 @@
 
                         </div>
                         <div class="col">
-                            <label for="shipping_method">Shipping Method:</label><br>
-                            <select id="shipping_method" name="shipping_method" class="form-select">
+                            <label class="required" for="shipping_method">Shipping Method:</label><br>
+                            <select id="shipping_method" name="shipping_method" class="form-select" required>
                                 <option value="" selected disabled>Select Shipping Method</option>
                                 <option value="Grab">Grab</option>
                                 <option value="Lalamove">Lalamove</option>
@@ -78,7 +87,7 @@
 
                         <div class="col">
                             <label for="order_method">Order Method:</label><br>
-                            <select id="order_method" name="order_method" class="form-select" required>
+                            <select id="order_method" name="order_method" class="form-select">
                                 <option value="No selected order method" selected disabled>Select Order Method</option>
                                 <option value="Walk-in">Walk-in</option>
                                 <option value="Lazada">Lazada</option>
@@ -132,7 +141,7 @@
                         <div class="col">
                             <label for="consignee_notes">Consignee Notes:</label><br>
                             <textarea id="consignee_notes" name="consignee_notes" rows="4" cols="50"
-                                class="form-control"></textarea><br><br>
+                                class="form-control" disabled></textarea><br><br>
                         </div>
                         <div class="col">
                             <label for="order_notes">Order Notes:</label><br>
@@ -337,6 +346,10 @@
             document.getElementById("barangay").value = barangay;
             document.getElementById("zip_code").value = zipCode;
 
+            // Set Consignee's notes
+            var consigneeNotes = selectedOption.getAttribute("data-consignee-notes");
+            document.getElementById("consignee_notes").value = consigneeNotes;
+
             // Update Consignee Information in Step 3 Summary
             document.getElementById('consignee_customer_name').textContent = selectedOption.textContent;
             document.getElementById('consignee_email').textContent = email;
@@ -345,6 +358,7 @@
             document.getElementById('consignee_address_line1').textContent = addressLine1;
             document.getElementById('consignee_barangay_municipality_province').textContent = barangay + ", " + municipality + ", " + province;
             document.getElementById('consignee_zip_code').textContent = zipCode;
+            document.getElementById('consignee_notes_summary').textContent = consigneeNotes;
         }
 
         // Add to Cart"
@@ -432,8 +446,21 @@
 
         // Function to handle transition from the second step to the third step
         function nextStep() {
-            // Transition to the third step (add_po_direct_customer does)
-            if (currentStep === 2) {
+            if (currentStep === 1) {
+                // Validate form inputs before proceeding
+                if (validateFormInputs()) {
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = '';
+                    currentStep = 2;
+                } else {
+                    // Show error message or handle invalid form
+                    alert('Please fill out all required fields and satisfy the required input.');
+                }
+                // Transition to the third step (add_po_direct_customer does)
+            } else if (currentStep === 2) {
+                document.getElementById('step2').style.display = 'none';
+                document.getElementById('step3').style.display = '';
+                currentStep = 3;
                 // Collect selected products
                 var selectedProducts = [];
                 var productRows = document.querySelectorAll("#product-list tr");
@@ -444,19 +471,6 @@
                     var quantity = row.cells[3].querySelector('input').value;
                     selectedProducts.push({ name: name, id: id, price: price, quantity: quantity });
                 });
-
-                // Render consignee information and selected products
-                renderSummary(selectedProducts);
-            }
-
-            if (currentStep === 1) {
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = '';
-                currentStep = 2;
-            } else if (currentStep === 2) {
-                document.getElementById('step2').style.display = 'none';
-                document.getElementById('step3').style.display = '';
-                currentStep = 3;
 
                 // Collect consignee information
                 var selectedConsigneeOption = document.getElementById("consignee").options[document.getElementById("consignee").selectedIndex];
@@ -470,7 +484,27 @@
                 document.getElementById('consignee_zip_code').textContent = selectedConsigneeOption.getAttribute("data-zip-code");
                 document.getElementById('order_notes_summary').textContent = document.getElementById('order_notes').value;
                 document.getElementById('consignee_notes_summary').textContent = document.getElementById('consignee_notes').value;
+
+                // Render consignee information and selected products
+                renderSummary(selectedProducts);
             }
+        }
+
+        // Function to validate form inputs before proceeding to the next step
+        function validateFormInputs() {
+            var inputs = document.querySelectorAll('#step1 input[required], #step1 select[required]');
+            var isValid = true;
+
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            return isValid;
         }
 
         // Render consignee information and selected products

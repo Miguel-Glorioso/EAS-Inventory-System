@@ -6,6 +6,17 @@
 
 {% block content %}
 <body>
+    <style>
+        .required:after {
+          content:" *";
+          color: red;
+        }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
             <div class="col-md-auto d-flex align-items-center">
@@ -26,8 +37,8 @@
                     <!-- Row 1: Requested Date -->
                     <div class="row">
                         <div class="col">
-                            <label for="requested_date">Requested Date:</label><br>
-                            <input type="date" id="requested_date" name="requested_date" class="form-control"><br><br>
+                            <label class="required" for="requested_date">Requested Date:</label><br>
+                            <input type="date" id="requested_date" name="requested_date" class="form-control" required><br><br>
                         </div>
                         
                         <div class="col">
@@ -39,12 +50,12 @@
                     <!-- Row 2: Customer Name & Contact Info  -->
                     <div class="row">
                         <div class="col">
-                            <label for="customer_name">Customer Name:</label><br>
+                            <label class="required" for="customer_name">Customer Name:</label><br>
                             <input type="text" id="customer_name" name="customer_name" class="form-control" required><br><br>
                         </div>
                         <div class="col">
-                            <label for="contact_info">Contact Info:</label><br>
-                            <input type="tel" id="contact_info" name="contact_info" class="form-control" maxlength="11" required><br><br>
+                            <label class="required" for="contact_info">Contact Info: (11 digits)</label><br>
+                            <input type="number" id="contact_info" name="contact_info" class="form-control" maxlength="11" required minlength="11" placeholder="09123456789"><br><br>
                         </div>
                         
                         <div class="col">
@@ -54,7 +65,7 @@
                     <!-- Row 3: Shipping Method & Order Method-->
                     <div class="row">
                         <div class="col">
-                            <label for="shipping_method">Shipping Method:</label><br>
+                            <label class="required" for="shipping_method">Shipping Method:</label><br>
                             <select id="shipping_method" name="shipping_method" class="form-select" required>
                                 <option value="No selected shipping method" selected disabled>Select Shipping Method</option>
                                 <option value="Grab">Grab</option>
@@ -67,7 +78,7 @@
                         </div>
                         <div class="col">
                             <label for="order_method">Order Method:</label><br>
-                            <select id="order_method" name="order_method" class="form-select" required>
+                            <select id="order_method" name="order_method" class="form-select">
                                 <option value="No selected order method" selected disabled>Select Order Method</option>
                                 <option value="Walk-in">Walk-in</option>
                                 <option value="Lazada">Lazada</option>
@@ -81,24 +92,24 @@
                     <!-- Row 4: Address Line 1, Province, Municipality, Barangay, & Zip Code -->
                     <div class="row">
                         <div class="col">
-                            <label for="address_line1">Address Line 1:</label><br>
-                            <input type="text" id="address_line1" name="address_line1" class="form-control"><br><br>
+                            <label class="required" for="address_line1">Address Line 1:</label><br>
+                            <input type="text" id="address_line1" name="address_line1" class="form-control" required><br><br>
                         </div>
                         <div class="col">
-                            <label for="province">Province:</label><br>
-                            <input type="text" id="province" name="province" class="form-control"><br><br>
+                            <label class="required" for="province">Province:</label><br>
+                            <input type="text" id="province" name="province" class="form-control" required><br><br>
                         </div>
                         <div class="col">
-                            <label for="municipality">Municipality:</label><br>
-                            <input type="text" id="municipality" name="municipality" class="form-control"><br><br>
+                            <label class="required" for="municipality">Municipality:</label><br>
+                            <input type="text" id="municipality" name="municipality" class="form-control" required><br><br>
                         </div>
                         <div class="col">
-                            <label for="barangay">Barangay:</label><br>
-                            <input type="text" id="barangay" name="barangay" class="form-control"><br><br>
+                            <label class="required" for="barangay">Barangay:</label><br>
+                            <input type="text" id="barangay" name="barangay" class="form-control" required><br><br>
                         </div>
                         <div class="col">
-                            <label for="zip_code">Zip Code:</label><br>
-                            <input type="text" id="zip_code" name="zip_code" class="form-control"><br><br>
+                            <label class="required" for="zip_code">Zip Code: (4 digits)</label><br>
+                            <input type="number" id="zip_code" name="zip_code" class="form-control" required minlength="4" placeholder="1234"><br><br>
                         </div>
                     </div>
                     
@@ -361,9 +372,15 @@
     
         function nextStep() {
             if (currentStep === 1) {
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = '';
-                currentStep = 2;
+                // Validate form inputs before proceeding
+                if (validateFormInputs()) {
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = '';
+                    currentStep = 2;
+                } else {
+                    // Show error message or handle invalid form
+                    alert('Please fill out all required fields and satisfy the required input.');
+                }
             } else if (currentStep === 2) {
                 document.getElementById('step2').style.display = 'none';
                 document.getElementById('step3').style.display = '';
@@ -395,6 +412,50 @@
                 // Render consignee information and selected products
                 renderSummary(selectedProducts);
             }
+        }
+
+        // Function to validate form inputs before proceeding to the next step
+        function validateFormInputs() {
+            var inputs = document.querySelectorAll('#step1 input[required], #step1 select[required]');
+            var isValid = true;
+
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            // Validate shipping method
+            var shippingMethodSelect = document.getElementById('shipping_method');
+            if (shippingMethodSelect.value === 'No selected shipping method') {
+                isValid = false;
+                shippingMethodSelect.classList.add('is-invalid');
+            } else {
+                shippingMethodSelect.classList.remove('is-invalid');
+            }
+
+            // Validate minimum length for zip code
+            var zipCodeInput = document.getElementById('zip_code');
+            if (zipCodeInput.value.trim().length !== 4) {
+                isValid = false;
+                zipCodeInput.classList.add('is-invalid');
+            } else {
+                zipCodeInput.classList.remove('is-invalid');
+            }
+
+            // Validate minimum length for contact number
+            var contactNumberInput = document.getElementById('contact_info');
+            if (contactNumberInput.value.trim().length !== 11) {
+                isValid = false;
+                contactNumberInput.classList.add('is-invalid');
+            } else {
+                contactNumberInput.classList.remove('is-invalid');
+            }
+
+            return isValid;
         }
 
         // Render consignee information and selected products
