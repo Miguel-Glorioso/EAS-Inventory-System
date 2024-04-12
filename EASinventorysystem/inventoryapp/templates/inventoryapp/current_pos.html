@@ -74,7 +74,13 @@
                     <td class="iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Consignee_Name}}</td>
                   {% endif %}
 
-                  <td class="iact_inv_cnt" style="text-align: center;">{{po.Progress}}</td>
+                  <td class="iact_inv_cnt" style="text-align: center;">
+                    <select id="PO_progress_dropdown" name="PO_progress_dropdown" data-PO-pk="{{ po.Purchase_Order_ID }}"  onchange="updateProgress()">
+                      <option value="Pending" {% if po.Progress == "Pending" %}selected{% endif %}>Pending</option>
+                      <option value="Ongoing" {% if po.Progress == "Ongoing" %}selected{% endif %}>Ongoing</option>
+                      <option value="Shipped" {% if po.Progress == "Shipped" %}selected{% endif %}>Shipped</option>
+                    </select>
+                  </td>
                   <td> 
                       <a href="#" type="button" class="btn btn-danger">Delete</a>
                     </td>   
@@ -96,5 +102,29 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+  
+  <script>
+    function updateProgress() {
+      const selectedValue = $('#PO_progress_dropdown').val();
+      var PO_pk = $('#PO_progress_dropdown').data('po-pk');
+      
+      let csrftoken = '{{ csrf_token }}'
+
+      $.ajax({
+        url: '/update_PO_progress/' + PO_pk +"/",
+        method: 'POST',
+        contentType: 'application/json',
+        headers:{'X-CSRFToken':csrftoken},
+        data: JSON.stringify({ progress: selectedValue }),
+        success: function(response) {
+          console.log('Progress updated successfully');
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    }
+  </script>
+
 </body>
 {% endblock %}

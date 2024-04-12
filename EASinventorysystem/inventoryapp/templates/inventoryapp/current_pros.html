@@ -54,7 +54,12 @@
                     <td class = "iid" style="text-align: center;">{{pro.Creation_Date}}</td>
                     <td class = "iact_inv_cnt" style="text-align: center;">{{pro.Estimated_Receiving_Date}}</td>
                     <td class = "iact_inv_cnt" style="text-align: center;">{{pro.PRO_Manufacturer}}</td>
-                    <td class = "iact_inv_cnt" style="text-align: center;">{{pro.Progress}}</td>
+                    <td class="iact_inv_cnt" style="text-align: center;">
+                      <select id="PRO_progress_dropdown" name="PRO_progress_dropdown" data-PRO-pk="{{ pro.Product_Requisition_ID }}"  onchange="updateProgress()">
+                        <option value="Pending" {% if pro.Progress == "Pending" %}selected{% endif %}>Pending</option>
+                        <option value="To be Picked Up" {% if pro.Progress == "To be Picked Up" %}selected{% endif %}>To be Picked Up</option>
+                      </select>
+                    </td>
                     <td> 
                         <a href="#" type="button" class="btn btn-danger">Delete</button>
                     </td>   
@@ -76,6 +81,28 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
-    
+  
+  <script>
+    function updateProgress() {
+      const selectedValue = $('#PRO_progress_dropdown').val();
+      var PRO_pk = $('#PRO_progress_dropdown').data('pro-pk');
+      
+      let csrftoken = '{{ csrf_token }}'
+
+      $.ajax({
+        url: '/update_PRO_progress/' + PRO_pk +"/",
+        method: 'POST',
+        contentType: 'application/json',
+        headers:{'X-CSRFToken':csrftoken},
+        data: JSON.stringify({ progress: selectedValue }),
+        success: function(response) {
+          console.log('Progress updated successfully');
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    }
+  </script>  
 </body>
 {% endblock %}

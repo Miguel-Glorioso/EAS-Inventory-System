@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from . models import Product, Category, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered
 from django.http import  JsonResponse
+import json
 from django.core.files.storage import default_storage
 from django.core.files import File
 from django.utils import timezone
@@ -35,15 +36,12 @@ def inventory_list(request):
     category_param = request.GET.get('category')
     consignee_param = request.GET.get('consignee')
 
-    # Filter products by category if category parameter is provided
     if category_param:
          
         category = get_object_or_404(Category, Category_ID=category_param)
         all_inventory = all_inventory.filter(Category=category)
 
-    # Filter products by consignee if consignee parameter is provided
     if consignee_param:
-        print(consignee_param)  
         consignee = get_object_or_404(Consignee, Consignee_ID=consignee_param)
         consignee_products = all_consignee_products.filter(Consignee_ID=consignee)
         product_ids = consignee_products.values_list('Product_ID', flat=True)
@@ -244,6 +242,23 @@ def purchase_order_list(request):
     all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
     return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
 
+def update_PO_progress(request, PO_pk):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        progress = data.get('progress')
+
+        try:
+            purchase_order = Purchase_Order.objects.get(pk=PO_pk)
+            
+            purchase_order.Progress = progress
+            purchase_order.save()
+
+            return JsonResponse({'message': 'Progress updated successfully'})
+        except Purchase_Order.DoesNotExist:
+            return JsonResponse({'error': 'Purchase Order does not exist'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
 # def add_purchase_order(request):
 #     products = Product.objects.all()
 #     if request.method == 'POST':
@@ -441,9 +456,10 @@ def add_purchase_order_direct_customer(request):
 
         #Checks if customer already exists
         if existing_customer:
-            existing_customer.Notes = Customer_Notes
-            existing_customer.save()
             PO_customer = existing_customer.first()
+            PO_customer.Notes = Customer_Notes
+            PO_customer.save()
+            
             
         else:
         #creates a new direct customer
@@ -551,6 +567,23 @@ def close_po(request, pk):
 def requisition_order_list(request):
     all_requisition_orders = Product_Requisition_Order.objects.all()
     return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
+
+def update_PRO_progress(request, PRO_pk):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        progress = data.get('progress')
+
+        try:
+            purchase_order = Product_Requisition_Order.objects.get(pk=PRO_pk)
+            
+            purchase_order.Progress = progress
+            purchase_order.save()
+
+            return JsonResponse({'message': 'Progress updated successfully'})
+        except Purchase_Order.DoesNotExist:
+            return JsonResponse({'error': 'Purchase Order does not exist'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def add_requisition_order(request):
     products = Product.objects.all()
@@ -685,7 +718,16 @@ def customer_list(request):
     all_direct = Customer.objects.all()
     all_consignees = Consignee.objects.all()
     all_customers = chain(all_direct, all_consignees)
-    return render(request, 'inventoryapp/current_customers.html', {'customers':all_customers, 'consignees':all_consignees})
+
+    customer_type_param = request.GET.get('customer_type')
+
+    if customer_type_param:
+        if customer_type_param == "Direct":
+            all_customers = Customer.objects.all()
+        elif customer_type_param == "Consignee":
+            all_customers = Consignee.objects.all()
+            
+    return render(request, 'inventoryapp/current_customers.html', {'customers':all_customers    })
 
 def create_direct_customer(request):
     if request.method == 'POST':

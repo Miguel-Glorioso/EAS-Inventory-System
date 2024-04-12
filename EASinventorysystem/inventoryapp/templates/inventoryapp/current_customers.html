@@ -62,7 +62,15 @@
         </div>
       </div>
     </div>
-
+    <div class="row mt-3">
+      <div class="col-md-auto">
+        <select id="customerFilter" class="form-select" aria-label="Filter by Customer">
+            <option value="">All Customers Types</option>
+            <option value="Direct" {% if request.GET.customer_type|stringformat:"s" == "Direct" %} selected {% endif %}>Direct</option>
+            <option value="Consignee" {% if request.GET.customer_type|stringformat:"s" == "Consignee" %} selected {% endif %}>Consignee</option>
+        </select>
+      </div>
+    </div>
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">
@@ -78,24 +86,24 @@
           </thead>
           <tbody>
             {% for c in customers %}
-        <tr>
-          {% if c.Customer_Name %}
-          <td class="iname" style="text-align: center;">{{ c.Customer_Name }}</td>
-          {% elif c.Consignee_Name %}
-          <td class="iname" style="text-align: center;">{{ c.Consignee_Name }}</td>
-          {% endif %}
-          <td class="iid" style="text-align: center;">{{ c.Customer_Type }}</td>
-          <td class="iact_inv_cnt" style="text-align: center;">{{ c.Zip_Code }}</td>
-          <td class="iact_inv_cnt" style="text-align: center;">{{ c.Primary_Contact_Number }}</td>
-          <td>
-            {% if c.Customer_Name %}
-              <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#customerModal" data-customer-pk="{{ c.Customer_ID }}" data-direct-customer="true">View</button>
-            {% elif c.Consignee_Name %}
-              <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#customerModal" data-customer-pk="{{ c.Consignee_ID }}" data-direct-customer="false">View</button>
-            {% endif %}
-          </td>    
-        </tr>
-        {% endfor %}        
+              <tr>
+                {% if c.Customer_Name %}
+                <td class="iname" style="text-align: center;">{{ c.Customer_Name }}</td>
+                {% elif c.Consignee_Name %}
+                <td class="iname" style="text-align: center;">{{ c.Consignee_Name }}</td>
+                {% endif %}
+                <td class="iid" style="text-align: center;">{{ c.Customer_Type }}</td>
+                <td class="iact_inv_cnt" style="text-align: center;">{{ c.Zip_Code }}</td>
+                <td class="iact_inv_cnt" style="text-align: center;">{{ c.Primary_Contact_Number }}</td>
+                <td>
+                  {% if c.Customer_Name %}
+                    <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#customerModal" data-customer-pk="{{ c.Customer_ID }}" data-direct-customer="true">View</button>
+                  {% elif c.Consignee_Name %}
+                    <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#customerModal" data-customer-pk="{{ c.Consignee_ID }}" data-direct-customer="false">View</button>
+                  {% endif %}
+                </td>    
+              </tr>
+            {% endfor %}        
           </tbody>
         </table>
       </div>
@@ -174,8 +182,21 @@
           }
       });
   });
+</script>
 
+<script>
+  $(document).ready(function() {
+    var table = $('#currentcustomer').DataTable();
 
+    // Add event listener for customer type filter
+    $('#customerFilter').on('change', function() {
+        var customer_type = $(this).val();
+        var url = window.location.pathname; // Get the current URL
+        var params = new URLSearchParams(window.location.search); // Get the existing query parameters
+        params.set('customer_type', customer_type); // Set the 'customer_type' parameter to the selected value
+        window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
+    });
+  });
 
 </script>
 
