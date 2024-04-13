@@ -263,6 +263,7 @@
         pictureInput.addEventListener("change", updatePreview);
 
         removeImageButton.addEventListener("click", function() {
+            event.preventDefault();
             pictureInput.value = null;
             imagePreview.innerHTML = '';
             removeImageButton.style.display = "none";
