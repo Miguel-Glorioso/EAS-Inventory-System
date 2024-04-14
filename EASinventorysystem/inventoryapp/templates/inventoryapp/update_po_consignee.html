@@ -1,10 +1,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
 {% block content %}
+
+
 <body>
     <style>
         .required:after {
@@ -20,64 +22,71 @@
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
             <div class="col-md-auto d-flex align-items-center">
-                <h4 class="m-0 mr-3">Add Purchase Order: Direct Customer</h4>
+                <h4 class="m-0 mr-3">Add Purchase Order: Consignee</h4>
             </div>
         </div>
 
-        
-        <form method="POST" action="{% url 'add_po_direct_customer' %}">
-            <!-- First Tab: Customer Information -->
+
+        <form method="POST" action="{% url 'add_po_consignee' %}">
+            <!-- First Tab: Consignee Information -->
             <div id="step1">
-            
+
                 {% csrf_token %}
                 <fieldset>
-                    <legend>Direct Customer Information</legend>
+                    <legend>Consignee Information</legend>
 
-                    <!-- Rows for Customer Information -->
+                    <!-- Rows for Consignee Information -->
                     <!-- Row 1: Requested Date -->
                     <div class="row">
                         <div class="col">
                             <label class="required" for="requested_date">Requested Date:</label><br>
                             <input type="date" id="requested_date" name="requested_date" class="form-control" required><br><br>
                         </div>
-                        
+
                         <div class="col">
                         </div>
                         <div class="col">
                         </div>
                     </div>
-                    
-                    <!-- Row 2: Customer Name & Contact Info  -->
+
+                    <!-- Row 2: Consignee Name, Shipping Method  -->
                     <div class="row">
                         <div class="col">
-                            <label class="required" for="customer_name">Customer Name:</label><br>
-                            <input type="text" id="customer_name" name="customer_name" class="form-control" required><br><br>
+                            <label class="required" for="consignee" class="form-label custom-text">Consignee Name</label>
+                            <select name="consignee" class="form-select" id="consignee" required onchange="fillInputs()">
+                                <option value="" disabled selected>Select a Consignee</option>
+                                {% for c in consignees %}
+                                <option value="{{ c.Consignee_ID }}"
+                                    data-email="{{ c.Email_Address }}"
+                                    data-primary-contact="{{ c.Primary_Contact_Number }}"
+                                    data-emergency-contact="{{ c.Emergency_Contact_Number }}"
+                                    data-address-line1="{{ c.Address_Line_1 }}"
+                                    data-province="{{ c.Province }}"
+                                    data-municipality="{{ c.Municipality }}"
+                                    data-barangay="{{ c.Barangay }}"
+                                    data-zip-code="{{ c.Zip_Code }}"
+                                    data-consignee-notes="{{ c.Notes }}">
+                                    {{ c.Consignee_Name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+
                         </div>
-                        <div class="col">
-                            <label class="required" for="contact_info">Contact Info: (11 digits)</label><br>
-                            <input type="number" id="contact_info" name="contact_info" class="form-control" maxlength="11" required minlength="11" placeholder="09123456789"><br><br>
-                        </div>
-                        
-                        <div class="col">
-                        </div>
-                    </div>
-                    
-                    <!-- Row 3: Shipping Method & Order Method-->
-                    <div class="row">
                         <div class="col">
                             <label class="required" for="shipping_method">Shipping Method:</label><br>
                             <select id="shipping_method" name="shipping_method" class="form-select" required>
-                                <option value="No selected shipping method" selected disabled>Select Shipping Method</option>
+                                <option value="" selected disabled>Select Shipping Method</option>
                                 <option value="Grab">Grab</option>
                                 <option value="Lalamove">Lalamove</option>
-                                <!-- NOTE: value has no "_" for display purposes on third step, notify timmy if there's issue with this -->
-                                <option value="Direct Delivery">Direct Delivery</option> 
+                                <!-- NOTE: value has no "_" for display purposes on third step -->
+                                <option value="Direct Delivery">Direct Delivery</option>
                                 <option value="Lazada">Lazada</option>
                                 <option value="Shopee">Shopee</option>
                             </select><br><br>
                         </div>
+
                         <div class="col">
-                            <label class="required" for="order_method">Order Method:</label><br>
+                            <label for="order_method">Order Method:</label><br>
                             <select id="order_method" name="order_method" class="form-select">
                                 <option value="No selected order method" selected disabled>Select Order Method</option>
                                 <option value="Walk-in">Walk-in</option>
@@ -85,43 +94,59 @@
                                 <option value="Shopee">Shopee</option>
                             </select><br><br>
                         </div>
-                        <div class="col">
-                        </div>
                     </div>
-                    
-                    <!-- Row 4: Address Line 1, Province, Municipality, Barangay, & Zip Code -->
+
+                    <!-- Row 3: Primary Contact Info, Email Address, and Emergency Contact Info -->
                     <div class="row">
                         <div class="col">
-                            <label class="required" for="address_line1">Address Line 1:</label><br>
-                            <input type="text" id="address_line1" name="address_line1" class="form-control" required><br><br>
+                            <label for="primary_contact">Primary Contact Info:</label><br>
+                            <input type="tel" id="primary_contact" name="primary_contact" class="form-control" maxlength="11" disabled><br><br>
                         </div>
                         <div class="col">
-                            <label class="required" for="province">Province:</label><br>
-                            <input type="text" id="province" name="province" class="form-control" required><br><br>
+                            <label for="email_address">Email Address:</label><br>
+                            <input type="email" id="email_address" name="email_address" class="form-control" disabled><br><br>
                         </div>
                         <div class="col">
-                            <label class="required" for="municipality">Municipality:</label><br>
-                            <input type="text" id="municipality" name="municipality" class="form-control" required><br><br>
-                        </div>
-                        <div class="col">
-                            <label class="required" for="barangay">Barangay:</label><br>
-                            <input type="text" id="barangay" name="barangay" class="form-control" required><br><br>
-                        </div>
-                        <div class="col">
-                            <label class="required" for="zip_code">Zip Code: (4 digits)</label><br>
-                            <input type="number" id="zip_code" name="zip_code" class="form-control" required minlength="4" placeholder="1234"><br><br>
+                            <label for="emergency_contact">Emergency Contact Info:</label><br>
+                            <input type="tel" id="emergency_contact" name="emergency_contact" class="form-control" maxlength="11" disabled><br><br>
                         </div>
                     </div>
-                    
+
+                    <!-- Row 4: Address Line 1, Province, Municipality, Barangay, and Zip Code -->
+                    <div class="row">
+                        <div class="col">
+                            <label for="address_line1">Address Line 1:</label><br>
+                            <input type="text" id="address_line1" name="address_line1" class="form-control" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="province">Province:</label><br>
+                            <input type="text" id="province" name="province" class="form-control" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="municipality">Municipality:</label><br>
+                            <input type="text" id="municipality" name="municipality" class="form-control" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="barangay">Barangay:</label><br>
+                            <input type="text" id="barangay" name="barangay" class="form-control" disabled><br><br>
+                        </div>
+                        <div class="col">
+                            <label for="zip_code">Zip Code:</label><br>
+                            <input type="text" id="zip_code" name="zip_code" class="form-control" disabled><br><br>
+                        </div>
+                    </div>
+
                     <!-- Row 5: Notes -->
                     <div class="row">
                         <div class="col">
-                            <label for="order_notes">Customer Notes:</label><br>
-                            <textarea id="customer_notes" name="customer_notes" rows="4" cols="50" class="form-control"></textarea><br><br>
+                            <label for="consignee_notes">Consignee Notes:</label><br>
+                            <textarea id="consignee_notes" name="consignee_notes" rows="4" cols="50"
+                                class="form-control" disabled></textarea><br><br>
                         </div>
                         <div class="col">
-                            <label for="customer_notes">Order Notes:</label><br>
-                            <textarea id="order_notes" name="order_notes" rows="4" cols="50" class="form-control"></textarea><br><br>
+                            <label for="order_notes">Order Notes:</label><br>
+                            <textarea id="order_notes" name="order_notes" rows="4" cols="50"
+                                class="form-control"></textarea><br><br>
                         </div>
                     </div>
 
@@ -157,15 +182,14 @@
                                                     <th>Price</th>
                                                     <th>Quantity</th>
                                                     <th>Stock</th>
-                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="product-list">
                                                 <!-- Products will be appended here as rows -->
                                             </tbody>
                                         </table>
-                                        <input type="hidden" name="all_products" id="all_products" value="">  
-                                        <input type="hidden" name="total_price" id="total_price" value="">  
+                                        <input type="hidden" name="all_products" id="all_products" value="">
+                                        <input type="hidden" name="total_price" id="total_price" value="">
                                     </div>
                                 </div>
                             </div>
@@ -175,34 +199,37 @@
                                 <div class="row mb-3">
                                     <h5>List of Products:</h5>
                                     <div class="input-group mb-4 mr-3">
-                                        <input type="text" class="form-control" id="search-input" placeholder="Search products..." aria-label="Search products" aria-describedby="search-button">
+                                        <input type="text" class="form-control" id="search-input"
+                                            placeholder="Search products..." aria-label="Search products"
+                                            aria-describedby="search-button">
                                     </div>
                                 </div>
                                 <div class="row mx-4" id="product-list" style="overflow-y: auto; height: 520px;">
                                     {% for p in products %}
-                                        <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
-                                            <!-- Product information -->
-                                            <div class="col">
-                                                {% if p.Picture %}
-                                                    <!-- Image -->
-                                                    <img src="{{ p.Picture.url }}" width="120" class="mr-3">
-                                                {% endif %}
-                                            </div>
-
-                                            <div class="col">
-                                                <!-- Product details -->
-                                                <h5>{{ p.Name }}</h5>
-                                                <p>ID: {{ p.EAS_Product_ID }}</p>
-                                                <p class="product-price">Php {{ p.Price }}</p>
-                                                <p><strong>Stock: </strong><span class="product_count">{{ p.Actual_Inventory_Count }}</span></p>
-                                                <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
-                                            </div>
-
-                                            <div class="col">
-                                                <!-- Add to Cart button -->
-                                                <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
-                                            </div>
+                                    <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}">
+                                        <!-- Product information -->
+                                        <div class="col">
+                                            {% if p.Picture %}
+                                            <!-- Image -->
+                                            <img src="{{ p.Picture.url }}" width="120" class="mr-3">
+                                            {% endif %}
                                         </div>
+
+                                        <div class="col">
+                                            <!-- Product details -->
+                                            <h5>{{ p.Name }}</h5>
+                                            <p>ID: {{ p.EAS_Product_ID }}</p>
+                                            <p class="product-price">Php {{ p.Price }}</p>
+                                            <p><strong>Stock: </strong><span class="product_count">{{ p.Actual_Inventory_Count }}</span></p>
+                                            <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
+                                        </div>
+
+                                        <div class="col">
+                                            <!-- Add to Cart button -->
+                                            <button type="button" class="btn btn-primary add-to-cart"
+                                                data-name="{{ p.Name }}">Add to Cart</button>
+                                        </div>
+                                    </div>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -215,7 +242,8 @@
                             <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button type="button" class="btn btn-success" onclick="validateQuantityAndNext()">Next</button>
+                            <button type="button" class="btn btn-success"
+                                onclick="validateQuantityAndNext()">Next</button>
                         </div>
                     </div>
                 </div>
@@ -225,28 +253,30 @@
             <div id="step3" style="display: none;">
                 <div class="container-fluid">
                     <legend>Summary</legend>
-                    
-                    <!-- Customer Information -->
-                    <h5>Customer Information:</h5>
-                    <div class="row mb-3">
-                        <div class="col">
-                            <p><strong>Customer Name:</strong> <span id="direct_customer_name"></span></p>
-                            <p><strong>Contact Info:</strong> <span id="direct_customer_contact_info"></span></p>
-                            <p><strong>Selected Shipping Method:</strong> <span id="selected_shipping_method"></span></p>
-                            <p><strong>Selected Order Method:</strong> <span id="selected_order_method"></span></p>
 
+                    <!-- Consignee Information -->
+                    <h5>Consignee Information:</h5>
+                    <div class="row mb-1">
+                        <div class="col">
+                            <p><strong>Consignee Name:</strong> <span id="consignee_customer_name"></span></p>
+                            <p><strong>Email:</strong> <span id="consignee_email"></span></p>
+                            <p><strong>Primary Contact:</strong> <span id="consignee_primary_contact"></span></p>
+                            <p><strong>Emergency Contact:</strong> <span id="consignee_emergency_contact"></span></p>
+                            <p><strong>Selected Shipping Method:</strong> <span id="selected_shipping_method"></span>
+                            </p>
                         </div>
                         <div class="col">
                             <p><strong>Address:</strong><br>
-                                <span id="direct_customer_address_line1"></span><br>
-                                <span id="direct_customer_barangay_municipality_province"></span><br>
-                                <span id="direct_customer_zip_code"></span></p>
+                                <span id="consignee_address_line1"></span><br>
+                                <span id="consignee_barangay_municipality_province"></span><br>
+                                <span id="consignee_zip_code"></span>
+                            </p>
                         </div>
                     </div>
                     <div class="row mb-1">
                         <div class="col">
-                            <h5>Customer Notes:</h5>
-                            <p id="customer_notes_summary"></p>
+                            <h5>Consignee Notes:</h5>
+                            <p id="consignee_notes_summary"></p>
                         </div>
                         <div class="col">
                             <h5>Order Notes:</h5>
@@ -255,7 +285,7 @@
                     </div>
 
                     <!-- Products Table -->
-                    <h5>Products Selected:</h5>
+                    <h5>Products Selected:</h5><br>
                     <p><strong>Total Price:</strong> <span id="total_price_summary"></span></p>
                     <div class="table-responsive">
                         <table class="table table-bordered">
@@ -273,7 +303,7 @@
                         </table>
                     </div>
                     <!-- Buttons: back and submit -->
-                    <div class="row my-3">
+                    <div class="row m-3">
                         <div class="col-md-6">
                             <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
                         </div>
@@ -287,46 +317,90 @@
     </div>
 
     <script>
+        function fillInputs() {
+            var selectElement = document.getElementById("consignee");
+            var selectedOption = selectElement.options[selectElement.selectedIndex];
+            
+            // Set Consignee's primary contact number
+            var primaryContact = selectedOption.getAttribute("data-primary-contact");
+            document.getElementById("primary_contact").value = primaryContact;
+
+            // Set Consignee's email address
+            var email = selectedOption.getAttribute("data-email");
+            document.getElementById("email_address").value = email;
+
+            // Set Consignee's emergency contact number
+            var emergencyContact = selectedOption.getAttribute("data-emergency-contact");
+            document.getElementById("emergency_contact").value = emergencyContact;
+
+            // Set Consignee's address details
+            var addressLine1 = selectedOption.getAttribute("data-address-line1");
+            var province = selectedOption.getAttribute("data-province");
+            var municipality = selectedOption.getAttribute("data-municipality");
+            var barangay = selectedOption.getAttribute("data-barangay");
+            var zipCode = selectedOption.getAttribute("data-zip-code");
+
+            document.getElementById("address_line1").value = addressLine1;
+            document.getElementById("province").value = province;
+            document.getElementById("municipality").value = municipality;
+            document.getElementById("barangay").value = barangay;
+            document.getElementById("zip_code").value = zipCode;
+
+            // Set Consignee's notes
+            var consigneeNotes = selectedOption.getAttribute("data-consignee-notes");
+            document.getElementById("consignee_notes").value = consigneeNotes;
+
+            // Update Consignee Information in Step 3 Summary
+            document.getElementById('consignee_customer_name').textContent = selectedOption.textContent;
+            document.getElementById('consignee_email').textContent = email;
+            document.getElementById('consignee_primary_contact').textContent = primaryContact;
+            document.getElementById('consignee_emergency_contact').textContent = emergencyContact;
+            document.getElementById('consignee_address_line1').textContent = addressLine1;
+            document.getElementById('consignee_barangay_municipality_province').textContent = barangay + ", " + municipality + ", " + province;
+            document.getElementById('consignee_zip_code').textContent = zipCode;
+            document.getElementById('consignee_notes_summary').textContent = consigneeNotes;
+        }
+
         // Add to Cart"
         var addToCartButtons = document.querySelectorAll('.add-to-cart');
-        addToCartButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
+        addToCartButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
                 var productName = button.getAttribute('data-name');
                 var productId = button.parentNode.parentNode.dataset.id;
                 var productPK = button.closest('.product-item').querySelector('.product_pk').value;
-                var productCount = button.closest('.product-item').querySelector('.product_count').textContent.trim(); 
+                var productCount = button.closest('.product-item').querySelector('.product_count').textContent.trim();
                 var productPrice = button.closest('.product-item').querySelector('.product-price').textContent.trim();
                 addToCart(productName, productId, productPK, productCount, productPrice);
                 renderTotalPrice();
             });
         });
-        
+
         // add a product to the cart
         function addToCart(productName, productId, productPK, productCount, productPrice) {
             // get the table body where products will be appended
             var productList = document.getElementById("product-list");
-            
+
             // create a new row for the product
             var newRow = document.createElement("tr");
-            
+
             // populate the row with product information
             newRow.innerHTML = `
                 <td>${productName}</td>
                 <td>${productId}</td>
-                <td>${productPrice}</td>
+                <td>${productPrice}</td> 
                 <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value="1"></td>
-                <td>${productCount}</td>
+                <td>${productCount}</td> 
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
             `;
-            
+
             // append the new row to the table body
             productList.appendChild(newRow);
-            
+
             // hide the product in the right column list
             hideProduct(productId);
         }
-    
+
         // remove a product from the cart
         function removeFromCart(row) {
 
@@ -351,7 +425,7 @@
             // Unhide the product in the right column list
             unhideProduct(productId);
         }
-    
+
         // hide a product in the right column list
         function hideProduct(productId) {
             var productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
@@ -359,7 +433,7 @@
                 productItem.style.display = 'none';
             }
         }
-    
+
         // unhide a product in the right column list
         function unhideProduct(productId) {
             var productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
@@ -367,9 +441,10 @@
                 productItem.style.display = '';
             }
         }
-    
+
         var currentStep = 1;
-    
+
+        // Function to handle transition from the second step to the third step
         function nextStep() {
             if (currentStep === 1) {
                 // Validate form inputs before proceeding
@@ -381,33 +456,34 @@
                     // Show error message or handle invalid form
                     alert('Please fill out all required fields and satisfy the required input.');
                 }
+                // Transition to the third step (add_po_direct_customer does)
             } else if (currentStep === 2) {
                 document.getElementById('step2').style.display = 'none';
                 document.getElementById('step3').style.display = '';
                 currentStep = 3;
-                
-                // Collect consignee information
-                document.getElementById('direct_customer_name').textContent = document.getElementById('customer_name').value;
-                document.getElementById('direct_customer_contact_info').textContent = document.getElementById('contact_info').value;
-                document.getElementById('selected_shipping_method').textContent = document.getElementById('shipping_method').value;
-                document.getElementById('selected_order_method').textContent = document.getElementById('order_method').value;
-                document.getElementById('direct_customer_address_line1').textContent = document.getElementById('address_line1').value;
-                document.getElementById('direct_customer_barangay_municipality_province').textContent = document.getElementById('barangay').value + ", " + document.getElementById('municipality').value + ", " + document.getElementById('province').value;
-                document.getElementById('direct_customer_zip_code').textContent = document.getElementById('zip_code').value;
-                document.getElementById('customer_notes_summary').textContent = orderNotes = document.getElementById('order_notes').value;
-                document.getElementById('order_notes_summary').textContent = orderNotes = document.getElementById('customer_notes').value;
-
-
                 // Collect selected products
                 var selectedProducts = [];
                 var productRows = document.querySelectorAll("#product-list tr");
-                productRows.forEach(function(row) {
+                productRows.forEach(function (row) {
                     var name = row.cells[0].textContent;
                     var id = row.cells[1].textContent;
                     var price = row.cells[2].textContent;
                     var quantity = row.cells[3].querySelector('input').value;
                     selectedProducts.push({ name: name, id: id, price: price, quantity: quantity });
                 });
+
+                // Collect consignee information
+                var selectedConsigneeOption = document.getElementById("consignee").options[document.getElementById("consignee").selectedIndex];
+                document.getElementById('consignee_customer_name').textContent = selectedConsigneeOption.textContent;
+                document.getElementById('consignee_email').textContent = selectedConsigneeOption.getAttribute("data-email");
+                document.getElementById('consignee_primary_contact').textContent = selectedConsigneeOption.getAttribute("data-primary-contact");
+                document.getElementById('selected_shipping_method').textContent = document.getElementById('shipping_method').value;
+                document.getElementById('consignee_emergency_contact').textContent = selectedConsigneeOption.getAttribute("data-emergency-contact");
+                document.getElementById('consignee_address_line1').textContent = selectedConsigneeOption.getAttribute("data-address-line1");
+                document.getElementById('consignee_barangay_municipality_province').textContent = selectedConsigneeOption.getAttribute("data-barangay") + ", " + selectedConsigneeOption.getAttribute("data-municipality") + ", " + selectedConsigneeOption.getAttribute("data-province");
+                document.getElementById('consignee_zip_code').textContent = selectedConsigneeOption.getAttribute("data-zip-code");
+                document.getElementById('order_notes_summary').textContent = document.getElementById('order_notes').value;
+                document.getElementById('consignee_notes_summary').textContent = document.getElementById('consignee_notes').value;
 
                 // Render consignee information and selected products
                 renderSummary(selectedProducts);
@@ -428,42 +504,6 @@
                 }
             });
 
-            // Validate order method
-            var orderMethodSelect = document.getElementById('order_method');
-            if (orderMethodSelect.value === 'No selected order method') {
-                isValid = false;
-                orderMethodSelect.classList.add('is-invalid');
-            } else {
-                orderMethodSelect.classList.remove('is-invalid');
-            }
-
-            // Validate shipping method
-            var shippingMethodSelect = document.getElementById('shipping_method');
-            if (shippingMethodSelect.value === 'No selected shipping method') {
-                isValid = false;
-                shippingMethodSelect.classList.add('is-invalid');
-            } else {
-                shippingMethodSelect.classList.remove('is-invalid');
-            }
-
-            // Validate minimum length for zip code
-            var zipCodeInput = document.getElementById('zip_code');
-            if (zipCodeInput.value.trim().length !== 4) {
-                isValid = false;
-                zipCodeInput.classList.add('is-invalid');
-            } else {
-                zipCodeInput.classList.remove('is-invalid');
-            }
-
-            // Validate minimum length for contact number
-            var contactNumberInput = document.getElementById('contact_info');
-            if (contactNumberInput.value.trim().length !== 11) {
-                isValid = false;
-                contactNumberInput.classList.add('is-invalid');
-            } else {
-                contactNumberInput.classList.remove('is-invalid');
-            }
-
             return isValid;
         }
 
@@ -471,7 +511,7 @@
         function renderSummary(selectedProducts) {
             var selectedProductsTable = document.getElementById("selected-products-table");
             selectedProductsTable.innerHTML = "";
-            selectedProducts.forEach(function(product) {
+            selectedProducts.forEach(function (product) {
                 var row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${product.name}</td>
@@ -508,12 +548,11 @@
             }
         }
 
-        
-        $(document).ready(function() {
+        $(document).ready(function () {
             var totalPrice = 0;
 
-            $('#submit_po').click(function() {
-                $('#PO_products tbody tr').each(function(i) {
+            $('#submit_po').click(function () {
+                $('#PO_products tbody tr').each(function (i) {
                     var productId = $(this).find('.product_pk').val();
                     var productPriceText = $(this).find("td:eq(2)").text().trim();
                     var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
@@ -533,11 +572,11 @@
 
 
         // Function to filter products as user types in the search bar
-        document.getElementById("search-input").addEventListener("input", function() {
+        document.getElementById("search-input").addEventListener("input", function () {
             var searchValue = this.value.trim().toLowerCase();
             var productItems = document.querySelectorAll(".product-item");
             var addedProductIds = getAddedProductIds(); // Get product IDs already added to the left column
-            productItems.forEach(function(item) {
+            productItems.forEach(function (item) {
                 var productId = item.dataset.id; // Get the product ID from dataset
                 var productName = item.querySelector("h5").textContent.trim().toLowerCase();
                 if (!addedProductIds.includes(productId) && productName.includes(searchValue)) {
@@ -552,7 +591,7 @@
         function getAddedProductIds() {
             var addedProductIds = [];
             var productListRows = document.querySelectorAll("#PO_products tbody tr");
-            productListRows.forEach(function(row) {
+            productListRows.forEach(function (row) {
                 var productId = row.cells[1].textContent.trim(); // Get product ID from the table cell
                 addedProductIds.push(productId);
             });
@@ -563,7 +602,7 @@
             var quantityInputs = document.querySelectorAll('.quantity-input');
             var isValid = true;
 
-            quantityInputs.forEach(function(input) {
+            quantityInputs.forEach(function (input) {
                 if (parseInt(input.value) < 1) {
                     isValid = false;
                     // Show error message or handle invalid input as desired
@@ -575,9 +614,6 @@
                 nextStep(); // Proceed to the next step if all quantities are valid
             }
         }
-
-
-
 
 
         // Total price
@@ -615,11 +651,11 @@
                 renderTotalPrice();
             }
         });
-
     </script>
 </body>
 
-<div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel" aria-hidden="true">
+<div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

@@ -443,6 +443,8 @@ def add_purchase_order_direct_customer(request):
         Products = request.POST.get('all_products')
         Total_Price = request.POST.get('total_price')
         print(Order_Method)
+        
+        print(Order_Method)
         existing_customer = Customer.objects.filter(
                 Customer_Name = Customer_Name,
                 Primary_Contact_Number = Primary_Contact,
@@ -934,3 +936,10 @@ def update_consignee(request, pk):
 
     else:
         return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string})
+
+# HI MIGGY, HERE'S THE UPDATE PO
+def update_PO_direct_customer(request, pk):
+    return render(request, 'update_po_direct_customer/login.html')
+
+def update_PO_consignee(request, pk):
+    return render(request, 'update_po_consignee/login.html')
