@@ -1,42 +1,92 @@
 {% load static %}
 
-<link rel="stylesheet" href="static/login.css">
+<!-- <link rel="stylesheet" href="{% static 'login.css' %}"> -->
 <html>
-    <head>
-        <title>Login Page</title>
-    </head>
-    <body>
-        <div class="full-screen-container my-3">
-            <img src= "{% static 'images/EAS_logo_red.jpg' %}" width="150" height="150">
-        </div>
+<head>
+    <title>Login Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .login-container {
+            margin-top: 10%;
+        }
 
-        <div class="full-screen-container">
-            <div class="login-container">
-                <h2 class="login-title">Sign in</h2>
-                      
-                <form method=POST action="{% url 'account_login' %}">
-                    {% csrf_token %}
-                    <div class="input-group success">
-                        <label for="user_name">Your username</label>
-                        <input type="text" class="form-control" id="user_name" name="user_name" required>
-                    </div>
-                        
-                    <div class="input-group error">
-                        <label for="password">Your password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    
-                    {% if error_msg %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ error_msg }}
-                        </div>
-                    {% endif %}
-                    
-                    <div class="login-button-container">
-                        <button type="submit" class="login-button">Log in</button>
-                    </div>
-                </form>
+        /* Custom CSS */
+        .login-button-container {
+            margin-top: 5px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 text-center my-3">
+                <img src="{% static 'images/EAS_logo_red.jpg' %}" width="150" height="150">
             </div>
         </div>
-    </body>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card login-container">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">Log in</h2>
+                        <p class="text-muted text-center">Please log in to continue</p>
+                        <form class="row g-3 needs-validation" novalidate method="POST" action="{% url 'account_login' %}">
+                            {% csrf_token %}
+                            <div class="col-md-12">
+                                <label for="user_name" class="form-label">Username:</label>
+                                <div class="input-group has-validation">
+                                    <input type="text" class="form-control" id="user_name" name="user_name" aria-describedby="inputGroupPrepend" required>
+                                    <div class="invalid-feedback">
+                                        Please fill out this field.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="password" class="form-label">Password:</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <div class="invalid-feedback">
+                                    Please fill out this field.
+                                </div>
+                                {% if error_msg %}
+                            <div class="col-12 alert alert-danger" role="alert" style="margin-top: 20px;">
+                                {{ error_msg }}
+                            </div>
+                            {% endif %}
+                            </div>
+                            <div class="col-12 login-button-container">
+                                <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Log in</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        (function () {
+            'use strict';
+    
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation');
+    
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+    
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+    </script>
+</body>
 </html>
