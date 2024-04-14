@@ -32,8 +32,10 @@ urlpatterns = [
     path('add_po_consignee', views.add_purchase_order_consignee, name='add_po_consignee'),
 
     # HI MIGGY HERE'S UPDATE PO
-    path('update_po_direct_customer/<int:PO_pk>/', views.update_PO_direct_customer, name='update_po_direct_customer'),
-    path('update_po_consignee/<int:PO_pk>/', views.update_PO_consignee, name='update_po_consignee'),
+    path('update_po_direct_customer/<int:po_pk>/', views.update_PO_direct_customer, name='update_po_direct_customer'),
+    path('update_po_consignee/<int:po_pk>/', views.update_PO_consignee, name='update_po_consignee'),
+
+    
     
     path('current_pros', views.requisition_order_list, name='current_pros'),
     path('view_po/<int:pk>/', views.view_po, name='view_po'), 

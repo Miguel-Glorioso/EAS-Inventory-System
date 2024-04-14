@@ -22,7 +22,7 @@
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
             <div class="col-md-auto d-flex align-items-center">
-                <h4 class="m-0 mr-3">Add Purchase Order: Consignee</h4>
+                <h4 class="m-0 mr-3">Edit Purchase Order: Consignee</h4>
             </div>
         </div>
 
@@ -40,7 +40,7 @@
                     <div class="row">
                         <div class="col">
                             <label class="required" for="requested_date">Requested Date:</label><br>
-                            <input type="date" id="requested_date" name="requested_date" class="form-control" required><br><br>
+                            <input type="date" id="requested_date" name="requested_date" class="form-control"  value="{{ PO.Requested_Date|date:'Y-m-d' }}" required><br><br>
                         </div>
 
                         <div class="col">
@@ -54,7 +54,6 @@
                         <div class="col">
                             <label class="required" for="consignee" class="form-label custom-text">Consignee Name</label>
                             <select name="consignee" class="form-select" id="consignee" required onchange="fillInputs()">
-                                <option value="" disabled selected>Select a Consignee</option>
                                 {% for c in consignees %}
                                 <option value="{{ c.Consignee_ID }}"
                                     data-email="{{ c.Email_Address }}"
@@ -65,7 +64,8 @@
                                     data-municipality="{{ c.Municipality }}"
                                     data-barangay="{{ c.Barangay }}"
                                     data-zip-code="{{ c.Zip_Code }}"
-                                    data-consignee-notes="{{ c.Notes }}">
+                                    data-consignee-notes="{{ c.Notes }}"
+                                    {% if PO.Consignee_ID.Consignee_ID == c.Consignee_ID %}selected{% endif %}>
                                     {{ c.Consignee_Name }}
                                 </option>
                                 {% endfor %}
@@ -75,23 +75,20 @@
                         <div class="col">
                             <label class="required" for="shipping_method">Shipping Method:</label><br>
                             <select id="shipping_method" name="shipping_method" class="form-select" required>
-                                <option value="" selected disabled>Select Shipping Method</option>
-                                <option value="Grab">Grab</option>
-                                <option value="Lalamove">Lalamove</option>
-                                <!-- NOTE: value has no "_" for display purposes on third step -->
-                                <option value="Direct Delivery">Direct Delivery</option>
-                                <option value="Lazada">Lazada</option>
-                                <option value="Shopee">Shopee</option>
+                                <option value="Grab" {% if PO.Shipping_Method == "Grab" %}selected{% endif %}>Grab</option>
+                                <option value="Lalamove" {% if PO.Shipping_Method == "Lalamove" %}selected{% endif %}>Lalamove</option>
+                                <option value="Direct Delivery" {% if PO.Shipping_Method == "Direct Delivery" %}selected{% endif %}>Direct Delivery</option> 
+                                <option value="Lazada" {% if PO.Shipping_Method == "Lazada" %}selected{% endif %}>Lazada</option>
+                                <option value="Shopee" {% if PO.Shipping_Method == "Shopee" %}selected{% endif %}>Shopee</option>
                             </select><br><br>
                         </div>
 
                         <div class="col">
                             <label for="order_method">Order Method:</label><br>
                             <select id="order_method" name="order_method" class="form-select">
-                                <option value="No selected order method" selected disabled>Select Order Method</option>
-                                <option value="Walk-in">Walk-in</option>
-                                <option value="Lazada">Lazada</option>
-                                <option value="Shopee">Shopee</option>
+                                <option value="Walk-in" {% if PO.Order_Method == "Walk-in" %}selected{% endif %}>Walk-in</option>
+                                <option value="Lazada" {% if PO.Order_Method == "Lazada" %}selected{% endif %}>Lazada</option>
+                                <option value="Shopee" {% if PO.Order_Method == "Shopee" %}selected{% endif %}>Shopee</option>
                             </select><br><br>
                         </div>
                     </div>
@@ -100,15 +97,15 @@
                     <div class="row">
                         <div class="col">
                             <label for="primary_contact">Primary Contact Info:</label><br>
-                            <input type="tel" id="primary_contact" name="primary_contact" class="form-control" maxlength="11" disabled><br><br>
+                            <input type="tel" id="primary_contact" name="primary_contact" class="form-control" maxlength="11" value="{{ PO.Consignee_ID.Primary_Contact_Number }}" disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="email_address">Email Address:</label><br>
-                            <input type="email" id="email_address" name="email_address" class="form-control" disabled><br><br>
+                            <input type="email" id="email_address" name="email_address" class="form-control" value="{{ PO.Consignee_ID.Email_Address }}" disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="emergency_contact">Emergency Contact Info:</label><br>
-                            <input type="tel" id="emergency_contact" name="emergency_contact" class="form-control" maxlength="11" disabled><br><br>
+                            <input type="tel" id="emergency_contact" name="emergency_contact" class="form-control" maxlength="11" value="{{ PO.Consignee_ID.Emergency_Contact_Number }}" disabled><br><br>
                         </div>
                     </div>
 
@@ -116,23 +113,23 @@
                     <div class="row">
                         <div class="col">
                             <label for="address_line1">Address Line 1:</label><br>
-                            <input type="text" id="address_line1" name="address_line1" class="form-control" disabled><br><br>
+                            <input type="text" id="address_line1" name="address_line1" class="form-control" value="{{ PO.Consignee_ID.Address_Line_1 }}" disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="province">Province:</label><br>
-                            <input type="text" id="province" name="province" class="form-control" disabled><br><br>
+                            <input type="text" id="province" name="province" class="form-control" value="{{ PO.Consignee_ID.Province }}"disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="municipality">Municipality:</label><br>
-                            <input type="text" id="municipality" name="municipality" class="form-control" disabled><br><br>
+                            <input type="text" id="municipality" name="municipality" class="form-control" value="{{ PO.Consignee_ID.Municipality }}"disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="barangay">Barangay:</label><br>
-                            <input type="text" id="barangay" name="barangay" class="form-control" disabled><br><br>
+                            <input type="text" id="barangay" name="barangay" class="form-control" value="{{ PO.Consignee_ID.Barangay }}"disabled><br><br>
                         </div>
                         <div class="col">
                             <label for="zip_code">Zip Code:</label><br>
-                            <input type="text" id="zip_code" name="zip_code" class="form-control" disabled><br><br>
+                            <input type="text" id="zip_code" name="zip_code" class="form-control" value="{{ PO.Consignee_ID.Zip_Code }}" disabled><br><br>
                         </div>
                     </div>
 
@@ -141,12 +138,12 @@
                         <div class="col">
                             <label for="consignee_notes">Consignee Notes:</label><br>
                             <textarea id="consignee_notes" name="consignee_notes" rows="4" cols="50"
-                                class="form-control" disabled></textarea><br><br>
+                                class="form-control" disabled>{{PO.Consignee_ID.Notes}}</textarea><br><br>
                         </div>
                         <div class="col">
                             <label for="order_notes">Order Notes:</label><br>
                             <textarea id="order_notes" name="order_notes" rows="4" cols="50"
-                                class="form-control"></textarea><br><br>
+                                class="form-control">{{ PO.Notes }}</textarea><br><br>
                         </div>
                     </div>
 
