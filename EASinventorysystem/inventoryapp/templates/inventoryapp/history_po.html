@@ -4,7 +4,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
-<!-- FIIIIX -->
+
 {% block content %}
 <head>
     <title>Purchase Order History</title>
@@ -38,13 +38,12 @@
           <thead>
             <tr>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Purchase Order No.</th>
-              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Requested Date</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Creation Date</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Fulfillment Date</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Type of Customer</th>
-              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Customer Name</th>
-              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Progress</th>
-              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
-              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
-              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Purchaser Name</th>
+              <th scope="col" style="background-color: #C2C1C1;">Action</th>
+              <!-- <th scope="col" style="background-color: #C2C1C1; text-align: center;">Closed by</th> -->
             </tr>
           </thead>
           <tbody>
@@ -62,7 +61,7 @@
                     <td class="iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Consignee_Name}}</td>
                   {% endif %}
 
-                  <td class="iact_inv_cnt" style="text-align: center;">
+                  <!-- <td class="iact_inv_cnt" style="text-align: center;">
                     <select class="PO_progress_dropdown" name="PO_progress_dropdown" data-PO-pk="{{ po.Purchase_Order_ID }}" onchange="updateProgress(this)">
                       <option value="Pending" {% if po.Progress == "Pending" %}selected{% endif %}>Pending</option>
                       <option value="Ongoing" {% if po.Progress == "Ongoing" %}selected{% endif %}>Ongoing</option>
@@ -74,7 +73,7 @@
                     </td>   
                   <td> 
                       <a href="{% url 'close_po' pk=po.pk %}" type="button" class="btn btn-success">Close</a>
-                    </td>   
+                    </td>    -->
                   <td> 
                     <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
                   </td>             
