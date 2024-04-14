@@ -249,7 +249,7 @@ def update_PO_progress(request, PO_pk):
 
         try:
             purchase_order = Purchase_Order.objects.get(pk=PO_pk)
-            
+            print(progress, PO_pk)
             purchase_order.Progress = progress
             purchase_order.save()
 
@@ -388,7 +388,6 @@ def add_purchase_order_consignee(request):
         Shipping_Method = request.POST.get('shipping_method')
         Order_Method = request.POST.get('order_method')
         PO_Consignee = request.POST.get('consignee') #depends whats the input getting if the whole consignee or just the Consignee_ID
-        print(PO_Consignee)
         PO_Consignee = get_object_or_404(Consignee, Consignee_ID=PO_Consignee)
 
         if Requested_Date == '':
@@ -443,7 +442,7 @@ def add_purchase_order_direct_customer(request):
         Order_Notes = request.POST.get('order_notes')
         Products = request.POST.get('all_products')
         Total_Price = request.POST.get('total_price')
-        
+        print(Order_Method)
         existing_customer = Customer.objects.filter(
                 Customer_Name = Customer_Name,
                 Primary_Contact_Number = Primary_Contact,

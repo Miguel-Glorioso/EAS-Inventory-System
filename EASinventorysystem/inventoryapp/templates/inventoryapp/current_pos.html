@@ -75,7 +75,7 @@
                   {% endif %}
 
                   <td class="iact_inv_cnt" style="text-align: center;">
-                    <select id="PO_progress_dropdown" name="PO_progress_dropdown" data-PO-pk="{{ po.Purchase_Order_ID }}"  onchange="updateProgress()">
+                    <select class="PO_progress_dropdown" name="PO_progress_dropdown" data-PO-pk="{{ po.Purchase_Order_ID }}" onchange="updateProgress(this)">
                       <option value="Pending" {% if po.Progress == "Pending" %}selected{% endif %}>Pending</option>
                       <option value="Ongoing" {% if po.Progress == "Ongoing" %}selected{% endif %}>Ongoing</option>
                       <option value="Shipped" {% if po.Progress == "Shipped" %}selected{% endif %}>Shipped</option>
@@ -104,9 +104,9 @@
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
   
   <script>
-    function updateProgress() {
-      const selectedValue = $('#PO_progress_dropdown').val();
-      var PO_pk = $('#PO_progress_dropdown').data('po-pk');
+    function updateProgress(dropdown) {
+      const selectedValue = $(dropdown).val();
+      var PO_pk = $(dropdown).data('po-pk');
       
       let csrftoken = '{{ csrf_token }}'
 
