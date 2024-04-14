@@ -32,9 +32,14 @@ def inventory_list(request):
     all_consignee_products = Consignee_Product.objects.all()
     all_categories = Category.objects.all()
     all_consignees = Consignee.objects.all()
+    show_hidden = False
     
     category_param = request.GET.get('category')
     consignee_param = request.GET.get('consignee')
+    hidden_param = request.GET.get('showHidden')
+
+    if hidden_param:
+        show_hidden = True
 
     if category_param:
          
@@ -46,7 +51,8 @@ def inventory_list(request):
         consignee_products = all_consignee_products.filter(Consignee_ID=consignee)
         product_ids = consignee_products.values_list('Product_ID', flat=True)
         all_inventory = all_inventory.filter(Product_ID__in=product_ids)
-    return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products})
+    print(hidden_param)
+    return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products, 'show_hidden':show_hidden})
 
 def add_product(request):
     categories = Category.objects.all()
