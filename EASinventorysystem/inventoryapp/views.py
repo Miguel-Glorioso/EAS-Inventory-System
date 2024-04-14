@@ -936,7 +936,6 @@ def update_consignee(request, pk):
     else:
         return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string})
 
-# HI MIGGY, HERE'S THE UPDATE PO
 def update_PO_direct_customer(request, po_pk):
     PO = get_object_or_404(Purchase_Order, pk=po_pk)
     ordered_products =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
@@ -955,3 +954,6 @@ def update_PO_consignee(request, po_pk):
         print("WIP")
     else:
         return render(request, 'inventoryapp/update_po_consignee.html', {'PO':PO, 'ordered_products':ordered_products, 'products':products, 'consignees':all_consignees})
+    
+def history_PO(request):
+    return render(request, 'inventoryapp/history_po.html')

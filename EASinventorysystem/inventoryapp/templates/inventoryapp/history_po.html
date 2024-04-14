@@ -4,7 +4,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
-
+<!-- FIIIIX -->
 {% block content %}
 <head>
     <title>Purchase Order History</title>
@@ -27,19 +27,7 @@
     <div class="row mt-3">
       <!-- Buttons column -->
       <div class="col-md-auto">
-        <div class="dropdown">
-          
-          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-            Add Purchase Order
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li><a href="{% url 'add_po_direct_customer' %}" class="dropdown-item">Direct Customer</a></li>
-            <li><a href="{% url 'add_po_consignee' %}" class="dropdown-item">Consignee</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-md-auto">
-        <a href="#" class="btn btn-primary">Purchase Order History</a>
+        <a href="{% url 'current_pos' %}" class="btn btn-primary">Back</a>
       </div>
     </div>
 
