@@ -25,9 +25,9 @@
             <div class="col-auto">
                 <button class="btn btn-danger me-2">Delete</button>
                 {% if po.Customer_ID %}
-                    <a href="{% url 'update_po_direct_customer' po_pk=po.Purchase_Order_ID %}" class="btn btn-primary me-2">Edit</a>
+                    <a href="{% url 'update_po_direct_customer' po_pk=po.Purchase_Order_ID c_pk=po.Customer_ID.Customer_ID %}" class="btn btn-primary me-2">Edit</a>
                 {% elif po.Consignee_ID %}
-                    <a href="{% url 'update_po_consignee'  po_pk=po.Purchase_Order_ID %}" class="btn btn-primary me-2">Edit</a>
+                    <a href="{% url 'update_po_consignee'  po_pk=po.Purchase_Order_ID c_pk=po.Consignee_ID.Consignee_ID %}" class="btn btn-primary me-2">Edit</a>
                 {% endif %}
                 <button class="btn btn-success me-2">Close</button>
             </div>

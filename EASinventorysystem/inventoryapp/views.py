@@ -936,24 +936,25 @@ def update_consignee(request, pk):
     else:
         return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string})
 
-def update_PO_direct_customer(request, po_pk):
+def update_PO_direct_customer(request, po_pk, c_pk):
     PO = get_object_or_404(Purchase_Order, pk=po_pk)
-    ordered_products =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
+    products_ordered =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
     products = Product.objects.all()
     if request.method == 'POST':
         print("WIP")
     else:
-        return render(request, 'inventoryapp/update_po_direct_customer.html', {'PO':PO, 'ordered_products':ordered_products, 'products':products})
+        return render(request, 'inventoryapp/update_po_direct_customer.html', {'PO':PO, 'products_ordered':products_ordered, 'products':products})
 
-def update_PO_consignee(request, po_pk):
+def update_PO_consignee(request, po_pk, c_pk):
     PO = get_object_or_404(Purchase_Order, pk=po_pk)
     all_consignees = Consignee.objects.all()
-    ordered_products =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
+    products_ordered =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
     products = Product.objects.all() 
     if request.method == 'POST':
         print("WIP")
     else:
-        return render(request, 'inventoryapp/update_po_consignee.html', {'PO':PO, 'ordered_products':ordered_products, 'products':products, 'consignees':all_consignees})
+        return render(request, 'inventoryapp/update_po_consignee.html', {'PO':PO, 'products_ordered':products_ordered, 'products':products, 'consignees':all_consignees})
     
 def history_PO(request):
-    return render(request, 'inventoryapp/history_po.html')
+    all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+    return render(request, 'inventoryapp/history_po.html', {'purchase_orders':all_purchase_orders})
