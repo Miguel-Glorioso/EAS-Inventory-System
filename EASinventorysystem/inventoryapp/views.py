@@ -249,7 +249,6 @@ def update_PO_progress(request, PO_pk):
 
         try:
             purchase_order = Purchase_Order.objects.get(pk=PO_pk)
-            print(progress, PO_pk)
             purchase_order.Progress = progress
             purchase_order.save()
 
@@ -938,8 +937,21 @@ def update_consignee(request, pk):
         return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string})
 
 # HI MIGGY, HERE'S THE UPDATE PO
-def update_PO_direct_customer(request, pk):
-    return render(request, 'update_po_direct_customer/login.html')
+def update_PO_direct_customer(request, po_pk):
+    PO = get_object_or_404(Purchase_Order, pk=po_pk)
+    ordered_products =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
+    products = Product.objects.all()
+    if request.method == 'POST':
+        print("WIP")
+    else:
+        return render(request, 'inventoryapp/update_po_direct_customer.html', {'PO':PO, 'ordered_products':ordered_products, 'products':products})
 
-def update_PO_consignee(request, pk):
-    return render(request, 'update_po_consignee/login.html')
+def update_PO_consignee(request, po_pk):
+    PO = get_object_or_404(Purchase_Order, pk=po_pk)
+    all_consignees = Consignee.objects.all()
+    ordered_products =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
+    products = Product.objects.all() 
+    if request.method == 'POST':
+        print("WIP")
+    else:
+        return render(request, 'inventoryapp/update_po_consignee.html', {'PO':PO, 'ordered_products':ordered_products, 'products':products, 'consignees':all_consignees})

@@ -20,7 +20,7 @@
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
             <div class="col-md-auto d-flex align-items-center">
-                <h4 class="m-0 mr-3">Add Purchase Order: Direct Customer</h4>
+                <h4 class="m-0 mr-3">Edit Purchase Order: Direct Customer</h4>
             </div>
         </div>
 
@@ -38,8 +38,8 @@
                     <div class="row">
                         <div class="col">
                             <label class="required" for="requested_date">Requested Date:</label><br>
-                            <input type="date" id="requested_date" name="requested_date" class="form-control" required><br><br>
-                        </div>
+                            <input type="date" id="requested_date" name="requested_date" class="form-control" value="{{ PO.Requested_Date|date:'Y-m-d' }}" required><br><br>
+                        </div>                        
                         
                         <div class="col">
                         </div>
@@ -51,11 +51,11 @@
                     <div class="row">
                         <div class="col">
                             <label class="required" for="customer_name">Customer Name:</label><br>
-                            <input type="text" id="customer_name" name="customer_name" class="form-control" required><br><br>
+                            <input type="text" id="customer_name" name="customer_name" class="form-control" value="{{ PO.Customer_ID.Customer_Name }}" required><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="contact_info">Contact Info: (11 digits)</label><br>
-                            <input type="number" id="contact_info" name="contact_info" class="form-control" maxlength="11" required minlength="11" placeholder="09123456789"><br><br>
+                            <input type="number" id="contact_info" name="contact_info" class="form-control" maxlength="11" required minlength="11" value="{{ PO.Customer_ID.Primary_Contact_Number }}"><br><br>
                         </div>
                         
                         <div class="col">
@@ -67,22 +67,19 @@
                         <div class="col">
                             <label class="required" for="shipping_method">Shipping Method:</label><br>
                             <select id="shipping_method" name="shipping_method" class="form-select" required>
-                                <option value="No selected shipping method" selected disabled>Select Shipping Method</option>
-                                <option value="Grab">Grab</option>
-                                <option value="Lalamove">Lalamove</option>
-                                <!-- NOTE: value has no "_" for display purposes on third step, notify timmy if there's issue with this -->
-                                <option value="Direct Delivery">Direct Delivery</option> 
-                                <option value="Lazada">Lazada</option>
-                                <option value="Shopee">Shopee</option>
+                                <option value="Grab" {% if PO.Shipping_Method == "Grab" %}selected{% endif %}>Grab</option>
+                                <option value="Lalamove" {% if PO.Shipping_Method == "Lalamove" %}selected{% endif %}>Lalamove</option>
+                                <option value="Direct Delivery" {% if PO.Shipping_Method == "Direct Delivery" %}selected{% endif %}>Direct Delivery</option> 
+                                <option value="Lazada" {% if PO.Shipping_Method == "Lazada" %}selected{% endif %}>Lazada</option>
+                                <option value="Shopee" {% if PO.Shipping_Method == "Shopee" %}selected{% endif %}>Shopee</option>
                             </select><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="order_method">Order Method:</label><br>
                             <select id="order_method" name="order_method" class="form-select">
-                                <option value="No selected order method" selected disabled>Select Order Method</option>
-                                <option value="Walk-in">Walk-in</option>
-                                <option value="Lazada">Lazada</option>
-                                <option value="Shopee">Shopee</option>
+                                <option value="Walk-in" {% if PO.Order_Method == "Walk-in" %}selected{% endif %}>Walk-in</option>
+                                <option value="Lazada" {% if PO.Order_Method == "Lazada" %}selected{% endif %}>Lazada</option>
+                                <option value="Shopee" {% if PO.Order_Method == "Shopee" %}selected{% endif %}>Shopee</option>
                             </select><br><br>
                         </div>
                         <div class="col">
@@ -93,37 +90,38 @@
                     <div class="row">
                         <div class="col">
                             <label class="required" for="address_line1">Address Line 1:</label><br>
-                            <input type="text" id="address_line1" name="address_line1" class="form-control" required><br><br>
+                            <input type="text" id="address_line1" name="address_line1" class="form-control"  value="{{ PO.Customer_ID.Address_Line_1 }}" required><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="province">Province:</label><br>
-                            <input type="text" id="province" name="province" class="form-control" required><br><br>
+                            <input type="text" id="province" name="province" class="form-control"  value="{{ PO.Customer_ID.Province }}" required><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="municipality">Municipality:</label><br>
-                            <input type="text" id="municipality" name="municipality" class="form-control" required><br><br>
+                            <input type="text" id="municipality" name="municipality" class="form-control" value="{{ PO.Customer_ID.Municipality }}" required><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="barangay">Barangay:</label><br>
-                            <input type="text" id="barangay" name="barangay" class="form-control" required><br><br>
+                            <input type="text" id="barangay" name="barangay" class="form-control"  value="{{ PO.Customer_ID.Barangay }}" required><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="zip_code">Zip Code: (4 digits)</label><br>
-                            <input type="number" id="zip_code" name="zip_code" class="form-control" required minlength="4" placeholder="1234"><br><br>
+                            <input type="number" id="zip_code" name="zip_code" class="form-control" required minlength="4" placeholder="1234"  value="{{ PO.Customer_ID.Zip_Code }}"><br><br>
                         </div>
                     </div>
                     
                     <!-- Row 5: Notes -->
                     <div class="row">
                         <div class="col">
-                            <label for="order_notes">Customer Notes:</label><br>
-                            <textarea id="customer_notes" name="customer_notes" rows="4" cols="50" class="form-control"></textarea><br><br>
+                            <label for="customer_notes">Customer Notes:</label><br>
+                            <textarea id="customer_notes" name="customer_notes" rows="4" cols="50" class="form-control">{{ PO.Customer_ID.Notes }}</textarea><br><br>
                         </div>
                         <div class="col">
-                            <label for="customer_notes">Order Notes:</label><br>
-                            <textarea id="order_notes" name="order_notes" rows="4" cols="50" class="form-control"></textarea><br><br>
+                            <label for="order_notes">Order Notes:</label><br>
+                            <textarea id="order_notes" name="order_notes" rows="4" cols="50" class="form-control">{{ PO.Notes }}</textarea><br><br>
                         </div>
                     </div>
+                    
 
                     <!-- Buttons for navigation -->
                     <div class="row mb-3">
