@@ -1,5 +1,5 @@
-<link rel ="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-<link rel ="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
@@ -33,7 +33,7 @@
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">
-        <table id ="currentpro" class="table text-center">
+        <table id="currentpro" class="table text-center">
           <thead>
             <tr>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Requisition Number</th>
@@ -61,10 +61,10 @@
                       </select>
                     </td>
                     <td> 
-                        <a href="#" type="button" class="btn btn-danger">Delete</button>
+                        <a href="#" type="button" class="btn btn-danger">Delete</a>
                     </td>   
                     <td> 
-                      <a href="{% url 'close_pro' pk=pro.pk %}" type="button" class="btn btn-primary">Close</button>
+                      <a href="{% url 'close_pro' pk=pro.pk %}" type="button" class="btn btn-primary">Close</a>
                     </td>   
                     <td> 
                       <a href="{% url 'view_pro' pk=pro.pk %}" type="button" class="btn btn-primary">View</a>
@@ -83,6 +83,10 @@
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
   
   <script>
+    $(document).ready(function() {
+        $('#currentpro').DataTable();
+    });
+
     function updateProgress(dropdown) {
       const selectedValue = $(dropdown).val();
       var PRO_pk = $(dropdown).data('pro-pk');
