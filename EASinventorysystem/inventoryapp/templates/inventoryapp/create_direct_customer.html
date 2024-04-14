@@ -26,21 +26,21 @@
                 {{ error_msg }}
             </div>
         {% endif %}
-        <form method="POST" action="{% url 'create_direct_customer' %}">
+        <form id="createDirectCustomerForm" method="POST" action="{% url 'create_direct_customer' %}">
             {% csrf_token %}
             <legend>Direct Customer Information</legend>
             <div class="row">
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="required" for="id_customer_name" class="form-label custom-text">Customer Name:</label>
-                        <input type="text" name="customer_name" class="form-control" maxlength="64" required id="id_customer_name" placeholder="Customer Name">
+                        <input type="text" name="customer_name" class="form-control" maxlength="32" required id="id_customer_name" placeholder="Customer Name">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="required" for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                        <input type="number" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" placeholder="Primary Contact Number">
-                    </div>
+                        <input type="number" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11">
+                    </div>                    
                 </div>
                 </div>
             <div class="mb-3">
@@ -69,7 +69,7 @@
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label class="required" for="id_zip_code" class="form-label custom-text">Zip Code:</label>
-                        <input type="text" name="zip_code" class="form-control" maxlength="4" required id="id_zip_code" placeholder="Zip Code">
+                        <input type="number" name="zip_code" class="form-control" required minlength="4" id="id_zip_code" placeholder="Zip Code" oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);">
                     </div>
                 </div>
             </div>
@@ -78,12 +78,87 @@
                 <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea>
             </div>
             <div class="col">
-                <a href="{% url 'current_customers' %}" class="btn btn-danger">Cancel</a>
-                <button type="submit" class="btn btn-primary">Create Customer</button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="createCustomerBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal" disabled>Create Customer</button>
             </div>
-
         </form>
     </div>
     
-    {% endblock %}
+    <!-- Cancel Modal -->
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Cancel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cancel creating a new Direct Customer?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <a href="{% url 'current_customers' %}" class="btn btn-danger">Yes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to create this new Direct Customer?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmCreateBtn">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Function to check if all required fields are filled
+        function checkRequiredFields() {
+            var customerName = document.getElementById('id_customer_name').value.trim();
+            var primaryContactNumber = document.getElementById('id_primary_contact_number').value.trim();
+            var addressLine1 = document.getElementById('id_address_line1').value.trim();
+            var province = document.getElementById('id_province').value.trim();
+            var municipality = document.getElementById('id_municipality').value.trim();
+            var barangay = document.getElementById('id_barangay').value.trim();
+            var zipCode = document.getElementById('id_zip_code').value.trim();
+            
+            return customerName !== '' && primaryContactNumber !== '' && addressLine1 !== '' &&
+                province !== '' && municipality !== '' && barangay !== '' && zipCode !== '';
+        }
+
+        // Function to enable/disable the Create Customer button based on required fields
+        function toggleCreateButton() {
+            var createButton = document.getElementById('createCustomerBtn');
+            createButton.disabled = !checkRequiredFields();
+        }
+
+        // Event listener for input fields to check validation on change
+        var inputFields = document.querySelectorAll('input, textarea, select');
+        inputFields.forEach(function(field) {
+            field.addEventListener('input', function() {
+                toggleCreateButton();
+            });
+        });
+
+        // Handle click event on "Yes" button in confirmation modal
+        document.getElementById('confirmCreateBtn').addEventListener('click', function() {
+            document.getElementById('createDirectCustomerForm').submit(); // Submit the form
+        });
+    </script>
+
 </body>
+{% endblock %}
+

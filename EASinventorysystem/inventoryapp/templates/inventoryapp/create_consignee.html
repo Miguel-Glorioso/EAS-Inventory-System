@@ -22,7 +22,7 @@
                 {{ error_msg }}
             </div>
         {% endif %}
-        <form method="POST" action="{% url 'create_consignee' %}">
+        <form id="createConsigneeForm" method="POST" action="{% url 'create_consignee' %}">
             {% csrf_token %}
             <legend>Consignee Information</legend>
             <div class="row">
@@ -39,14 +39,6 @@
                     </div>
                 </div>
                 </div>
-            <!-- <div class="mb-3">
-                <label class="required" for="id_consignee_name" class="form-label custom-text">Consignee Name:</label>
-                <input type="text" name="consignee_name" class="form-control" maxlength="32" required id="id_consignee_name" placeholder="Consignee Name">
-            </div>
-            <div class="mb-3">
-                <label class="required" for="id_consignee_name" class="form-label custom-text">Consignee Tag ID:</label>
-                <input type="text" name="consignee_tag_id" class="form-control" maxlength="16" required id="id_consignee_tag_id" placeholder="Consignee Tag ID">
-            </div> -->
             <div class="mb-3">
                 <label class="required" for="id_address_line_1" class="form-label custom-text">Address Line 1:</label>
                 <input type="text" name="address_line_1" class="form-control" maxlength="128" required id="id_address_line_1" placeholder="Address Line 1">
@@ -75,7 +67,7 @@
                 <div class="row" style="margin-bottom: 10px;">
                     <div class="col-md-4">
                         <label class="required" for="id_zip_code" class="form-label custom-text">Zip Code:</label>
-                        <input type="tel" name="zip_code" class="form-control" maxlength="4" required id="id_zip_code" placeholder="Zip Code">
+                        <input type="number" name="zip_code" class="form-control" required id="id_zip_code" placeholder="Zip Code" oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);">
                 </select>
                         <div class="col-md-3"></div> <!-- Invisible column -->
                         <div class="col-md-3"></div> <!-- Invisible column -->
@@ -89,7 +81,8 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="required" for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                        <input type="tel" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" inputmode="numeric" placeholder="Primary Contact Number">
+                        <input type="number" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11">
+                        <!-- <input type="tel" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" inputmode="numeric" placeholder="Primary Contact Number"> -->
                     </div>
                 </div>
 
@@ -101,8 +94,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label class="required" for="id_emergency_contact_number" class="form-label custom-text">Emergency Contact Number:</label>
-                        <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" required id="id_emergency_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" placeholder="Emergency Contact Number">
+                        <label class="nonrequired" for="id_emergency_contact_number" class="form-label custom-text">Emergency Contact Number:</label>
+                        <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" placeholder="Emergency Contact Number">
                     </div>
                 </div>
             </div>
@@ -161,20 +154,98 @@
             </div>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-6">
-                    <a href="{% url 'current_customers' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
                 </div>
                 <div class="col-md-6 text-end">
-                    <button type="submit" class="btn btn-success" name="Add" onclick="return confirm('Are you sure you want to create this consignee?')">Create</button>
+                    <button type="button" class="btn btn-success" id="createConsigneeBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal" disabled>Create</button>
                 </div>
             </div>
-            <!-- <div class="col">
-                <a href="{% url 'current_customers' %}" class="btn btn-danger">Cancel</a>
-                <button type="submit" class="btn btn-primary">Create Consignee</button>
-            </div> -->
         </form>
     </div>
     
+    <!-- Cancel Modal -->
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Cancel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cancel creating a new Consignee?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <a href="{% url 'current_customers' %}" class="btn btn-danger">Yes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to create this new Consignee?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmCreateConsigneeBtn">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
-    {% endblock %}
+    <script>
+        // Function to check if all required fields are filled
+        function checkRequiredFields() {
+            var consigneeName = document.getElementById('id_consignee_name').value.trim();
+            var consigneeTagId = document.getElementById('id_consignee_tag_id').value.trim();
+            var addressLine1 = document.getElementById('id_address_line_1').value.trim();
+            var province = document.getElementById('id_province').value.trim();
+            var municipality = document.getElementById('id_municipality').value.trim();
+            var barangay = document.getElementById('id_barangay').value.trim();
+            var zipCode = document.getElementById('id_zip_code').value.trim();
+            var primaryContactNumber = document.getElementById('id_primary_contact_number').value.trim();
+            var emailAddress = document.getElementById('id_email_address').value.trim();
+            var consignmentPeriodStart = document.getElementById('id_consignment_period_start').value.trim();
+            var consignmentPeriodEnd = document.getElementById('id_consignment_period_end').value.trim();
+
+            return consigneeName !== '' && consigneeTagId !== '' && addressLine1 !== '' &&
+                province !== '' && municipality !== '' && barangay !== '' && zipCode !== '' &&
+                primaryContactNumber !== '' && emailAddress !== '' && consignmentPeriodStart !== '' &&
+                consignmentPeriodEnd !== '';
+        }
+
+        // Function to enable/disable the Create button based on required fields
+        function toggleCreateButton() {
+            var createButton = document.getElementById('createConsigneeBtn');
+            createButton.disabled = !checkRequiredFields();
+        }
+
+        // Event listener for input fields to check validation on change
+        var inputFields = document.querySelectorAll('input, textarea, select');
+        inputFields.forEach(function(field) {
+            field.addEventListener('input', function() {
+                toggleCreateButton();
+            });
+        });
+
+        // Handle click event on "Yes" button in confirmation modal
+        document.getElementById('confirmCreateConsigneeBtn').addEventListener('click', function() {
+            document.getElementById('createConsigneeForm').submit(); // Submit the form
+        });
+    </script>
+
 </body>
+{% endblock %}
+</html>
+
 
