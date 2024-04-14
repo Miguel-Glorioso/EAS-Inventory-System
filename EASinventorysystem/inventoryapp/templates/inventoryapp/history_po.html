@@ -1,0 +1,107 @@
+<link rel ="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel ="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <title>Purchase Order History</title>
+</head>
+
+<body class="bg-light">
+  <div class="container-fluid">
+
+    <div class="row p-1" style="background-color: #eee;">
+      <div class="col-md-auto d-flex align-items-center">
+        <h4 class="m-0 mr-3">Current Purchase Orders</h4>
+      </div>
+    </div>
+    {% if error_msg %}
+    <div class="alert alert-danger" role="alert">
+        {{ error_msg }}
+    </div>
+    {% endif %}
+    <!-- Buttons row -->
+    <div class="row mt-3">
+      <!-- Buttons column -->
+      <div class="col-md-auto">
+        <div class="dropdown">
+          
+          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Add Purchase Order
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a href="{% url 'add_po_direct_customer' %}" class="dropdown-item">Direct Customer</a></li>
+            <li><a href="{% url 'add_po_consignee' %}" class="dropdown-item">Consignee</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-auto">
+        <a href="#" class="btn btn-primary">Purchase Order History</a>
+      </div>
+    </div>
+
+    <!-- Table Inventory row -->
+    <div class="row mt-3">
+      <div class="table-responsive">
+        <table id="currentpo" class="table text-center">
+          <thead>
+            <tr>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Purchase Order No.</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Requested Date</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Type of Customer</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Customer Name</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Progress</th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for po in purchase_orders %}
+              {% if po.PO_Status != "Closed" %}
+                <tr>  
+                  <td class="iname" style="text-align: center;">{{po.Purchase_Order_ID}}</td>
+                  <td class="iid" style="text-align: center;">{{po.Requested_Date}}</td>
+
+                  {% if po.Customer_ID %}
+                    <td class="iact_inv_cnt" style="text-align: center;">{{po.Customer_ID.Customer_Type}}</td>
+                    <td class="iact_inv_cnt" style="text-align: center;">{{po.Customer_ID.Customer_Name}}</td>
+                  {% elif po.Consignee_ID %}
+                    <td class="iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Customer_Type}}</td>
+                    <td class="iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Consignee_Name}}</td>
+                  {% endif %}
+
+                  <td class="iact_inv_cnt" style="text-align: center;">
+                    <select class="PO_progress_dropdown" name="PO_progress_dropdown" data-PO-pk="{{ po.Purchase_Order_ID }}" onchange="updateProgress(this)">
+                      <option value="Pending" {% if po.Progress == "Pending" %}selected{% endif %}>Pending</option>
+                      <option value="Ongoing" {% if po.Progress == "Ongoing" %}selected{% endif %}>Ongoing</option>
+                      <option value="Shipped" {% if po.Progress == "Shipped" %}selected{% endif %}>Shipped</option>
+                    </select>
+                  </td>
+                  <td> 
+                      <a href="#" type="button" class="btn btn-danger">Delete</a>
+                    </td>   
+                  <td> 
+                      <a href="{% url 'close_po' pk=po.pk %}" type="button" class="btn btn-success">Close</a>
+                    </td>   
+                  <td> 
+                    <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
+                  </td>             
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+
+</body>
+{% endblock %}
