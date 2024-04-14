@@ -160,6 +160,18 @@
                                             </thead>
                                             <tbody id="product-list">
                                                 <!-- Products will be appended here as rows -->
+                                                <!-- Loop through stock_ordered_items and display the stock ordered -->
+                                                {% for products in products_ordered %}
+                                                <tr>
+                                                    <td>{{ products.Product_ID.Name }}</td>
+                                                    <td>{{ products.Product_ID.EAS_Product_ID }}</td>
+                                                    <td>{{ products.Product_ID.Price }}</td>
+                                                    <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value= {{products.Quantity}}></td>
+                                                    <td>{{ products.Product_ID.Actual_Inventory_Count }}</td>
+                                                    <input type="hidden" class="product_pk" value={{products.Product_ID.Product_ID}}>
+                                                    <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
+                                                </tr>
+                                                {% endfor %}
                                             </tbody>
                                         </table>
                                         <input type="hidden" name="all_products" id="all_products" value="">  
@@ -561,7 +573,16 @@
             var quantityInputs = document.querySelectorAll('.quantity-input');
             var isValid = true;
 
-            quantityInputs.forEach(function(input) {
+            // Check if there's at least one product in the left column
+            var productListRows = document.querySelectorAll("#PO_products tbody tr");
+            if (productListRows.length === 0) {
+                isValid = false;
+                // Display alert message
+                alert("There should be at least 1 product in the products ordered.");
+            }
+
+            // Check if all quantities are valid
+            quantityInputs.forEach(function (input) {
                 if (parseInt(input.value) < 1) {
                     isValid = false;
                     // Show error message or handle invalid input as desired
@@ -570,7 +591,7 @@
             });
 
             if (isValid) {
-                nextStep(); // Proceed to the next step if all quantities are valid
+                nextStep(); // Proceed to the next step if all quantities are valid and at least one product is selected
             }
         }
 

@@ -7,7 +7,7 @@
 
 {% block content %}
 <head>
-    <title>Current Purchase Orders</title>
+    <title>Purchase Order History</title>
 </head>
 
 <body class="bg-light">
@@ -15,7 +15,7 @@
 
     <div class="row p-1" style="background-color: #eee;">
       <div class="col-md-auto d-flex align-items-center">
-        <h4 class="m-0 mr-3">Current Purchase Orders</h4>
+        <h4 class="m-0 mr-3">Closed Purchase Orders</h4>
       </div>
     </div>
     {% if error_msg %}
@@ -27,19 +27,7 @@
     <div class="row mt-3">
       <!-- Buttons column -->
       <div class="col-md-auto">
-        <div class="dropdown">
-          
-          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-            Add Purchase Order
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li><a href="{% url 'add_po_direct_customer' %}" class="dropdown-item">Direct Customer</a></li>
-            <li><a href="{% url 'add_po_consignee' %}" class="dropdown-item">Consignee</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-md-auto">
-        <a href="{% url 'history_po' %}" class="btn btn-primary">Purchase Order History</a>
+        <a href="{% url 'current_pos' %}" class="btn btn-primary">Back</a>
       </div>
     </div>
 
@@ -50,21 +38,21 @@
           <thead>
             <tr>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Purchase Order No.</th>
-              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Requested Date</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Creation Date</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Fulfillment Date</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Type of Customer</th>
-              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Customer Name</th>
-              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Progress</th>
-              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
-              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
-              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Purchaser Name</th>
+              <th scope="col" style="background-color: #C2C1C1;">Action</th>
+              <!-- <th scope="col" style="background-color: #C2C1C1; text-align: center;">Closed by</th> -->
             </tr>
           </thead>
           <tbody>
             {% for po in purchase_orders %}
-              {% if po.PO_Status != "Closed" %}
+              {% if po.PO_Status == "Closed" %}
                 <tr>  
                   <td class="iname" style="text-align: center;">{{po.Purchase_Order_ID}}</td>
                   <td class="iid" style="text-align: center;">{{po.Requested_Date}}</td>
+                  <td class="iid" style="text-align: center;">{{po.Fulfilled_Date}}</td>
 
                   {% if po.Customer_ID %}
                     <td class="iact_inv_cnt" style="text-align: center;">{{po.Customer_ID.Customer_Type}}</td>
@@ -74,7 +62,7 @@
                     <td class="iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Consignee_Name}}</td>
                   {% endif %}
 
-                  <td class="iact_inv_cnt" style="text-align: center;">
+                  <!-- <td class="iact_inv_cnt" style="text-align: center;">
                     <select class="PO_progress_dropdown" name="PO_progress_dropdown" data-PO-pk="{{ po.Purchase_Order_ID }}" onchange="updateProgress(this)">
                       <option value="Pending" {% if po.Progress == "Pending" %}selected{% endif %}>Pending</option>
                       <option value="Ongoing" {% if po.Progress == "Ongoing" %}selected{% endif %}>Ongoing</option>
@@ -86,7 +74,7 @@
                     </td>   
                   <td> 
                       <a href="{% url 'close_po' pk=po.pk %}" type="button" class="btn btn-success">Close</a>
-                    </td>   
+                    </td>    -->
                   <td> 
                     <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
                   </td>             
@@ -102,29 +90,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
-  
-  <script>
-    function updateProgress(dropdown) {
-      const selectedValue = $(dropdown).val();
-      var PO_pk = $(dropdown).data('po-pk');
-      
-      let csrftoken = '{{ csrf_token }}'
-
-      $.ajax({
-        url: '/update_PO_progress/' + PO_pk +"/",
-        method: 'POST',
-        contentType: 'application/json',
-        headers:{'X-CSRFToken':csrftoken},
-        data: JSON.stringify({ progress: selectedValue }),
-        success: function(response) {
-          console.log('Progress updated successfully');
-        },
-        error: function(xhr, status, error) {
-          console.error(error);
-        }
-      });
-    }
-  </script>
 
 </body>
 {% endblock %}

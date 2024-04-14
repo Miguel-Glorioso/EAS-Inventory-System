@@ -278,7 +278,8 @@
                             <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button type="submit" class="btn btn-success" id="submit_po">Submit</button>
+                            <!-- <button type="submit" class="btn btn-success" id="submit_po">Submit</button> -->
+                            <button type="submit" class="btn btn-success" id="submit_po" onclick="return confirm('Are you sure you want to create this purchase order?')">Submit</button>
                         </div>
                     </div>
                 </div>
@@ -563,7 +564,16 @@
             var quantityInputs = document.querySelectorAll('.quantity-input');
             var isValid = true;
 
-            quantityInputs.forEach(function(input) {
+            // Check if there's at least one product in the left column
+            var productListRows = document.querySelectorAll("#PO_products tbody tr");
+            if (productListRows.length === 0) {
+                isValid = false;
+                // Display alert message
+                alert("There should be at least 1 product in the products ordered.");
+            }
+
+            // Check if all quantities are valid
+            quantityInputs.forEach(function (input) {
                 if (parseInt(input.value) < 1) {
                     isValid = false;
                     // Show error message or handle invalid input as desired
@@ -572,7 +582,7 @@
             });
 
             if (isValid) {
-                nextStep(); // Proceed to the next step if all quantities are valid
+                nextStep(); // Proceed to the next step if all quantities are valid and at least one product is selected
             }
         }
 
