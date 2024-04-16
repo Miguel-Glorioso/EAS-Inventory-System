@@ -51,7 +51,6 @@ def inventory_list(request):
         consignee_products = all_consignee_products.filter(Consignee_ID=consignee)
         product_ids = consignee_products.values_list('Product_ID', flat=True)
         all_inventory = all_inventory.filter(Product_ID__in=product_ids)
-    print(hidden_param)
     return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products, 'show_hidden':show_hidden})
 
 def add_product(request):
@@ -392,9 +391,11 @@ def add_purchase_order_consignee(request):
         Total_Price = request.POST.get('total_price')
         Shipping_Method = request.POST.get('shipping_method')
         Order_Method = request.POST.get('order_method')
-        PO_Consignee = request.POST.get('consignee') #depends whats the input getting if the whole consignee or just the Consignee_ID
-        PO_Consignee = get_object_or_404(Consignee, Consignee_ID=PO_Consignee)
+        PO_Consignee = request.POST.get('consignee')
+        PO_account = request.POST.get('account')
 
+        PO_Consignee = get_object_or_404(Consignee, Consignee_ID=PO_Consignee)
+        PO_account = get_object_or_404(Account,pk=PO_account)
         if Requested_Date == '':
             Requested_Date = None
 
@@ -408,7 +409,7 @@ def add_purchase_order_consignee(request):
             Shipping_Method=Shipping_Method,
             Order_Method=Order_Method,
             Consignee_ID=PO_Consignee,
-            # Account_ID=PO_account,
+            Account_ID_Created_by=PO_account,
             Total_Due=Total_Price,
             Notes=Order_Notes,
             )
@@ -447,8 +448,12 @@ def add_purchase_order_direct_customer(request):
         Order_Notes = request.POST.get('order_notes')
         Products = request.POST.get('all_products')
         Total_Price = request.POST.get('total_price')
+        PO_account = request.POST.get('account')
         print(Order_Method)
         
+        PO_account = get_object_or_404(Account,pk=PO_account)
+        
+
         print(Order_Method)
         existing_customer = Customer.objects.filter(
                 Customer_Name = Customer_Name,
@@ -490,7 +495,7 @@ def add_purchase_order_direct_customer(request):
                 Shipping_Method=Shipping_Method,
                 Order_Method=Order_Method,
                 Customer_ID=PO_customer,
-                # Account_ID=PO_account,
+                Account_ID_Created_by=PO_account,
                 Total_Due=Total_Price,
                 Notes=Order_Notes,
                 )
@@ -522,8 +527,9 @@ def view_po(request, pk):
     products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
     return render(request, 'inventoryapp/view_po.html', {'po':purchase_order, 'products':products_ordered})
 
-def close_po(request, pk):
+def close_po(request, pk, account_id):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
+    account = get_object_or_404(Account,pk=account_id )
     if purchase_order.PO_Status != 'Closed':
         products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
 
@@ -561,6 +567,7 @@ def close_po(request, pk):
             purchase_order.Fulfilled_Date = timezone.now()
             purchase_order.PO_Status = 'Closed'
             purchase_order.Progress = 'Shipped'
+            purchase_order.Account_ID_Closed_by = account
             purchase_order.save()
         
         else:

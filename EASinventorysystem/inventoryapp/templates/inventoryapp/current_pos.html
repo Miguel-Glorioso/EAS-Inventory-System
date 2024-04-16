@@ -54,6 +54,7 @@
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Type of Customer</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Customer Name</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Progress</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Created By</th>
               <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
               <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
               <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
@@ -81,11 +82,12 @@
                       <option value="Shipped" {% if po.Progress == "Shipped" %}selected{% endif %}>Shipped</option>
                     </select>
                   </td>
+                  <td class="iact_inv_cnt" style="text-align: center;">{{po.Account_ID_Created_by}}</td>
                   <td> 
                       <a href="#" type="button" class="btn btn-danger">Delete</a>
                     </td>   
                   <td> 
-                      <a href="{% url 'close_po' pk=po.pk %}" type="button" class="btn btn-success">Close</a>
+                      <a href="{% url 'close_po' pk=po.pk account_id=request.user.account.pk %}" type="button" class="btn btn-success">Close</a>
                     </td>   
                   <td> 
                     <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>

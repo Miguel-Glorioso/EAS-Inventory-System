@@ -64,8 +64,9 @@ class Purchase_Order(models.Model):
     Order_Method = models.CharField(max_length=32)
     Customer_ID = models.ForeignKey('Customer', on_delete=models.PROTECT, null=True, blank=True) #null if it is a consignee
     Consignee_ID = models.ForeignKey('Consignee', on_delete=models.PROTECT, null=True, blank=True) #null if it is a customer
-    Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT, null=True, blank=True) # temporarily null
-
+    Account_ID_Closed_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='po_closed', null=True, blank=True)
+    Account_ID_Created_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='po_created', null=True, blank=True)
+    
     def __str__(self):
         return f" Purchase Order # {self.Purchase_Order_ID}"
 
@@ -87,7 +88,8 @@ class Product_Requisition_Order(models.Model):
     Notes = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)
     Progress = models.CharField(max_length=16, default = "Pending")
     PRO_Status = models.CharField(max_length=16, default = "Ongoing")
-    Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT, null=True, blank=True) # temporarily null
+    Account_ID_Closed_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='pro_closed', null=True, blank=True)
+    Account_ID_Created_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='pro_created', null=True, blank=True) # temporarily null
     
     def __str__(self):
         return f" Product Requisition Order # {self.Product_Requisition_ID}"

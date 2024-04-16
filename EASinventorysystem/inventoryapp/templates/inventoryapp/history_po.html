@@ -42,6 +42,7 @@
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Fulfillment Date</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Type of Customer</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Purchaser Name</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Closed By</th>
               <th scope="col" style="background-color: #C2C1C1;">Action</th>
               <!-- <th scope="col" style="background-color: #C2C1C1; text-align: center;">Closed by</th> -->
             </tr>
@@ -61,7 +62,7 @@
                     <td class="iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Customer_Type}}</td>
                     <td class="iact_inv_cnt" style="text-align: center;">{{po.Consignee_ID.Consignee_Name}}</td>
                   {% endif %}
-
+                  <td class="iid" style="text-align: center;">{{po.Account_ID_Closed_by}}</td>
                   <!-- <td class="iact_inv_cnt" style="text-align: center;">
                     <select class="PO_progress_dropdown" name="PO_progress_dropdown" data-PO-pk="{{ po.Purchase_Order_ID }}" onchange="updateProgress(this)">
                       <option value="Pending" {% if po.Progress == "Pending" %}selected{% endif %}>Pending</option>
@@ -71,10 +72,7 @@
                   </td>
                   <td> 
                       <a href="#" type="button" class="btn btn-danger">Delete</a>
-                    </td>   
-                  <td> 
-                      <a href="{% url 'close_po' pk=po.pk %}" type="button" class="btn btn-success">Close</a>
-                    </td>    -->
+                    </td>      -->
                   <td> 
                     <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
                   </td>             
