@@ -1,7 +1,6 @@
 <link rel ="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
 <link rel ="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
@@ -54,7 +53,6 @@
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Type of Customer</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Customer Name</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Progress</th>
-              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Created By</th>
               <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
               <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
               <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
@@ -82,7 +80,6 @@
                       <option value="Shipped" {% if po.Progress == "Shipped" %}selected{% endif %}>Shipped</option>
                     </select>
                   </td>
-                  <td class="iact_inv_cnt" style="text-align: center;">{{po.Account_ID_Created_by}}</td>
                   <td> 
                       <a href="#" type="button" class="btn btn-danger">Delete</a>
                     </td>   

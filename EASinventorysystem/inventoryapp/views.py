@@ -606,8 +606,10 @@ def add_requisition_order(request):
         total_cost =  request.POST.get('total_cost')
         pro_notes = request.POST.get('pro_notes')
         Products = request.POST.get('all_products')
+        PRO_account = request.POST.get('account')
         
-        print(Products, 'checker', total_cost)
+        
+        PRO_account = get_object_or_404(Account, pk=PRO_account)
 
         current_date = timezone.now()
         
@@ -616,6 +618,7 @@ def add_requisition_order(request):
             Creation_Date=current_date,
             PRO_Manufacturer=manufacturer_name,
             Total_Cost=total_cost,
+            Account_ID_Created_by = PRO_account,
             Notes=pro_notes,
         )
 
@@ -685,13 +688,12 @@ def update_pro(request, pk):
     
 def view_pro(request, pk):
     product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
-    print(product_requisition_order, 'yes')
     stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID = pk)
-    print(stocks_ordered)
     return render(request, 'inventoryapp/view_pro.html', {'pro':product_requisition_order, 'stocks':stocks_ordered})
 
-def close_pro(request, pk):
+def close_pro(request, pk, account_id):
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+    account = get_object_or_404(Account,pk=account_id )
     if requisition_order.PRO_Status != 'Closed':
         stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
 
@@ -722,6 +724,7 @@ def close_pro(request, pk):
         requisition_order.Received_Date = timezone.now()
         requisition_order.PRO_Status = 'Closed'
         requisition_order.Progress = 'To be Picked Up'
+        requisition_order.Account_ID_Closed_by = account
         requisition_order.save()
     
     return redirect('current_pros')

@@ -43,7 +43,7 @@ urlpatterns = [
     path('update_PRO_progress/<int:PRO_pk>/', views.update_PRO_progress, name='update_PRO_progress'), 
     
     path('close_po/<int:pk>/<int:account_id>/', views.close_po, name='close_po'),
-    path('close_pro/<int:pk>/', views.close_pro, name='close_pro'),
+    path('close_pro/<int:pk>/<int:account_id>/', views.close_pro, name='close_pro'),
     path('add_pro', views.add_requisition_order, name='add_pro'),
     path('view_pro/<int:pk>/', views.view_pro, name='view_pro'), 
     path('update_pro/<int:pk>/', views.update_pro, name='update_pro'),
