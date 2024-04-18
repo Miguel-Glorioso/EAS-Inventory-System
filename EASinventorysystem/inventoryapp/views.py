@@ -974,3 +974,7 @@ def update_PO_consignee(request, po_pk, c_pk):
 def history_PO(request):
     all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
     return render(request, 'inventoryapp/history_po.html', {'purchase_orders':all_purchase_orders})
+
+def history_PRO(request):
+    all_requisition_orders = Product_Requisition_Order.objects.all().order_by('Creation_Date')
+    return render(request, 'inventoryapp/history_pro.html', {'requisition_orders':all_requisition_orders})

@@ -35,6 +35,7 @@ urlpatterns = [
     path('update_po_consignee/<int:po_pk>/<int:c_pk>/', views.update_PO_consignee, name='update_po_consignee'),
     
     path('history_po', views.history_PO, name='history_po'),
+    path('history_pro', views.history_PRO, name='history_pro'),
     
     path('current_pros', views.requisition_order_list, name='current_pros'),
     path('view_po/<int:pk>/', views.view_po, name='view_po'), 
