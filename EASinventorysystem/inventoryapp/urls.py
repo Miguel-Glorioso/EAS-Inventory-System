@@ -57,4 +57,6 @@ urlpatterns = [
     path('view_customer/<str:customer_type>/<int:customer_id>/', views.view_customer, name='view_customer'),
     path('update_direct_customer/<int:pk>/', views.update_direct_customer, name='update_direct_customer'),
     path('update_consignee/<int:pk>/', views.update_consignee, name='update_consignee'),
+
+    path('CatsAndTags', views.CatsAndTags, name='CatsAndTags'),
 ]

@@ -1,0 +1,139 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>Categories and Tags</title>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+  <div class="row p-1" style="background-color: #eee;">
+    <div class="col-md-auto d-flex align-items-center">
+      <h4 class="m-0 mr-3">Categories and Tags</h4>
+    </div>
+  </div>
+
+  <!-- Buttons row -->
+  <div class="row mt-3">
+    <!-- Buttons column -->
+    <div class="col-md-auto">
+      <!-- Create New Category Button -->
+      <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Create New Category</button>
+    </div>
+    <div class="col-md-auto">
+      <!-- Create New Tag Button -->
+      <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addTagModal">Create New Tag</button>
+    </div>
+  </div>
+
+  <!-- Table Categories and Tags row -->
+  <div class="row mt-3">
+    <!-- Categories Column -->
+    <div class="col-md-6">
+      <div class="table-responsive">
+        <table id="currentCategories" class="table text-center">
+          <thead>
+            <tr>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Category Name</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Description</th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Iterate over categories and display them -->
+            {% for category in categories %}
+              <tr>
+                <td style="text-align: center;">{{ category.Category_Name }}</td>
+                <td style="text-align: center;">{{ category.Description }}</td>
+                <td>
+                  <!-- Add any additional actions here if needed -->
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Tags Column -->
+    <div class="col-md-6">
+      <div class="table-responsive">
+        <table id="currentTags" class="table text-center">
+          <thead>
+            <tr>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Tag Name</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Color</th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Iterate over consignees and display their associated tags -->
+            {% for consignee in consignees %}
+                <tr>
+                  <td style="text-align: center;"><span class="badge" id="badge-{{ forloop.counter }}">{{ consignee.Consignee_Name }}</span></td>
+                  <td style="text-align: center;">{{ consignee.Tag_Hex_Color_ID }}</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals for adding new categories and tags -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
+  aria-hidden="true">
+  <!-- Category Modal Content Goes Here -->
+</div>
+
+<div class="modal fade" id="addTagModal" tabindex="-1" role="dialog" aria-labelledby="addTagModalLabel"
+  aria-hidden="true">
+  <!-- Tag Modal Content Goes Here -->
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Get all badge elements
+    var badges = document.querySelectorAll('.badge');
+    
+    // Loop through each badge element
+    badges.forEach(function(badge, index) {
+      // Get the corresponding hex color
+      var hexColor = badge.parentElement.nextElementSibling.textContent;
+      
+      // Set the background color of the badge
+      badge.style.backgroundColor = hexColor;
+      
+      // Check if the background color is light
+      if (isColorLight(hexColor)) {
+        badge.style.color = '#000000'; // Set text color to black
+      } else {
+        badge.style.color = '#ffffff'; // Set text color to white
+      }
+    });
+
+    // Function to check if a color is light
+    function isColorLight(color) {
+      // Convert hex color to RGB
+      var r = parseInt(color.substr(1, 2), 16);
+      var g = parseInt(color.substr(3, 2), 16);
+      var b = parseInt(color.substr(5, 2), 16);
+      
+      // Calculate luminance
+      var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // Check if luminance is greater than 0.5 (light color)
+      return luminance > 0.5;
+    }
+  });
+</script>
+
+</body> 
+{% endblock %}

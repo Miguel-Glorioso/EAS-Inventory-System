@@ -978,3 +978,10 @@ def history_PO(request):
 def history_PRO(request):
     all_requisition_orders = Product_Requisition_Order.objects.all().order_by('Creation_Date')
     return render(request, 'inventoryapp/history_pro.html', {'requisition_orders':all_requisition_orders})
+
+def CatsAndTags(request):
+    consignees = Consignee.objects.all()
+    categories = Category.objects.all()
+
+    # Render the template with the consignees and categories
+    return render(request, 'inventoryapp/CatsAndTags.html', {'consignees': consignees, 'categories': categories})
