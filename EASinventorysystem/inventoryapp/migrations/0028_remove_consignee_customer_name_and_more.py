@@ -10,20 +10,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='consignee',
-            old_name='Customer_Name',
-            new_name='Consignee_Name',
-        ),
-        migrations.AddField(
-            model_name='consignee',
-            name='Consignee_Name',
-            field=models.CharField(default='consignee', max_length=32),
-            preserve_default=False,
-        ),
-        migrations.AlterField(
-            model_name='consignee',
-            name='Consignee_Tag_ID',
-            field=models.CharField(max_length=32, unique=True),
-        ),
     ]

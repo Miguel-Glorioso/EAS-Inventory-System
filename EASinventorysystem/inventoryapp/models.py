@@ -34,7 +34,7 @@ class Product(models.Model):
     To_Be_Received_Inventory_Count = models.PositiveIntegerField(validators =[MaxValueValidator(9999)], default = 0)
     Visibility = models.BooleanField(default=True)
     Product_Low_Stock_Threshold = models.PositiveIntegerField(validators =[MaxValueValidator(9999)], null=True, blank=True)
-    Product_Stock_Status = models.CharField(max_length=16) # needs implementation
+    Product_Stock_Status = models.CharField(max_length=16) 
     Category = models.ForeignKey("Category", on_delete=models.PROTECT)
 
     def __str__(self):
