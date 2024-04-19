@@ -43,7 +43,7 @@ class Product(models.Model):
 class Category(models.Model):
     Category_ID = models.AutoField(primary_key=True)
     Category_Name = models.CharField(max_length=32)
-    Category_Hex_Color_ID = models.CharField(max_length=7)
+    Category_Hex_Color_ID = models.CharField(max_length=7, unique=True)
     Description = models.TextField(validators =[MaxLengthValidator(1024)])
     Category_Product_Low_Stock_Threshold = models.PositiveIntegerField(validators =[MaxValueValidator(9999)])
     Notes = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)
@@ -133,7 +133,7 @@ class Consignee(models.Model):
     Consignment_Period_End = models.DateField()
     Emergency_Contact_Number = models.CharField(max_length=11)
     Email_Address = models.EmailField(max_length=128)
-    Tag_Hex_Color_ID = models.CharField(max_length=7)
+    Tag_Hex_Color_ID = models.CharField(max_length=7, unique=True)
 
     def __str__(self):
         return self.Consignee_Name
