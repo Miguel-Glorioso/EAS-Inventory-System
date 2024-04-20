@@ -1,0 +1,90 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row p-1" style="background-color: #eee;">
+        <div class="col-md-auto d-flex align-items-center">
+            <h4 class="m-0 mr-3">Add Category</h4>
+        </div>
+    </div>
+    {% if error_msg %}
+        <div class="alert alert-danger" role="alert">
+            {{ error_msg }}
+        </div>
+    {% endif %}
+    <form method="POST" action="{% url 'add_category' %}">
+        {% csrf_token %}
+        <legend>Category Information</legend>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="required" for="id_Category_Name" class="form-label custom-text">Category Name:</label>
+                    <input type="text" name="category_name" class="form-control" maxlength="32" required id="id_Category_Name" placeholder="Category Name">
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <label class="required" for="id_Category_Hex_Color_ID">Category Color Picker:</label>
+                <input type="color" name="category_hex_color_id" value="#000000" required id="id_Category_Hex_Color_ID">
+                <div id="colorDisplay">#000000</div>
+            </div>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var colorPicker = document.getElementById('id_Category_Hex_Color_ID');
+                    var colorDisplay = document.getElementById('colorDisplay');
+                    function updateColorDisplay() {
+                        colorDisplay.textContent = colorPicker.value;
+                    }
+                    updateColorDisplay();
+                    colorPicker.addEventListener('input', function() {
+                        updateColorDisplay();
+                    });
+                });
+            </script>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="id_Category_Product_Low_Stock_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
+                    <div class="input-group">
+                        <input type="number" min='0' name="category_product_low_stock_threshold" class="form-control" required id="id_Category_Product_Low_Stock_Threshold" placeholder="0">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            
+                function incrementThreshold() {
+                    var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
+                    input.stepUp();
+                }
+
+                function decrementThreshold() {
+                    var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
+                    input.stepDown();
+                }
+        </script>
+        <div class="mb-3">
+            <label class="required" for="id_Description" class="form-label custom-text">Description:</label>
+            <textarea name="description" class="form-control" maxlength="1024" required id="id_Description" placeholder="Description"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="id_Notes" class="form-label custom-text">Notes:</label>
+            <textarea name="notes" class="form-control" maxlength="1024" id="id_Notes" placeholder="Notes"></textarea>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="{% url 'categories_consignee_tags' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+            <div class="col-md-6 text-end">
+                <button type="submit" class="btn btn-success">Create</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

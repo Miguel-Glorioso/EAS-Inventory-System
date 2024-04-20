@@ -985,3 +985,27 @@ def categories_consignee_tags(request):
 
     # Render the template with the consignees and categories
     return render(request, 'inventoryapp/categories_consignee_tags.html', {'consignees': consignees, 'categories': categories})
+
+def add_category(request):
+    if request.method == 'POST':
+        Category_Name = request.POST.get('category_name')
+        Category_Hex_Color_ID = request.POST.get('category_hex_color_id')
+        Description = request.POST.get('description')
+        Category_Product_Low_Stock_Threshold = request.POST.get('category_product_low_stock_threshold')
+        Notes = request.POST.get('notes')
+
+        existing_category = Category.objects.filter(Category_Name=Category_Name)
+        if existing_category.exists():
+            error_msg = 'Category Already Exists'
+            return render(request, 'inventoryapp/categories_consignee_tags.html', {'error_msg': error_msg})
+        else:
+            Category.objects.create(
+                Category_Name=Category_Name,
+                Category_Hex_Color_ID=Category_Hex_Color_ID,
+                Description=Description,
+                Category_Product_Low_Stock_Threshold=Category_Product_Low_Stock_Threshold,
+                Notes=Notes
+            )
+            return redirect('inventoryapp/categories_consignee_tags.html')
+    else:
+        return render(request, 'inventoryapp/add_category.html')
