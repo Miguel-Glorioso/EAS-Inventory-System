@@ -81,7 +81,7 @@ DATABASES = {
             'ENGINE': 'django.db.backends.mysql',
             'USER': 'root',
             'NAME': 'eas_inventory',
-            'PASSWORD': 'mysqlpassword321',
+            'PASSWORD': '',
             'HOST': 'localhost',
             'PORT': '3306',
         }
