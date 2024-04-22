@@ -1006,6 +1006,6 @@ def add_category(request):
                 Category_Product_Low_Stock_Threshold=Category_Product_Low_Stock_Threshold,
                 Notes=Notes
             )
-            return redirect('inventoryapp/categories_consignee_tags.html')
+            return redirect('categories_consignee_tags')
     else:
         return render(request, 'inventoryapp/add_category.html')

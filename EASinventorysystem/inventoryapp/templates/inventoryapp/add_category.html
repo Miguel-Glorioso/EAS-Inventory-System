@@ -49,11 +49,9 @@
                     <div class="mb-3">
                         <label for="id_Category_Product_Low_Stock_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
                         <div class="input-group">
+                            <button type="button" class="btn btn-secondary" onclick="changeValue(-1)">-</button>
                             <input type="number" min="0" name="category_product_low_stock_threshold" class="form-control" required id="id_Category_Product_Low_Stock_Threshold" placeholder="0">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
-                                <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>
-                            </div>
+                            <button type="button" class="btn btn-secondary" onclick="changeValue(1)">+</button>
                         </div>
                     </div>
                 </div>
@@ -66,6 +64,30 @@
                 <label for="id_Notes" class="form-label custom-text">Notes:</label>
                 <textarea name="notes" class="form-control" maxlength="1024" id="id_Notes" placeholder="Notes"></textarea>
             </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="id_Category_Product_Low_Stock_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
+                    <div class="input-group">
+                        <input type="number" min="0" name="category_product_low_stock_threshold" class="form-control" required id="id_Category_Product_Low_Stock_Threshold" placeholder="0">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                function incrementThreshold() {
+                    var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
+                    input.stepUp();
+                }
+            
+                function decrementThreshold() {
+                    var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
+                    input.stepDown();
+                }
+            </script>
             <div class="row">
                 <div class="col-md-6">
                     <a href="{% url 'categories_consignee_tags' %}" class="btn btn-secondary">Cancel</a>
@@ -76,19 +98,17 @@
             </div>
         </form>
     </div>
+
     {% endblock %}
 
     <script>
-        function incrementThreshold() {
-            var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
-            input.stepUp();
-        }
-
-        function decrementThreshold() {
-            var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
-            input.stepDown();
-        }
-
+        function changeValue(delta) {
+        var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
+        var value = parseInt(input.value, 10) || 0;
+        value += delta;
+        if (value < 0) value = 0; // Ensure the value doesn't go below 0
+        input.value = value;
+    }
         document.addEventListener('DOMContentLoaded', function() {
             var colorPicker = document.getElementById('id_Category_Hex_Color_ID');
             var colorDisplay = document.getElementById('colorDisplay');
@@ -101,5 +121,6 @@
             });
         });
     </script>
+    
 </body>
 </html>
