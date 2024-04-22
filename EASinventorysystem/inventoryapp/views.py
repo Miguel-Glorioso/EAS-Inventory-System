@@ -1009,3 +1009,18 @@ def add_category(request):
             return redirect('categories_consignee_tags')
     else:
         return render(request, 'inventoryapp/add_category.html')
+    
+def view_category(request, category_id):
+    try:
+        category = Category.objects.get(Category_ID=category_id)
+        response_data = {
+            'category_id': category.Category_ID,
+            'name': category.Category_Name,
+            'hex_color_id': category.Category_Hex_Color_ID,
+            'description': category.Description,
+            'low_stock_threshold': category.Category_Product_Low_Stock_Threshold,
+            'notes': category.Notes,
+        }
+        return JsonResponse(response_data)
+    except Category.DoesNotExist:
+        return JsonResponse({'error': 'Category not found'}, status=404)

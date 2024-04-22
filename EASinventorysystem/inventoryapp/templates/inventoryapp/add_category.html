@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +17,7 @@
           color: red;
         }
       </style>
-    {% extends 'inventoryapp/base.html' %}
-    {% load static %}
-    
-    {% block content %}
+
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
             <div class="col-md-auto d-flex align-items-center">
@@ -28,7 +29,7 @@
                 {{ error_msg }}
             </div>
         {% endif %}
-        <form method="POST" action="{% url 'add_category' %}">
+        <form id="categoryForm" method="POST" action="{% url 'add_category' %}">
             {% csrf_token %}
             <legend>Category Information</legend>
             <div class="row">
@@ -64,51 +65,70 @@
                 <label for="id_Notes" class="form-label custom-text">Notes:</label>
                 <textarea name="notes" class="form-control" maxlength="1024" id="id_Notes" placeholder="Notes"></textarea>
             </div>
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label for="id_Category_Product_Low_Stock_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
-                    <div class="input-group">
-                        <input type="number" min="0" name="category_product_low_stock_threshold" class="form-control" required id="id_Category_Product_Low_Stock_Threshold" placeholder="0">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
-                            <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <script>
-                function incrementThreshold() {
-                    var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
-                    input.stepUp();
-                }
-            
-                function decrementThreshold() {
-                    var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
-                    input.stepDown();
-                }
-            </script>
             <div class="row">
                 <div class="col-md-6">
                     <a href="{% url 'categories_consignee_tags' %}" class="btn btn-secondary">Cancel</a>
                 </div>
                 <div class="col-md-6 text-end">
-                    <button type="submit" class="btn btn-success">Create</button>
+                    <button type="button" id="nextButton" class="btn btn-success" onclick="showCategorySummary()">Next</button>
                 </div>
             </div>
         </form>
+        
+        <div id="categorySummary" style="display: none;">
+            <h5>Category Summary:</h5>
+            <p id="categoryNameSummary"></p>
+            <p id="categoryColorSummary"></p>
+            <p id="stockThresholdSummary"></p>
+            <p id="descriptionSummary"></p>
+            <p id="notesSummary"></p>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button type="button" class="btn btn-success" onclick="confirmCategory()">Confirm</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {% endblock %}
-
     <script>
+        function showCategorySummary() {
+            var categoryName = document.getElementById('id_Category_Name').value;
+            var categoryColor = document.getElementById('id_Category_Hex_Color_ID').value;
+            var stockThreshold = document.getElementById('id_Category_Product_Low_Stock_Threshold').value;
+            var description = document.getElementById('id_Description').value;
+            var notes = document.getElementById('id_Notes').value;
+            
+            document.getElementById('categoryNameSummary').innerText = "Category Name: " + categoryName;
+            document.getElementById('categoryColorSummary').innerText = "Category Color: " + categoryColor;
+            document.getElementById('stockThresholdSummary').innerText = "Stock Level Threshold: " + stockThreshold;
+            document.getElementById('descriptionSummary').innerText = "Description: " + description;
+            document.getElementById('notesSummary').innerText = "Notes: " + notes;
+            
+            document.getElementById('categoryForm').style.display = "none";
+            document.getElementById('categorySummary').style.display = "block";
+        }
+        
         function changeValue(delta) {
-        var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
-        var value = parseInt(input.value, 10) || 0;
-        value += delta;
-        if (value < 0) value = 0; // Ensure the value doesn't go below 0
-        input.value = value;
-    }
+            var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
+            var value = parseInt(input.value, 10) || 0;
+            value += delta;
+            if (value < 0) value = 0; // Ensure the value doesn't go below 0
+            input.value = value;
+        }
+
+        function goBack() {
+            document.getElementById('categoryForm').style.display = "block";
+            document.getElementById('categorySummary').style.display = "none";
+        }
+
+        function confirmCategory() {
+            // Perform any final checks or actions before submitting the form
+            document.getElementById('categoryForm').submit();
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             var colorPicker = document.getElementById('id_Category_Hex_Color_ID');
             var colorDisplay = document.getElementById('colorDisplay');
@@ -124,3 +144,4 @@
     
 </body>
 </html>
+{% endblock %}

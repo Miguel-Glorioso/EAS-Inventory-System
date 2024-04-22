@@ -36,7 +36,7 @@
             <tr>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Category Name</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Description</th>
-              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"></th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false">Actions</th> <!-- Add Actions column header -->
             </tr>
           </thead>
           <tbody>
@@ -46,7 +46,7 @@
                 <td style="text-align: center;">{{ c.Category_Name }}</td>
                 <td style="text-align: center;">{{ c.Description }}</td>
                 <td>
-                  <!-- Add any additional actions here if needed -->
+                  <a href="{% url 'view_category' category_id=c.Category_ID %}" class="btn btn-info">View</a> <!-- View button -->
                 </td>
               </tr>
             {% endfor %}
@@ -126,6 +126,4 @@
   });
 </script>
 
-
-</body> 
 {% endblock %}

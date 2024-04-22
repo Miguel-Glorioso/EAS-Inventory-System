@@ -1,0 +1,16 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="category-information">
+    <h2>Category Information</h2>
+    <ul>
+        <li><strong>Category Name:</strong> {{ category.Category_Name }}</li>
+        <li><strong>Category ID:</strong> {{ category.Category_ID }}</li>
+        <li><strong>Hex Color ID:</strong> {{ category.Category_Hex_Color_ID }}</li>
+        <li><strong>Description:</strong> {{ category.Description }}</li>
+        <li><strong>Low Stock Threshold:</strong> {{ category.Category_Product_Low_Stock_Threshold }}</li>
+        <li><strong>Notes:</strong> {{ category.Notes }}</li>
+    </ul>
+</div>
+{% endblock %}
