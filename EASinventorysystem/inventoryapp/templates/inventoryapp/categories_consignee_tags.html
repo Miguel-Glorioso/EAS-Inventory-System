@@ -41,10 +41,10 @@
           </thead>
           <tbody>
             <!-- Iterate over categories and display them -->
-            {% for category in categories %}
+            {% for c in categories %}
               <tr>
-                <td style="text-align: center;">{{ category.Category_Name }}</td>
-                <td style="text-align: center;">{{ category.Description }}</td>
+                <td style="text-align: center;">{{ c.Category_Name }}</td>
+                <td style="text-align: center;">{{ c.Description }}</td>
                 <td>
                   <!-- Add any additional actions here if needed -->
                 </td>
