@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-    {% extends 'inventoryapp/base.html' %}
+{% extends 'inventoryapp/base.html' %}
 {% load static %}
 
 {% block content %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +13,10 @@
 <body>
     <style>
         .required:after {
-          content:" *";
-          color: red;
+            content: " *";
+            color: red;
         }
-      </style>
+    </style>
 
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
@@ -70,8 +70,8 @@
                     <a href="{% url 'categories_consignee_tags' %}" class="btn btn-secondary">Cancel</a>
                 </div>
                 <div class="col-md-6 text-end">
-                    <button type="button" id="nextButton" class="btn btn-success" onclick="showCategorySummary()">Next</button>
-                </div>
+                    <button type="button" id="nextButton" class="btn btn-success" onclick="showCategorySummary()" disabled>Next</button>
+                </div>                
             </div>
         </form>
         
@@ -93,30 +93,110 @@
         </div>
     </div>
 
+    <!-- Create Confirmation Modal -->
+    <div class="modal fade" id="createConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="createConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createConfirmationModalLabel">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to create this category?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="submitCategoryForm()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelConfirmationModalLabel">Cancel Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cancel adding the category?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Continue</button>
+                    <button type="button" class="btn btn-danger" onclick="cancelCategory()">Yes, Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
+        function showCreateConfirmationModal() {
+            $('#createConfirmationModal').modal('show');
+        }
+
+        function showCancelConfirmationModal() {
+            $('#cancelConfirmationModal').modal('show');
+        }
+
+        function submitCategoryForm() {
+            document.getElementById('categoryForm').submit();
+        }
+
+        function cancelCategory() {
+            window.history.back();
+        }
+
+        document.getElementById('nextButton').addEventListener('click', function () {
+            showCreateConfirmationModal();
+        });
+
+        document.querySelector('a.btn-secondary').addEventListener('click', function () {
+            showCancelConfirmationModal();
+        });
+
         function showCategorySummary() {
             var categoryName = document.getElementById('id_Category_Name').value;
             var categoryColor = document.getElementById('id_Category_Hex_Color_ID').value;
             var stockThreshold = document.getElementById('id_Category_Product_Low_Stock_Threshold').value;
             var description = document.getElementById('id_Description').value;
             var notes = document.getElementById('id_Notes').value;
-            
+
             document.getElementById('categoryNameSummary').innerText = "Category Name: " + categoryName;
             document.getElementById('categoryColorSummary').innerText = "Category Color: " + categoryColor;
             document.getElementById('stockThresholdSummary').innerText = "Stock Level Threshold: " + stockThreshold;
             document.getElementById('descriptionSummary').innerText = "Description: " + description;
             document.getElementById('notesSummary').innerText = "Notes: " + notes;
-            
+
             document.getElementById('categoryForm').style.display = "none";
             document.getElementById('categorySummary').style.display = "block";
         }
-        
+
         function changeValue(delta) {
             var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
             var value = parseInt(input.value, 10) || 0;
             value += delta;
             if (value < 0) value = 0; // Ensure the value doesn't go below 0
             input.value = value;
+            checkFormValidity(); // Check form validity whenever the value changes
+        }
+
+        function checkFormValidity() {
+            var categoryForm = document.getElementById('categoryForm');
+            var nextButton = document.getElementById('nextButton');
+
+            // Check if required fields are filled
+            var categoryName = document.getElementById('id_Category_Name').value;
+            var categoryColor = document.getElementById('id_Category_Hex_Color_ID').value;
+            var description = document.getElementById('id_Description').value;
+
+            if (categoryName.trim() !== "" && categoryColor.trim() !== "" && description.trim() !== "") {
+                nextButton.disabled = false; // Enable the button
+            } else {
+                nextButton.disabled = true; // Disable the button
+            }
         }
 
         function goBack() {
@@ -129,19 +209,33 @@
             document.getElementById('categoryForm').submit();
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            var inputs = document.querySelectorAll('input[type="text"], input[type="color"], textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    checkFormValidity();
+                });
+            });
+
             var colorPicker = document.getElementById('id_Category_Hex_Color_ID');
             var colorDisplay = document.getElementById('colorDisplay');
+
             function updateColorDisplay() {
                 colorDisplay.textContent = colorPicker.value;
             }
+
             updateColorDisplay();
-            colorPicker.addEventListener('input', function() {
+
+            colorPicker.addEventListener('input', function () {
                 updateColorDisplay();
             });
+
+            // Check form validity on load
+            checkFormValidity();
         });
     </script>
-    
 </body>
 </html>
+
+
 {% endblock %}

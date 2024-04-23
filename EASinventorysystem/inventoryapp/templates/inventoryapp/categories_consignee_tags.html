@@ -43,8 +43,8 @@
             <!-- Iterate over categories and display them -->
             {% for c in categories %}
               <tr>
-                <td style="text-align: center;">{{ c.Category_Name }}</td>
-                <td style="text-align: center;">{{ c.Description }}</td>
+                <td style="text-align: center;"><span class="badge" id="badge-category-{{ forloop.counter }}">{{ c.Category_Name }}</span></td>
+                <td style="text-align: center;">{{ c.Category_Hex_Color_ID  }}</td>
                 <td>
                   <a href="{% url 'view_category' category_id=c.Category_ID %}" class="btn btn-info">View</a> <!-- View button -->
                 </td>
@@ -69,7 +69,7 @@
             <!-- Iterate over consignees and display their associated tags -->
             {% for consignee in consignees %}
                 <tr>
-                  <td style="text-align: center;"><span class="badge" id="badge-{{ forloop.counter }}">{{ consignee.Consignee_Name }}</span></td>
+                  <td style="text-align: center;"><span class="badge" id="badge-tag-{{ forloop.counter }}">{{ consignee.Consignee_Name }}</span></td>
                   <td style="text-align: center;">{{ consignee.Tag_Hex_Color_ID }}</td>
                 </tr>
             {% endfor %}
@@ -88,11 +88,11 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    // Get all badge elements
+    // Get all badge elements for categories
     var badges = document.querySelectorAll('.badge');
     
     // Loop through each badge element
-    badges.forEach(function(badge, index) {
+    badges.forEach(function(badge) {
       // Get the corresponding hex color
       var hexColor = badge.parentElement.nextElementSibling.textContent;
       
@@ -101,9 +101,9 @@
       
       // Check if the background color is light
       if (isColorLight(hexColor)) {
-        badge.style.color = '#000000'; // Set text color to black
+        badge.style.color = '#000000'; // Set text color to black for light background
       } else {
-        badge.style.color = '#ffffff'; // Set text color to white
+        badge.style.color = '#ffffff'; // Set text color to white for dark background
       }
 
       // Add a black outline to the badge
@@ -125,5 +125,4 @@
     }
   });
 </script>
-
 {% endblock %}
