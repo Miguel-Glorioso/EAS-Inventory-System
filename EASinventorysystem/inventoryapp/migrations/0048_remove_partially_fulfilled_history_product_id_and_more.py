@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventoryapp', '0047_product_product_low_stock_threshold'),
+        ('inventoryapp', '0045_account_visibility'),
     ]
 
     operations = [
