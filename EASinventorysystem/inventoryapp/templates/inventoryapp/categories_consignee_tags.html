@@ -144,7 +144,10 @@
               <li><strong>Notes:</strong> ${response.Notes}</li>
             </ul>
           `);
-          $('#categoryModal').find('.modal-footer').find('a.btn-primary').attr('href', url + response.categoryId + '/');
+          var categoryId = response.categoryId;
+
+          var editUrl = '/update_category/' + categoryId + '/';
+          $('#categoryModal').find('.modal-footer').find('a.btn-primary').attr('href', editUrl);
           $('#categoryModal').modal('show');
         },
         error: function(xhr, status, error) {

@@ -63,5 +63,6 @@ urlpatterns = [
     path('view_category/<int:category_id>/', views.view_category, name='view_category'),
     path('view_category_details/<int:category_id>/', views.view_category_details, name='view_category_details'),
     path('view_consignee_details/<int:consignee_id>/', views.view_consignee_tag_details, name='view_consignee_details'),
+    path('create__consignee', views.create__consignee, name='create__consignee'),
     path('update_category/<int:category_id>/', views.update_category, name='update_category'),
 ]

@@ -812,7 +812,7 @@ def create_consignee(request):
         )
         if existing_consignee:
             error_msg = 'Consignee Already Exists'
-            return render(request, 'inventoryapp/create__consignee.html',  {'error_msg': error_msg})
+            return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
 
 
         else:   
@@ -865,7 +865,7 @@ def create__consignee(request):
         )
         if existing_consignee:
             error_msg = 'Consignee Already Exists'
-            return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
+            return render(request, 'inventoryapp/create__consignee.html',  {'error_msg': error_msg})
 
 
         else:   
@@ -892,7 +892,7 @@ def create__consignee(request):
             return redirect('categories_consignee_tags')
 
     else:
-        return render(request, 'inventoryapp/create_consignee.html')
+        return render(request, 'inventoryapp/create__consignee.html')
 
 def view_customer(request, customer_type, customer_id):
     try:
