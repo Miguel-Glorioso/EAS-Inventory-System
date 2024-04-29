@@ -27,7 +27,7 @@
         </div>
 
 
-        <form method="POST" action="{% url 'add_po_consignee' %}">
+        <form method="POST" action="{% url 'update_po_consignee' po_pk=PO.Purchase_Order_ID c_pk=C.Consignee_ID %}">
             <!-- First Tab: Consignee Information -->
             <div id="step1">
 
@@ -193,6 +193,10 @@
                                         </table>
                                         <input type="hidden" name="all_products" id="all_products" value="">
                                         <input type="hidden" name="total_price" id="total_price" value="">
+
+                                        {% for p_o in products_ordered %}
+                                        <input type="hidden" name="ordered_prods" id="ordered_prods" value="{{ p_o.Product_ID.EAS_Product_ID}}">  
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
@@ -663,6 +667,18 @@
                 renderTotalPrice();
             }
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+                hideOrderedProducts();
+            });
+
+        function hideOrderedProducts() {
+            var allProductsInputs = document.querySelectorAll('input[name="ordered_prods"]')
+            allProductsInputs.forEach(function(input) {
+                var productId = input.value;
+                hideProduct(productId);
+            });
+        }
     </script>
 </body>
 

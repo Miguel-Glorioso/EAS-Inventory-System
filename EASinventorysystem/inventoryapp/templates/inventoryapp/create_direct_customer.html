@@ -78,10 +78,18 @@
                 <label for="id_notes" class="form-label custom-text">Notes:</label>
                 <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea>
             </div>
-            <div class="col">
+            <div class="row">
+                <div class="col">
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                </div>
+                <div class="col text-end">
+                    <button type="button" class="btn btn-primary" id="createCustomerBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal" disabled>Create Customer</button>
+                </div>
+            </div>
+            <!-- <div class="col">
                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
                 <button type="button" class="btn btn-primary" id="createCustomerBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal" disabled>Create Customer</button>
-            </div>
+            </div> -->
         </form>
     </div>
     
