@@ -67,7 +67,7 @@
                 <div class="row" style="margin-bottom: 10px;">
                     <div class="col-md-4">
                         <label class="required" for="id_zip_code" class="form-label custom-text">Zip Code:</label>
-                        <input type="number" name="zip_code" class="form-control" required id="id_zip_code" placeholder="Zip Code" oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);">
+                        <input type="number" name="zip_code" class="form-control" required id="id_zip_code" placeholder="Zip Code" oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);" pattern="[0-9]{4}" >
                 </select>
                         <div class="col-md-3"></div> <!-- Invisible column -->
                         <div class="col-md-3"></div> <!-- Invisible column -->
@@ -81,7 +81,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="required" for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                        <input type="number" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11">
+                        <input type="tel" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number" pattern="[0-9]{11}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11">
                         <!-- <input type="tel" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" inputmode="numeric" placeholder="Primary Contact Number"> -->
                     </div>
                 </div>
