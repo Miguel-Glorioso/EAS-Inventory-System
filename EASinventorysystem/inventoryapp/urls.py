@@ -54,7 +54,6 @@ urlpatterns = [
     
     path('create_direct_customer', views.create_direct_customer, name='create_direct_customer'),
     path('create_consignee', views.create_consignee, name='create_consignee'),
-    path('create__consignee', views.create__consignee, name='create__consignee'),
     path('view_customer/<str:customer_type>/<int:customer_id>/', views.view_customer, name='view_customer'),
     path('update_direct_customer/<int:pk>/', views.update_direct_customer, name='update_direct_customer'),
     path('update_consignee/<int:pk>/', views.update_consignee, name='update_consignee'),
@@ -63,5 +62,10 @@ urlpatterns = [
     path('add_category', views.add_category, name='add_category'),
     path('view_category/<int:category_id>/', views.view_category, name='view_category'),
 
-    path('inventory_summary', views.generate_inventory_summary, name='generate_inventory_summary')
+    path('inventory_summary', views.generate_inventory_summary, name='generate_inventory_summary'),
+    path('view_category_details/<int:category_id>/', views.view_category_details, name='view_category_details'),
+    path('view_consignee_details/<int:consignee_id>/', views.view_consignee_tag_details, name='view_consignee_details'),
+    path('create__consignee', views.create__consignee, name='create__consignee'),
+    
+    path('update_category/<int:category_id>/', views.update_category, name='update_category'),
 ]

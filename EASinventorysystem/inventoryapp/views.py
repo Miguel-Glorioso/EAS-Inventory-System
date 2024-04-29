@@ -780,7 +780,7 @@ def create_direct_customer(request):
     else:
         return render(request, 'inventoryapp/create_direct_customer.html')
 
-def create__consignee(request):
+def create_consignee(request):
     if request.method == 'POST':
         Consignee_Tag_ID = request.POST.get('consignee_tag_id')
         Consignee_Name = request.POST.get('consignee_name')
@@ -831,10 +831,9 @@ def create__consignee(request):
             return redirect('categories_consignee_tags')
 
     else:
-        return render(request, 'inventoryapp/create__consignee.html')
+        return render(request, 'inventoryapp/create_consignee.html')
     
-
-def create_consignee(request):
+def create__consignee(request):
     if request.method == 'POST':
         Consignee_Tag_ID = request.POST.get('consignee_tag_id')
         Consignee_Name = request.POST.get('consignee_name')
@@ -858,7 +857,7 @@ def create_consignee(request):
         )
         if existing_consignee:
             error_msg = 'Consignee Already Exists'
-            return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
+            return render(request, 'inventoryapp/create__consignee.html',  {'error_msg': error_msg})
 
 
         else:   
@@ -882,10 +881,10 @@ def create_consignee(request):
             )
 
             # Redirect to some page after successful creation
-            return redirect('current_customers')
+            return redirect('categories_consignee_tags')
 
     else:
-        return render(request, 'inventoryapp/create_consignee.html')
+        return render(request, 'inventoryapp/create__consignee.html')
 
 def view_customer(request, customer_type, customer_id):
     try:
@@ -1196,3 +1195,71 @@ def generate_inventory_summary(request):
     all_categories = Category.objects.all()
     all_consignees = Consignee.objects.all()
     return render(request, 'inventoryapp/inventory_summary.html',{'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products})
+
+def view_category_details(request, category_id):
+    try:
+        category = Category.objects.get(pk=category_id)
+        category_details = {
+            'Category_Name': category.Category_Name,
+            'Category_ID': category.Category_ID,
+            'Category_Hex_Color_ID': category.Category_Hex_Color_ID,
+            'Description': category.Description,
+            'Category_Product_Low_Stock_Threshold': category.Category_Product_Low_Stock_Threshold,
+            'Notes': category.Notes,
+        }
+        # Return the category details as JSON response
+        return JsonResponse(category_details)
+    except Category.DoesNotExist:
+        # If the category doesn't exist, return a JSON response with an error message
+        return JsonResponse({'error': 'Category does not exist'}, status=404)
+    
+def view_consignee_tag_details(request, consignee_id):
+    try:
+        consignee = get_object_or_404(Consignee, pk=consignee_id)
+        consignee_details = {
+            'Consignee_ID': consignee.Consignee_ID,
+            'Consignee_Name': consignee.Consignee_Name,
+            'Address_Line_1': consignee.Address_Line_1,
+            'Barangay': consignee.Barangay,
+            'Municipality': consignee.Municipality,
+            'Province': consignee.Province,
+            'Zip_Code': consignee.Zip_Code,
+            'Primary_Contact_Number': consignee.Primary_Contact_Number,
+            'Customer_Type': consignee.Customer_Type,
+            'Notes': consignee.Notes,
+            'Consignment_Period_Start': consignee.Consignment_Period_Start,
+            'Consignment_Period_End': consignee.Consignment_Period_End,
+            'Emergency_Contact_Number': consignee.Emergency_Contact_Number,
+            'Email_Address': consignee.Email_Address,
+            'Tag_Hex_Color_ID': consignee.Tag_Hex_Color_ID,
+        }
+        return JsonResponse(consignee_details)
+    except Consignee.DoesNotExist:
+        return JsonResponse({'error': 'Consignee does not exist'}, status=404)
+    
+def update_category(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    
+    if request.method == 'POST':
+        Category_Name = request.POST.get('category_name')
+        Category_Hex_Color_ID = request.POST.get('category_hex_color_id')
+        Description = request.POST.get('description')
+        Category_Product_Low_Stock_Threshold = request.POST.get('category_product_low_stock_threshold')
+        Notes = request.POST.get('notes')
+
+        # Check if a category with the same name already exists excluding the current one
+        existing_category = Category.objects.filter(Category_Name=Category_Name).exclude(pk=category_id)
+        if existing_category.exists():
+            error_msg = 'Category Already Exists'
+            return render(request, 'inventoryapp/update_category.html', {'error_msg': error_msg, 'category': category})
+        else:
+            # Update the category fields
+            category.Category_Name = Category_Name
+            category.Category_Hex_Color_ID = Category_Hex_Color_ID
+            category.Description = Description
+            category.Category_Product_Low_Stock_Threshold = Category_Product_Low_Stock_Threshold
+            category.Notes = Notes
+            category.save()
+            return redirect('categories_consignee_tags')
+    else:
+        return render(request, 'inventoryapp/update_category.html', {'category': category, 'category_id': category_id})

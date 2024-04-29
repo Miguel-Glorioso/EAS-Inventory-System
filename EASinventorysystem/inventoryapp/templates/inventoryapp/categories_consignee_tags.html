@@ -46,7 +46,7 @@
                 <td style="text-align: center;"><span class="badge" id="badge-category-{{ forloop.counter }}">{{ c.Category_Name }}</span></td>
                 <td style="text-align: center;">{{ c.Category_Hex_Color_ID  }}</td>
                 <td>
-                  <a href="{% url 'view_category' category_id=c.Category_ID %}" class="btn btn-info">View</a> <!-- View button -->
+                  <button type="button" class="btn btn-info btn-view" data-category-id="{{ c.Category_ID }}">View</button>
                 </td>
               </tr>
             {% endfor %}
@@ -71,10 +71,49 @@
                 <tr>
                   <td style="text-align: center;"><span class="badge" id="badge-tag-{{ forloop.counter }}">{{ consignee.Consignee_Name }}</span></td>
                   <td style="text-align: center;">{{ consignee.Tag_Hex_Color_ID }}</td>
+                  <td>
+                    <button type="button" class="btn btn-info btn-view-consignee-tag" data-consignee-id="{{ consignee.Consignee_ID }}">View</button>
+                  </td>
                 </tr>
             {% endfor %}
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="categoryModalLabel">Category Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: gray;"></button>
+      </div>
+      <div class="modal-body">
+        <div id="customerInfo">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary">Edit</a> 
+        <button type="button" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="consigneeTagModal" tabindex="-1" role="dialog" aria-labelledby="consigneeTagModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="consigneeTagModalLabel">Consignee Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: gray;"></button>
+      </div>
+      <div class="modal-body">
+        <div id="consigneeInfo">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary">Edit</a> 
       </div>
     </div>
   </div>
@@ -85,6 +124,76 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+<script>
+  $(document).ready(function() {
+    $('.btn-view').click(function() {
+      var categoryId = $(this).data('category-id');
+      var url = '/view_category_details/' + categoryId + '/';
+      
+      $.ajax({
+        url: url,
+        method: 'GET',
+        success: function(response) {
+          $('#categoryModal').find('.modal-body').html(`
+            <ul>
+              <li><strong>Category Name:</strong> ${response.Category_Name}</li>
+              <li><strong>Category ID:</strong> ${response.Category_ID}</li>
+              <li><strong>Hex Color ID:</strong> ${response.Category_Hex_Color_ID}</li>
+              <li><strong>Description:</strong> ${response.Description}</li>
+              <li><strong>Low Stock Threshold:</strong> ${response.Category_Product_Low_Stock_Threshold}</li>
+              <li><strong>Notes:</strong> ${response.Notes}</li>
+            </ul>
+          `);
+          var categoryId = response.Category_ID;
+
+          var editUrl = '/update_category/' + categoryId + '/';
+          $('#categoryModal').find('.modal-footer').find('a.btn-primary').attr('href', editUrl);
+          $('#categoryModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+  });
+
+  $(document).ready(function() {
+  $('.btn-view-consignee-tag').click(function() {
+    var consigneeId = $(this).data('consignee-id');
+    var url = '/view_consignee_details/' + consigneeId + '/';
+
+    $.ajax({
+      url: url,
+      method: 'GET',
+      success: function(response) {
+        $('#consigneeTagModal').find('.modal-body').html(`
+          <ul>
+            <li><strong>Consignee Name:</strong> ${response.Consignee_Name}</li>
+            <li><strong>Address Line 1:</strong> ${response.Address_Line_1}</li>
+            <li><strong>Barangay:</strong> ${response.Barangay}</li>
+            <li><strong>Municipality:</strong> ${response.Municipality}</li>
+            <li><strong>Province:</strong> ${response.Province}</li>
+            <li><strong>Zip Code:</strong> ${response.Zip_Code}</li>
+            <li><strong>Primary Contact Number:</strong> ${response.Primary_Contact_Number}</li>
+            <li><strong>Customer Type:</strong> ${response.Customer_Type}</li>
+            <li><strong>Notes:</strong> ${response.Notes}</li>
+            <li><strong>Consignment Period Start:</strong> ${response.Consignment_Period_Start}</li>
+            <li><strong>Consignment Period End:</strong> ${response.Consignment_Period_End}</li>
+            <li><strong>Emergency Contact Number:</strong> ${response.Emergency_Contact_Number}</li>
+            <li><strong>Email Address:</strong> ${response.Email_Address}</li>
+            <li><strong>Tag Hex Color ID:</strong> ${response.Tag_Hex_Color_ID}</li>
+          </ul>
+        `);
+        $('#consigneeTagModal').modal('show');
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+      }
+    });
+  });
+});
+
+</script>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
