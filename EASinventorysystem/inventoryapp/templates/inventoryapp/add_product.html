@@ -49,7 +49,7 @@
             <div class="col-md-4">
                 <div class="mb-3">
                     <label class="required" for="id_Sku" class="form-label custom-text">SKU:</label>
-                    <input type="text" name="product_sku" class="form-control" maxlength="64" required id="id_Sku" placeholder="SKU">
+                    <input type="text" name="product_sku" class="form-control" maxlength="32" required id="id_Sku" placeholder="SKU">
                 </div>
             </div>
         </div>
@@ -59,15 +59,25 @@
                     <label class="required" for="id_Price" class="form-label custom-text">Price:</label>
                     <div class="input-group">
                         <span class="input-group-text">PHP</span>
-                        <input type="number" name="product_price" step="1" min="0" max="99999.99" maxlength="9" class="form-control" required id="id_Price" placeholder="0.00">
+                        <input type="number" name="product_price" step="1" min="0" max="99999.99" class="form-control" required id="id_Price" placeholder="0.00" oninput="validatePriceInput(event)">
+                        <!-- <input type="number" name="product_price" step="1" min="0" max="99999.99" maxlength="9" class="form-control" required id="id_Price" placeholder="0.00"> -->
                     </div>
+                    <script>
+                        function validatePriceInput(event) {
+                            var input = event.target;
+                            if (input.id === "id_Price" && input.value.length > 8) {
+                                input.value = input.value.slice(0, 8);
+                            }
+                        }
+                    </script>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="mb-3">
                     <label for="id_Actual_Inventory_Count" class="form-label custom-text">Initial Inventory Count:</label>
                     <div class="input-group">
-                        <input type="number" min='0' name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" value="0">
+                        <input type="int" min="0" maxlength="5" name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" value="0">
+                        <!-- <input type="number" min='0' name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" value="0"> -->
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="button" onclick="decrementCount()">-</button>
                             <button class="btn btn-outline-secondary" type="button" onclick="incrementCount()">+</button>
@@ -79,7 +89,8 @@
                 <div class="mb-3">
                     <label for="id_Stock_Level_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
                     <div class="input-group">
-                        <input type="number" min='0' name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" value="0">
+                        <input type="int" min="0" maxlength="5" name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" value="0">
+                        <!-- <input type="number" min='0' name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" value="0"> -->
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
                             <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>

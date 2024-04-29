@@ -40,6 +40,19 @@
                             <label class="required" for="requested_date">Requested Date:</label><br>
                             <input type="date" id="requested_date" name="requested_date" class="form-control" required><br><br>
                         </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var today = new Date();
+                                var dd = String(today.getDate()).padStart(2, '0');
+                                var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                                var yyyy = today.getFullYear();
+                        
+                                today = yyyy + '-' + mm + '-' + dd;
+                        
+                                var estimatedReceivingDateInput = document.getElementById('requested_date');
+                                estimatedReceivingDateInput.setAttribute('min', today);
+                            });
+                        </script>
                         
                         <div class="col">
                         </div>
@@ -51,11 +64,12 @@
                     <div class="row">
                         <div class="col">
                             <label class="required" for="customer_name">Customer Name:</label><br>
-                            <input type="text" id="customer_name" name="customer_name" class="form-control" required><br><br>
+                            <input type="text" id="customer_name" name="customer_name" class="form-control" required maxlength="32"><br><br>
                         </div>
                         <div class="col">
-                            <label class="required" for="contact_info">Contact Info: (11 digits)</label><br>
-                            <input type="number" id="contact_info" name="contact_info" class="form-control" maxlength="11" required minlength="11" placeholder="09123456789"><br><br>
+                            <label class="required" for="contact_info">Primary Contact Number:</label><br>
+                            <input type="tel" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number: 09xxxxxxxxx" pattern="09[0-9]{9}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 0;">
+                            <!-- <input type="number" id="contact_info" name="contact_info" class="form-control" maxlength="11" required minlength="11" placeholder="09123456789"><br><br> -->
                         </div>
                         
                         <div class="col">
@@ -91,23 +105,25 @@
                     <div class="row">
                         <div class="col">
                             <label class="required" for="address_line1">Address Line 1:</label><br>
-                            <input type="text" id="address_line1" name="address_line1" class="form-control" required><br><br>
+                            <input type="text" id="address_line1" name="address_line1" class="form-control" required maxlength="128"><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="province">Province:</label><br>
-                            <input type="text" id="province" name="province" class="form-control" required><br><br>
+                            <input type="text" id="province" name="province" class="form-control " required maxlength="64"><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="municipality">Municipality:</label><br>
-                            <input type="text" id="municipality" name="municipality" class="form-control" required><br><br>
+                            <input type="text" id="municipality" name="municipality" class="form-control" required maxlength="64"><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="barangay">Barangay:</label><br>
-                            <input type="text" id="barangay" name="barangay" class="form-control" required><br><br>
+                            <input type="text" id="barangay" name="barangay" class="form-control" required maxlength="64"><br><br>
                         </div>
                         <div class="col">
                             <label class="required" for="zip_code">Zip Code: (4 digits)</label><br>
-                            <input type="number" id="zip_code" name="zip_code" class="form-control" required minlength="4" placeholder="1234"><br><br>
+                            <input type="text" name="zip_code" class="form-control" required id="id_zip_code" placeholder="Zip Code" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" maxlength="4">
+                            <!-- <input type="text" name="zip_code" class="form-control" required id="id_zip_code" placeholder="Zip Code" oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);" pattern="[0-9]{4}" > -->
+                            <!-- <input type="number" id="zip_code" name="zip_code" class="form-control" required minlength="4" placeholder="1234"><br><br> -->
                         </div>
                     </div>
                     
@@ -115,11 +131,11 @@
                     <div class="row">
                         <div class="col">
                             <label for="order_notes">Customer Notes:</label><br>
-                            <textarea id="customer_notes" name="customer_notes" rows="4" cols="50" class="form-control"></textarea><br><br>
+                            <textarea id="customer_notes" name="customer_notes" rows="4" cols="50" class="form-control" maxlength="1024"></textarea><br><br>
                         </div>
                         <div class="col">
                             <label for="customer_notes">Order Notes:</label><br>
-                            <textarea id="order_notes" name="order_notes" rows="4" cols="50" class="form-control"></textarea><br><br>
+                            <textarea id="order_notes" name="order_notes" rows="4" cols="50" class="form-control" maxlength="1024"></textarea><br><br>
                         </div>
                     </div>
 
