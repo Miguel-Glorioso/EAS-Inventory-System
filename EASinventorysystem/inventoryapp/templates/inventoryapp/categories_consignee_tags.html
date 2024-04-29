@@ -184,6 +184,7 @@
             <li><strong>Tag Hex Color ID:</strong> ${response.Tag_Hex_Color_ID}</li>
           </ul>
         `);
+        $('#consigneeTagModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_tags/' + response.Consignee_ID + '/');
         $('#consigneeTagModal').modal('show');
       },
       error: function(xhr, status, error) {
