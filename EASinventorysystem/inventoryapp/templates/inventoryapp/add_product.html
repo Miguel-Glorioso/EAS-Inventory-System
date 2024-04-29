@@ -110,16 +110,12 @@
                     <div id="consignee-list" style="height: 100px; overflow-y: auto;"> <!-- Adjust height as needed -->
                         {% for con in consignees %}
                         <div class="consignee-item">
-                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="consignee{{ con.Consignee_ID }}">
-                            <label class="form-check-label" for="consignee{{ con.Consignee_ID }}">{{ con.Consignee_Name }}</label>
+                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="product_consignees">
+                            <label class="form-check-label" for="consignee_product_consignees">
+                                <span class="rounded-circle" style="display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.5rem; background-color: {{ con.Tag_Hex_Color_ID }}"></span>{{ con.Consignee_Name}}
+                            </label>
                         </div>
                         {% endfor %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <!-- Box for chosen pills/consignees -->
-                    <div id="chosen-consignees" style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
-                        Chosen Consignees:
                     </div>
                 </div>
             </div>

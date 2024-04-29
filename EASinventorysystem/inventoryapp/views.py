@@ -396,11 +396,6 @@ def add_purchase_order_consignee(request):
 
         PO_Consignee = get_object_or_404(Consignee, Consignee_ID=PO_Consignee)
         PO_account = get_object_or_404(Account,pk=PO_account)
-        if Requested_Date == '':
-            Requested_Date = None
-
-        # if Order_Method == None:
-        #     Order_Method = "No selected order method"
         
         current_date = timezone.now()
         PO = Purchase_Order.objects.create(
@@ -449,12 +444,9 @@ def add_purchase_order_direct_customer(request):
         Products = request.POST.get('all_products')
         Total_Price = request.POST.get('total_price')
         PO_account = request.POST.get('account')
-        print(Order_Method)
         
         PO_account = get_object_or_404(Account,pk=PO_account)
         
-
-        print(Order_Method)
         existing_customer = Customer.objects.filter(
                 Customer_Name = Customer_Name,
                 Primary_Contact_Number = Primary_Contact,
@@ -1008,12 +1000,60 @@ def update_consignee(request, pk):
 
 def update_PO_direct_customer(request, po_pk, c_pk):
     PO = get_object_or_404(Purchase_Order, pk=po_pk)
+    C = get_object_or_404(Customer, pk=c_pk)
     products_ordered =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
     products = Product.objects.all()
     if request.method == 'POST':
-        print("WIP")
+        Requested_Date = request.POST.get('requested_date')
+        print("Requested Date:", Requested_Date)
+
+        Customer_Name = request.POST.get('customer_name')
+        print("Customer Name:", Customer_Name)
+
+        Shipping_Method = request.POST.get('shipping_method')
+        print("Shipping Method:", Shipping_Method)
+
+        Order_Method = request.POST.get('order_method')
+        print("Order Method:", Order_Method)
+
+        Primary_Contact = request.POST.get('contact_info')
+        print("Primary Contact:", Primary_Contact)
+
+        Address_Line1 = request.POST.get('address_line1')
+        print("Address Line 1:", Address_Line1)
+
+        Province = request.POST.get('province')
+        print("Province:", Province)
+
+        Municipality = request.POST.get('municipality')
+        print("Municipality:", Municipality)
+
+        Barangay = request.POST.get('barangay')
+        print("Barangay:", Barangay)
+
+        Zip_Code = request.POST.get('zip_code')
+        print("Zip Code:", Zip_Code)
+
+        Customer_Notes = request.POST.get('customer_notes')
+        print("Customer Notes:", Customer_Notes)
+
+        Order_Notes = request.POST.get('order_notes')
+        print("Order Notes:", Order_Notes)
+
+        Products = request.POST.get('all_products')
+        print("Products:", Products)
+
+        Total_Price = request.POST.get('total_price')
+        print("Total Price:", Total_Price)
+
+        PO_account = request.POST.get('account')
+        print("PO Account:", PO_account)
+        
+        return redirect('current_pos')
+        
+
     else:
-        return render(request, 'inventoryapp/update_po_direct_customer.html', {'PO':PO, 'products_ordered':products_ordered, 'products':products})
+        return render(request, 'inventoryapp/update_po_direct_customer.html', {'PO':PO, 'C':C, 'products_ordered':products_ordered, 'products':products})
 
 def update_PO_consignee(request, po_pk, c_pk):
     PO = get_object_or_404(Purchase_Order, pk=po_pk)
@@ -1078,3 +1118,10 @@ def view_category(request, category_id):
         return JsonResponse(response_data)
     except Category.DoesNotExist:
         return JsonResponse({'error': 'Category not found'}, status=404)
+    
+def generate_inventory_summary(request):
+    all_inventory = Product.objects.all()
+    all_consignee_products = Consignee_Product.objects.all()
+    all_categories = Category.objects.all()
+    all_consignees = Consignee.objects.all()
+    return render(request, 'inventoryapp/inventory_summary.html',{'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products})

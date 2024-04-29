@@ -1,0 +1,98 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+  <title>Inventory Summary</title>
+</head>
+
+<body class="bg-light">
+
+    <div class="container-fluid">
+      <div class="row p-1" style="background-color: #eee;">
+        <div class="col-md-auto d-flex align-items-center">
+          <h4 class="m-0 mr-3">Inventory Summary</h4>
+        </div>
+      </div>
+
+    <!-- Buttons row -->
+    <div class="row mt-3">
+      <!-- Buttons column -->
+      <div class="col-md-auto">
+        <a href="{% url 'current_inventory' %}" class="btn btn-primary">Back</a>
+      </div>
+
+      <div class="col-md-auto">
+        <a href="#" class="btn btn-primary">Download</a>
+      </div>
+    </div>
+  
+
+    <!-- Table Inventory row -->
+    <div class="row mt-3">
+      <div class="table-responsive">
+        <table id="currentinventory" class="table text-center">
+          <thead>
+            <tr>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Name</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">ID</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;" data-orderable="false">Picture</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Actual Count</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Reserved</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">To Be Received</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;" data-orderable="false" data-searchable="false">Categories</th>
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Consignee</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in products %}
+            {% if p.Visibility == True %}
+              <tr>  
+                <td class="iname" style="text-align: center;">{{ p.Name }}</td>
+                <td class="iid" style="text-align: center;">{{ p.EAS_Product_ID }}</td>    
+                <td class="ipicture" style="text-align: center;">         
+                  {% if p.Picture %}
+                    <img src="{{ p.Picture.url }}" width="50">
+                  {% endif %}
+                </td> 
+                {% if p.Product_Stock_Status == 'Low Stock' %}
+                  <td class="iact_inv_cnt" style="text-align: center;">
+                    {{ p.Actual_Inventory_Count }}
+                    <img src="{% static 'images/low_product_threshold.png' %}" style="width: 20px; height: 20px;">
+                  </td>
+                {% elif p.Product_Stock_Status == 'No Stock' %}
+                  <td class="iact_inv_cnt" style="text-align: center;">
+                    {{ p.Actual_Inventory_Count }}
+                    <img src="{% static 'images/no_stock.png' %}" style="width: 25px; height:30px;">
+                  </td>
+                {% elif p.Product_Stock_Status == 'Regular Stock' %}
+                  <td class="iact_inv_cnt" style="text-align: center;">{{ p.Actual_Inventory_Count }}</td>
+                {% endif %}
+                <td class="irsrvd_cnt" style="text-align: center;">{{ p.Reserved_Inventory_Count }}</td>
+                <td class="ito_be_rcvd_cnt" style="text-align: center;">{{ p.To_Be_Received_Inventory_Count }}</td>    
+                <td class="icategories" style="text-align: center;">{{ p.Category }}</td>    
+                <td class="iconsignee" style="text-align: center;">
+                  {% for c in consignee_products %}
+                    {% if c.Product_ID.Product_ID == p.Product_ID %}
+                      {{ c.Consignee_ID.Consignee_Tag_ID }}
+                    {% endif %}
+                  {% endfor %}
+                </td>    
+              </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+  
+{% endblock %}

@@ -91,15 +91,14 @@
                     <div class="col-md-3"></div> <!-- Invisible column -->
                 </div>
             </div>
-<!-- 
             <div class="mb-3">
                 <label for="id_Consignees" class="form-label custom-text">Consignee:</label>
                 <div class="border p-3" style="max-height: 200px; overflow-y: auto;">
                     {% for cp in con_p %}
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ cp.Consignee_ID.Consignee_ID }}" id="consignee_{{ cp.Consignee_ID.Consignee_ID }}" checked>
-                        <label class="form-check-label" for="consignee_{{ cp.Consignee_ID.Consignee_ID }}">
-                            {{ cp.Consignee_ID }}
+                        <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ cp.Consignee_ID.Consignee_ID }}" id="product_consignees" checked>
+                        <label class="form-check-label" for="consignee_product_consignees">
+                            <span class="rounded-circle" style="display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.5rem; background-color: {{ cp.Consignee_ID.Tag_Hex_Color_ID }}"></span>{{ cp.Consignee_ID }}
                         </label>
                     </div>
                     {% endfor %}
@@ -108,45 +107,15 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="consignee_{{ con.Consignee_ID }}">
                             <label class="form-check-label" for="consignee_{{ con.Consignee_ID }}">
-                                {{ con.Consignee_Name }}
+                                <span class="rounded-circle" style="display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.5rem; background-color: {{ con.Tag_Hex_Color_ID }}"></span>{{ con.Consignee_Name }}
                             </label>
                         </div>
                         {% endif %}
                     {% endfor %}
                 </div>
             </div>
-             -->
-        <div class="mb-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <label class="form-label custom-text">Consignee:   </label>
-                    <input type="text" id="consignee-search" class="form-control mb-2" placeholder="Search consignee..." style="margin-bottom: 10px;">
-                    <div id="consignee-list" style="height: 100px; overflow-y: auto;"> <!-- Adjust height as needed -->
-                        {% for con in consignees %}
-                        <div class="consignee-item">
-                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="consignee_{{ con.Consignee_ID }}">
-                            <label class="form-check-label" for="consignee_{{ con.Consignee_ID }}">{{ con.Consignee_Name }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <!-- Box for chosen pills/consignees -->
-                    <div id="chosen-consignees" class="border p-3" style="max-height: 200px; overflow-y: auto;">
-                        Chosen Consignees:
-                        {% for cp in con_p %}
-                        <div class="form-check pill-shape">
-                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ cp.Consignee_ID.Consignee_ID }}" id="consignee_{{ cp.Consignee_ID.Consignee_ID }}" checked>
-                            <label class="form-check-label" for="consignee_{{ cp.Consignee_ID.Consignee_ID }}">
-                                {{ cp.Consignee_ID }}
-                            </label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        
+            
+            
         <style>
                     .required:after {
                       content:" *";
@@ -186,53 +155,7 @@
                 });
             });
         
-            // JavaScript for toggling pill shape class and moving checked pills to the chosen box
-            document.querySelectorAll('#consignee-list input[type="checkbox"]').forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
-                    const label = this.parentNode.querySelector('.form-check-label');
-                    const container = this.parentNode.parentNode;
-        
-                    if (this.checked) {
-                        const length = label.textContent.trim().length;
-                        label.style.width = (length * 10) + 'px'; // Adjust the multiplier for desired width
-        
-                        // Check if the consignee is already in the chosen consignees list
-                        const existingPill = document.querySelector('#chosen-consignees input[type="checkbox"][value="' + this.value + '"]');
-                        if (!existingPill) {
-                            this.parentNode.classList.add('pill-shape');
-                            const clonedNode = this.parentNode.cloneNode(true);
-                            clonedNode.querySelector('input[type="checkbox"]').checked = true; // Ensure checkbox is checked
-                            document.getElementById('chosen-consignees').appendChild(clonedNode); // Move checked pill to the chosen box
-                        } else {
-                            // If the consignee is already chosen, prevent duplication
-                            this.checked = false;
-                        }
-        
-                        // Hide the selected consignee in the list
-                        this.parentNode.style.display = 'none';
-                    } else {
-                        label.style.width = ''; // Reset width
-                        this.parentNode.classList.remove('pill-shape');
-                        const originalCheckbox = document.querySelector('#chosen-consignees input[type="checkbox"][value="' + this.value + '"]');
-                        if (originalCheckbox) {
-                            originalCheckbox.parentNode.remove(); // Remove the unchecked pill from the chosen box
-                        }
-                        this.parentNode.style.display = 'inline-block'; // Show the consignee back in the list
-                    }
-                });
-            });
-        
-            // JavaScript for handling unchecked pills in the chosen box
-            document.querySelectorAll('#chosen-consignees input[type="checkbox"]').forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
-                    if (!this.checked) {
-                        this.parentNode.remove(); // Remove the unchecked pill from the chosen box
-                        const originalCheckbox = document.querySelector('#consignee-list input[type="checkbox"][value="' + this.value + '"]');
-                        originalCheckbox.checked = false; // Uncheck the original checkbox in the list
-                        originalCheckbox.parentNode.style.display = 'inline-block'; // Show the consignee back in the list
-                    }
-                });
-            });
+
         </script>
 <!--         
         <div class="mb-3">

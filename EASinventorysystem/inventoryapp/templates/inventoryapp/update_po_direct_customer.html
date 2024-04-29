@@ -25,7 +25,7 @@
         </div>
 
         
-        <form method="POST" action="{% url 'add_po_direct_customer' %}">
+        <form method="POST" action="{% url 'update_po_direct_customer' po_pk=PO.Purchase_Order_ID c_pk=C.Customer_ID %}">
             <!-- First Tab: Customer Information -->
             <div id="step1">
             
@@ -176,6 +176,10 @@
                                         </table>
                                         <input type="hidden" name="all_products" id="all_products" value="">  
                                         <input type="hidden" name="total_price" id="total_price" value="">  
+
+                                        {% for p_o in products_ordered %}
+                                            <input type="hidden" name="ordered_prods" id="ordered_prods" value="{{ p_o.Product_ID.EAS_Product_ID}}">  
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
@@ -297,6 +301,7 @@
     </div>
 
     <script>
+
         // Add to Cart"
         var addToCartButtons = document.querySelectorAll('.add-to-cart');
         addToCartButtons.forEach(function(button) {
@@ -321,6 +326,7 @@
             
             // populate the row with product information
             newRow.innerHTML = `
+                
                 <td>${productName}</td>
                 <td>${productId}</td>
                 <td>${productPrice}</td>
@@ -336,7 +342,7 @@
             // hide the product in the right column list
             hideProduct(productId);
         }
-    
+
         // remove a product from the cart
         function removeFromCart(row) {
 
@@ -634,6 +640,18 @@
                 renderTotalPrice();
             }
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+                hideOrderedProducts();
+            });
+
+        function hideOrderedProducts() {
+            var allProductsInputs = document.querySelectorAll('input[name="ordered_prods"]')
+            allProductsInputs.forEach(function(input) {
+                var productId = input.value;
+                hideProduct(productId);
+            });
+        }
 
     </script>
 </body>
