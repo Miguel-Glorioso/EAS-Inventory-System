@@ -788,7 +788,7 @@ def create_direct_customer(request):
     else:
         return render(request, 'inventoryapp/create_direct_customer.html')
 
-def create__consignee(request):
+def create_consignee(request):
     if request.method == 'POST':
         Consignee_Tag_ID = request.POST.get('consignee_tag_id')
         Consignee_Name = request.POST.get('consignee_name')
