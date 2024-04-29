@@ -12,6 +12,7 @@ class Account(models.Model):
     Last_name = models.CharField(max_length = 32)
     Profile_Picture = models.ImageField(upload_to='account_pfps/', null=True, blank=True)
     Role = models.CharField(max_length = 32)
+    Visibility = models.BooleanField(default=True)
 
     def getUsername(self):
         return self.Username
@@ -29,11 +30,11 @@ class Product(models.Model):
     Picture = models.ImageField(null=True, blank=True, upload_to='product_images/', )
     SKU = models.CharField(max_length=32)
     Price = models.DecimalField(max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
-    Actual_Inventory_Count = models.PositiveIntegerField(validators =[MaxValueValidator(9999)])
-    Reserved_Inventory_Count = models.PositiveIntegerField(validators =[MaxValueValidator(9999)], default = 0)
-    To_Be_Received_Inventory_Count = models.PositiveIntegerField(validators =[MaxValueValidator(9999)], default = 0)
+    Actual_Inventory_Count = models.PositiveIntegerField(validators =[MaxValueValidator(99999)])
+    Reserved_Inventory_Count = models.PositiveIntegerField(validators =[MaxValueValidator(99999)], default = 0)
+    To_Be_Received_Inventory_Count = models.PositiveIntegerField(validators =[MaxValueValidator(99999)], default = 0)
     Visibility = models.BooleanField(default=True)
-    Product_Low_Stock_Threshold = models.PositiveIntegerField(validators =[MaxValueValidator(9999)], null=True, blank=True)
+    Product_Low_Stock_Threshold = models.PositiveIntegerField(validators =[MaxValueValidator(99999)], null=True, blank=True)
     Product_Stock_Status = models.CharField(max_length=16) 
     Category = models.ForeignKey("Category", on_delete=models.PROTECT)
 
@@ -45,7 +46,7 @@ class Category(models.Model):
     Category_Name = models.CharField(max_length=32)
     Category_Hex_Color_ID = models.CharField(max_length=7, unique=True)
     Description = models.TextField(validators =[MaxLengthValidator(1024)])
-    Category_Product_Low_Stock_Threshold = models.PositiveIntegerField(validators =[MaxValueValidator(9999)])
+    Category_Product_Low_Stock_Threshold = models.PositiveIntegerField(validators =[MaxValueValidator(99999)])
     Notes = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)
 
     def __str__(self):
@@ -65,7 +66,7 @@ class Purchase_Order(models.Model):
     Customer_ID = models.ForeignKey('Customer', on_delete=models.PROTECT, null=True, blank=True) #null if it is a consignee
     Consignee_ID = models.ForeignKey('Consignee', on_delete=models.PROTECT, null=True, blank=True) #null if it is a customer
     Account_ID_Closed_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='po_closed', null=True, blank=True)
-    Account_ID_Created_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='po_created', null=True, blank=True)
+    Account_ID_Created_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='po_created')
     
     def __str__(self):
         return f" Purchase Order # {self.Purchase_Order_ID}"
@@ -73,7 +74,7 @@ class Purchase_Order(models.Model):
 class Product_Ordered(models.Model):
     Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
     Purchase_Order_ID = models.ForeignKey(Purchase_Order, on_delete=models.PROTECT)
-    Quantity = models.PositiveIntegerField( validators=[MaxValueValidator(9999)])
+    Quantity = models.PositiveIntegerField( validators=[MaxValueValidator(99999)])
 
     def __str__(self):
         return f"{self.Product_ID.Name} in {self.Purchase_Order_ID} "
@@ -89,7 +90,7 @@ class Product_Requisition_Order(models.Model):
     Progress = models.CharField(max_length=16, default = "Pending")
     PRO_Status = models.CharField(max_length=16, default = "Ongoing")
     Account_ID_Closed_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='pro_closed', null=True, blank=True)
-    Account_ID_Created_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='pro_created', null=True, blank=True) # temporarily null
+    Account_ID_Created_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='pro_created')
     
     def __str__(self):
         return f" Product Requisition Order # {self.Product_Requisition_ID}"
@@ -97,7 +98,7 @@ class Product_Requisition_Order(models.Model):
 class Stock_Ordered(models.Model):
     Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
     Product_Requisition_ID = models.ForeignKey(Product_Requisition_Order, on_delete=models.PROTECT)
-    Quantity = models.PositiveIntegerField( validators=[MaxValueValidator(9999)])
+    Quantity = models.PositiveIntegerField( validators=[MaxValueValidator(99999)])
     
     def __str__(self):
         return f"{self.Product_ID.Name} in {self.Product_Requisition_ID} "
@@ -151,8 +152,8 @@ class Consignee_Product(models.Model):
 class Count_Edit_History(models.Model):
     Count_Edit_ID = models.AutoField(primary_key=True)
     Date_Updated = models.DateTimeField()
-    Initial_Inventory_Count = models.PositiveIntegerField(validators=[MaxValueValidator(9999)])
-    Updated_Inventory_Count = models.PositiveIntegerField(validators=[MaxValueValidator(9999)])
+    Initial_Inventory_Count = models.PositiveIntegerField(validators=[MaxValueValidator(99999)])
+    Updated_Inventory_Count = models.PositiveIntegerField(validators=[MaxValueValidator(99999)])
     Image_Report = models.ImageField(upload_to='count_edit_images/', null=True, blank=True, )
     Text_Report = models.TextField(null=True, blank=True, validators=[MaxLengthValidator(1024)])
     Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
@@ -164,11 +165,10 @@ class Count_Edit_History(models.Model):
 class Partially_Fulfilled_History(models.Model):
     Partially_Fulfill_Edit_ID = models.AutoField(primary_key=True)
     Date_Updated = models.DateTimeField()
-    Partially_Fulfilled_Quantity = models.PositiveIntegerField(validators=[MaxValueValidator(9999)])
+    Partially_Fulfilled_Quantity = models.PositiveIntegerField(validators=[MaxValueValidator(99999)])
     Image_Report = models.ImageField(upload_to='partially_fulfilled_images/', null=True, blank=True)
     Text_Report = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)
-    Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
-    Product_Requisition_ID = models.ForeignKey(Product_Requisition_Order, on_delete=models.PROTECT)
+    Stock = models.ForeignKey(Stock_Ordered, on_delete=models.PROTECT)
     Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT)
     
     def __str__(self):
