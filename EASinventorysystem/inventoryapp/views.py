@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from . models import Product, Category, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered
-from django.http import  JsonResponse
+from django.http import  JsonResponse, FileResponse
 import json
 from django.core.files.storage import default_storage
 from django.core.files import File
@@ -8,8 +8,13 @@ from django.utils import timezone
 from datetime import datetime
 from itertools import chain
 from django.contrib.auth import authenticate, login, logout
-
-
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Table, TableStyle, Image
+from reportlab.lib import colors
+from reportlab.lib.utils import ImageReader
 
 # Create your views here.
 
@@ -1197,13 +1202,83 @@ def view_category(request, category_id):
         return JsonResponse(response_data)
     except Category.DoesNotExist:
         return JsonResponse({'error': 'Category not found'}, status=404)
-    
-def generate_inventory_summary(request):
+
+def generate_inventory_summary_screen(request):
     all_inventory = Product.objects.all()
     all_consignee_products = Consignee_Product.objects.all()
     all_categories = Category.objects.all()
     all_consignees = Consignee.objects.all()
-    return render(request, 'inventoryapp/inventory_summary.html',{'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products})
+    return render(request, 'inventoryapp/generate_inventory_summary_screen.html',{'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products})
+
+def generate_inventory_summary(request):
+    # Retrieve all products
+    all_inventory = Product.objects.all()
+
+    # Create a PDF buffer
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+
+    # Set Title
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(100, 750, "Inventory Summary")
+
+    # Render the table
+    table_data = [
+        ["Name", "ID", "Actual Count", "Picture"]
+    ]
+    for product in all_inventory:
+        # Check if the product has a picture
+        if product.Picture:
+            # Get image dimensions
+            img_width, img_height = ImageReader(product.Picture.path).getSize()
+            # Calculate aspect ratio to maintain proportions
+            aspect_ratio = img_width / img_height
+            # Calculate new width and height to fit within 50x50
+            if img_width > img_height:
+                img_width = 50
+                img_height = 50 / aspect_ratio
+            else:
+                img_height = 50
+                img_width = 50 * aspect_ratio
+            # Rotate image by 180 degrees
+            c.saveState()
+            c.rotate(180)
+            # Add image to table data
+            c.drawImage(product.Picture.path, -100-img_width, -100-img_height, width=img_width, height=img_height)
+            c.restoreState()
+            table_data.append([
+                product.Name,
+                str(product.EAS_Product_ID),
+                str(product.Actual_Inventory_Count),
+                ""
+            ])
+        else:
+            table_data.append([
+                product.Name,
+                str(product.EAS_Product_ID),
+                str(product.Actual_Inventory_Count),
+                ""
+            ])
+
+    table = Table(table_data)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+    ]))
+
+    table.wrapOn(c, inch, inch)
+    table.drawOn(c, inch, 2 * inch)
+
+    c.showPage()
+    c.save()
+    buf.seek(0)
+
+    # Return the PDF response
+    return FileResponse(buf, as_attachment=True, filename="Summary Report.pdf")
 
 def view_category_details(request, category_id):
     try:
