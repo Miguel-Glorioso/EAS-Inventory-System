@@ -840,59 +840,6 @@ def create_consignee(request):
 
     else:
         return render(request, 'inventoryapp/create_consignee.html')
-    
-def create__consignee(request):
-    if request.method == 'POST':
-        Consignee_Tag_ID = request.POST.get('consignee_tag_id')
-        Consignee_Name = request.POST.get('consignee_name')
-        Address_Line_1 = request.POST.get('address_line_1')
-        Barangay = request.POST.get('barangay')
-        Municipality = request.POST.get('municipality')
-        Province = request.POST.get('province')
-        Zip_Code = request.POST.get('zip_code')
-        Primary_Contact_Number = request.POST.get('primary_contact_number')
-        Notes = request.POST.get('notes')
-        Consignment_Period_Start = request.POST.get('consignment_period_start')
-        Consignment_Period_End = request.POST.get('consignment_period_end')
-        Emergency_Contact_Number = request.POST.get('emergency_contact_number')
-        Email_Address = request.POST.get('email_address')
-        Tag_Hex_Color_ID = request.POST.get('tag_hex_color_id')
-
-        # Check if the consignee already exists
-        existing_consignee = Consignee.objects.filter(
-            Consignee_Tag_ID=Consignee_Tag_ID,
-            Consignee_Name=Consignee_Name,
-        )
-        if existing_consignee:
-            error_msg = 'Consignee Already Exists'
-            return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
-
-
-        else:   
-            # Create a new consignee object
-            Consignee.objects.create(
-                Consignee_Tag_ID=Consignee_Tag_ID,
-                Consignee_Name=Consignee_Name,
-                Address_Line_1=Address_Line_1,
-                Barangay=Barangay,
-                Municipality=Municipality,
-                Province=Province,
-                Zip_Code=Zip_Code,
-                Primary_Contact_Number=Primary_Contact_Number,
-                Customer_Type= 'Consignee',
-                Notes=Notes,
-                Consignment_Period_Start=Consignment_Period_Start,
-                Consignment_Period_End=Consignment_Period_End,
-                Emergency_Contact_Number=Emergency_Contact_Number,
-                Email_Address=Email_Address,
-                Tag_Hex_Color_ID=Tag_Hex_Color_ID
-            )
-
-            # Redirect to some page after successful creation
-            return redirect('categories_consignee_tags')
-
-    else:
-        return render(request, 'inventoryapp/create_consignee.html')
 
 def view_customer(request, customer_type, customer_id):
     try:
