@@ -68,4 +68,5 @@ urlpatterns = [
     path('create__consignee', views.create__consignee, name='create__consignee'),
     
     path('update_category/<int:category_id>/', views.update_category, name='update_category'),
+    path('update_tags/<int:pk>/', views.update_tags, name='update_tags'),
 ]

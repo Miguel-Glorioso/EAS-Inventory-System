@@ -837,7 +837,7 @@ def create_consignee(request):
             )
 
             # Redirect to some page after successful creation
-            return redirect('categories_consignee_tags')
+            return redirect('current_customers')
 
     else:
         return render(request, 'inventoryapp/create_consignee.html')
@@ -1272,3 +1272,50 @@ def update_category(request, category_id):
             return redirect('categories_consignee_tags')
     else:
         return render(request, 'inventoryapp/update_category.html', {'category': category, 'category_id': category_id})
+    
+def update_tags(request, pk):
+    consignee = get_object_or_404(Consignee, pk=pk)
+    Start_date = consignee.Consignment_Period_Start
+    End_date = consignee.Consignment_Period_End
+
+    Start_date_string = Start_date.strftime('%Y-%m-%d')
+    End_date_string = End_date.strftime('%Y-%m-%d')
+    if request.method == 'POST':
+        Consignee_Tag_ID = request.POST.get('consignee_tag_id')
+        Consignee_Name = request.POST.get('consignee_name')
+        Address_Line_1 = request.POST.get('address_line_1')
+        Barangay = request.POST.get('barangay')
+        Municipality = request.POST.get('municipality')
+        Province = request.POST.get('province')
+        Zip_Code = request.POST.get('zip_code')
+        Primary_Contact_Number = request.POST.get('primary_contact_number')
+        Notes = request.POST.get('notes')
+        Consignment_Period_Start = request.POST.get('consignment_period_start')
+        Consignment_Period_End = request.POST.get('consignment_period_end')
+        Emergency_Contact_Number = request.POST.get('emergency_contact_number')
+        Email_Address = request.POST.get('email_address')
+        Tag_Hex_Color_ID = request.POST.get('tag_hex_color_id')
+
+        # Update the consignee object
+        consignee.Consignee_Tag_ID = Consignee_Tag_ID
+        consignee.Consignee_Name = Consignee_Name
+        consignee.Address_Line_1 = Address_Line_1
+        consignee.Barangay = Barangay
+        consignee.Municipality = Municipality
+        consignee.Province = Province
+        consignee.Zip_Code = Zip_Code
+        consignee.Primary_Contact_Number = Primary_Contact_Number
+        consignee.Notes = Notes
+        consignee.Consignment_Period_Start = Consignment_Period_Start
+        consignee.Consignment_Period_End = Consignment_Period_End
+        consignee.Emergency_Contact_Number = Emergency_Contact_Number
+        consignee.Email_Address = Email_Address
+        print(Tag_Hex_Color_ID,'CHECKIS')
+        consignee.Tag_Hex_Color_ID = Tag_Hex_Color_ID
+
+        consignee.save()
+
+        return redirect('categories_consignee_tags')
+
+    else:
+        return render(request, 'inventoryapp/update_tags.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string})
