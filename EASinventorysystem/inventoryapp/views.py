@@ -812,7 +812,7 @@ def create__consignee(request):
         )
         if existing_consignee:
             error_msg = 'Consignee Already Exists'
-            return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
+            return render(request, 'inventoryapp/create__consignee.html',  {'error_msg': error_msg})
 
 
         else:   
@@ -839,10 +839,9 @@ def create__consignee(request):
             return redirect('categories_consignee_tags')
 
     else:
-        return render(request, 'inventoryapp/create__consignee.html')
+        return render(request, 'inventoryapp/create_consignee.html')
     
-
-def create_consignee(request):
+def create__consignee(request):
     if request.method == 'POST':
         Consignee_Tag_ID = request.POST.get('consignee_tag_id')
         Consignee_Name = request.POST.get('consignee_name')
@@ -890,7 +889,7 @@ def create_consignee(request):
             )
 
             # Redirect to some page after successful creation
-            return redirect('current_customers')
+            return redirect('categories_consignee_tags')
 
     else:
         return render(request, 'inventoryapp/create_consignee.html')
