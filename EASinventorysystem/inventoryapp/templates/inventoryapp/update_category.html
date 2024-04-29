@@ -20,7 +20,8 @@
                 {{ error_msg }}
             </div>
         {% endif %}
-        <form id="editCategoryForm" method="POST" action="{% url 'update_category' category.id %}">
+        <form method="POST" action="{% url 'update_category' category_id=c.Category_ID %}">
+
             {% csrf_token %}
             <legend>Category Information</legend>
             <div class="row">

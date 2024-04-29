@@ -144,7 +144,7 @@
               <li><strong>Notes:</strong> ${response.Notes}</li>
             </ul>
           `);
-          var categoryId = response.categoryId;
+          var categoryId = response.Category_ID;
 
           var editUrl = '/update_category/' + categoryId + '/';
           $('#categoryModal').find('.modal-footer').find('a.btn-primary').attr('href', editUrl);
