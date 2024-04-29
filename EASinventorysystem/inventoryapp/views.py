@@ -631,10 +631,9 @@ def add_requisition_order(request):
         return render(request, 'inventoryapp/add_pro.html', {'products': products})
 
 def update_pro(request, pk):
-    requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
-    products = Product.objects.all()
-    stock_ordered_items = Stock_Ordered.objects.filter(Product_Requisition_ID=requisition_order)
-    print(stock_ordered_items)
+    PRO = get_object_or_404(Product_Requisition_Order, pk=pk)
+    all_inventory = Product.objects.all()
+    stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=PRO)
 
     if request.method == 'POST':
         estimated_receiving_date = request.POST.get('estimated_receiving_date')
@@ -642,41 +641,51 @@ def update_pro(request, pk):
         total_cost =  request.POST.get('total_cost')
         pro_notes = request.POST.get('pro_notes')
         Products = request.POST.get('all_products')
-        
-        current_date = timezone.now()
-        
-        # Update the requisition order object with the new data
-        requisition_order.Estimated_Receiving_Date = estimated_receiving_date
-        requisition_order.Creation_Date = current_date
-        requisition_order.PRO_Manufacturer = manufacturer_name
-        requisition_order.Total_Cost = total_cost
-        requisition_order.Notes = pro_notes
-        
-        requisition_order.save()
 
-        # Process the ordered products
+        
+        PRO.Estimated_Receiving_Date=estimated_receiving_date
+        PRO.PRO_Manufacturer=manufacturer_name
+        PRO.Total_Cost=total_cost
+        PRO.Notes = pro_notes
+
         Products = Products[:-1]
-        Ordered_Products = Products.split("-")
+        Ordered_Products= Products.split("-")
+        new_stocks_ordered = []
+
         for op in Ordered_Products:
             values = op.split(":")
             product_object = Product.objects.get(Product_ID=values[0])
 
-            # Update To_Be_Received_Inventory_Count for the product
-            product_object.To_Be_Received_Inventory_Count += int(values[1])
-            product_object.save()
+            ordered_products = stocks_ordered.filter(Product_ID=values[0])
 
-            # Update or create a Stock_Ordered object for the product requisition order
-            stock_ordered, _ = Stock_Ordered.objects.get_or_create(
-                Product_ID=product_object,
-                Product_Requisition_ID=requisition_order
-            )
-            stock_ordered.Quantity = values[1]
-            stock_ordered.save()
+            if ordered_products.exists():
+                ordered_product = ordered_products.first()
+                quantity_diff = int(values[1]) - ordered_product.Quantity
+                ordered_product.Quantity = values[1]
+                product_object.To_Be_Received_Inventory_Count += quantity_diff
+                ordered_product.save()
+                product_object.save()
+                new_stocks_ordered.append(ordered_product)
+            else:
+                product_object.To_Be_Received_Inventory_Count += int(values[1])
+                product_object.save()
+                new_product_ordered = Stock_Ordered.objects.create(Product_ID=product_object, Product_Requisition_ID=PRO, Quantity=values[1])
+                new_stocks_ordered.append(new_product_ordered)
+
+        # Create a list of Product_Ordered objects to delete
+        products_to_delete = [s_o for s_o in stocks_ordered if s_o not in new_stocks_ordered]
+
+        # Delete the Product_Ordered objects
+        for s_o in products_to_delete:
+            product_object = Product.objects.get(Product_ID=s_o.Product_ID.Product_ID)
+            product_object.To_Be_Received_Inventory_Count -= s_o.Quantity
+            product_object.save()
+            s_o.delete()
 
         return redirect('current_pros')
     else:
         
-        return render(request, 'inventoryapp/update_pro.html', {'requisition_order': requisition_order, 'products': products, 'stock_ordered_items': stock_ordered_items})
+        return render(request, 'inventoryapp/update_pro.html', {'requisition_order': PRO, 'products': all_inventory, 'stock_ordered_items': stocks_ordered})
     
 def view_pro(request, pk):
     product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
