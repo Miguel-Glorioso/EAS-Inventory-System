@@ -396,11 +396,6 @@ def add_purchase_order_consignee(request):
 
         PO_Consignee = get_object_or_404(Consignee, Consignee_ID=PO_Consignee)
         PO_account = get_object_or_404(Account,pk=PO_account)
-        if Requested_Date == '':
-            Requested_Date = None
-
-        # if Order_Method == None:
-        #     Order_Method = "No selected order method"
         
         current_date = timezone.now()
         PO = Purchase_Order.objects.create(
@@ -449,12 +444,9 @@ def add_purchase_order_direct_customer(request):
         Products = request.POST.get('all_products')
         Total_Price = request.POST.get('total_price')
         PO_account = request.POST.get('account')
-        print(Order_Method)
         
         PO_account = get_object_or_404(Account,pk=PO_account)
         
-
-        print(Order_Method)
         existing_customer = Customer.objects.filter(
                 Customer_Name = Customer_Name,
                 Primary_Contact_Number = Primary_Contact,
@@ -1007,22 +999,141 @@ def update_consignee(request, pk):
 
 def update_PO_direct_customer(request, po_pk, c_pk):
     PO = get_object_or_404(Purchase_Order, pk=po_pk)
+    C = get_object_or_404(Customer, pk=c_pk)
     products_ordered =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
     products = Product.objects.all()
     if request.method == 'POST':
-        print("WIP")
+        Requested_Date = request.POST.get('requested_date')
+        Customer_Name = request.POST.get('customer_name')
+        Shipping_Method = request.POST.get('shipping_method')
+        Order_Method = request.POST.get('order_method')
+        Primary_Contact = request.POST.get('contact_info')
+        Address_Line1 = request.POST.get('address_line1')
+        Province = request.POST.get('province')
+        Municipality = request.POST.get('municipality')
+        Barangay = request.POST.get('barangay')
+        Zip_Code = request.POST.get('zip_code')
+        Customer_Notes = request.POST.get('customer_notes')
+        Order_Notes = request.POST.get('order_notes')
+        Products = request.POST.get('all_products')
+        Total_Price = request.POST.get('total_price')
+        
+        PO.Requested_Date = Requested_Date
+        PO.Shipping_Method = Shipping_Method
+        PO.Order_Method = Order_Method
+        PO.Total_Due = Total_Price
+        PO.Notes = Order_Notes
+        PO.save()
+
+        C.Customer_Name = Customer_Name
+        C.Primary_Contact_Number = Primary_Contact
+        C.Address_Line_1 = Address_Line1
+        C.Province = Province
+        C.Municipality = Municipality
+        C.Barangay = Barangay
+        C.Zip_Code = Zip_Code
+        C.Notes = Customer_Notes
+        C.save()
+
+        Products = Products[:-1]
+        Ordered_Products= Products.split("-")
+        new_products_ordered = []
+
+        for op in Ordered_Products:
+            values = op.split(":")
+            product_object = Product.objects.get(Product_ID=values[0])
+
+            ordered_products = products_ordered.filter(Product_ID=values[0])
+
+            if ordered_products.exists():
+                ordered_product = ordered_products.first()
+                quantity_diff = int(values[1]) - ordered_product.Quantity
+                ordered_product.Quantity = values[1]
+                product_object.Reserved_Inventory_Count += quantity_diff
+                ordered_product.save()
+                product_object.save()
+                new_products_ordered.append(ordered_product)
+            else:
+                product_object.Reserved_Inventory_Count += int(values[1])
+                product_object.save()
+                new_product_ordered = Product_Ordered.objects.create(Product_ID=product_object, Purchase_Order_ID=PO, Quantity=values[1])
+                new_products_ordered.append(new_product_ordered)
+
+        # Create a list of Product_Ordered objects to delete
+        products_to_delete = [p_o for p_o in products_ordered if p_o not in new_products_ordered]
+
+        # Delete the Product_Ordered objects
+        for p_o in products_to_delete:
+            product_object = Product.objects.get(Product_ID=p_o.Product_ID.Product_ID)
+            product_object.Reserved_Inventory_Count -= p_o.Quantity
+            product_object.save()
+            p_o.delete()
+        return redirect('current_pos')
+        
     else:
-        return render(request, 'inventoryapp/update_po_direct_customer.html', {'PO':PO, 'products_ordered':products_ordered, 'products':products})
+        return render(request, 'inventoryapp/update_po_direct_customer.html', {'PO':PO, 'C':C, 'products_ordered':products_ordered, 'products':products})
 
 def update_PO_consignee(request, po_pk, c_pk):
     PO = get_object_or_404(Purchase_Order, pk=po_pk)
+    C = get_object_or_404(Consignee, pk=c_pk)
     all_consignees = Consignee.objects.all()
     products_ordered =  Product_Ordered.objects.filter(Purchase_Order_ID=po_pk)
     products = Product.objects.all() 
     if request.method == 'POST':
-        print("WIP")
+        Requested_Date = request.POST.get('requested_date')
+        Order_Notes = request.POST.get('order_notes')
+        Products = request.POST.get('all_products')
+        Total_Price = request.POST.get('total_price')
+        Shipping_Method = request.POST.get('shipping_method')
+        Order_Method = request.POST.get('order_method')
+        PO_Consignee = request.POST.get('consignee')
+
+        PO_Consignee = get_object_or_404(Consignee, Consignee_ID=PO_Consignee)
+
+        PO.Requested_Date = Requested_Date
+        PO.Consignee_ID=PO_Consignee
+        PO.Shipping_Method = Shipping_Method
+        PO.Order_Method = Order_Method
+        PO.Total_Due = Total_Price
+        PO.Notes = Order_Notes
+        PO.save()
+
+        Products = Products[:-1]
+        Ordered_Products= Products.split("-")
+        new_products_ordered = []
+
+        for op in Ordered_Products:
+            values = op.split(":")
+            product_object = Product.objects.get(Product_ID=values[0])
+
+            ordered_products = products_ordered.filter(Product_ID=values[0])
+
+            if ordered_products.exists():
+                ordered_product = ordered_products.first()
+                quantity_diff = int(values[1]) - ordered_product.Quantity
+                ordered_product.Quantity = values[1]
+                product_object.Reserved_Inventory_Count += quantity_diff
+                ordered_product.save()
+                product_object.save()
+                new_products_ordered.append(ordered_product)
+            else:
+                product_object.Reserved_Inventory_Count += int(values[1])
+                product_object.save()
+                new_product_ordered = Product_Ordered.objects.create(Product_ID=product_object, Purchase_Order_ID=PO, Quantity=values[1])
+                new_products_ordered.append(new_product_ordered)
+
+        # Create a list of Product_Ordered objects to delete
+        products_to_delete = [p_o for p_o in products_ordered if p_o not in new_products_ordered]
+
+        # Delete the Product_Ordered objects
+        for p_o in products_to_delete:
+            product_object = Product.objects.get(Product_ID=p_o.Product_ID.Product_ID)
+            product_object.Reserved_Inventory_Count -= p_o.Quantity
+            product_object.save()
+            p_o.delete()
+        return redirect('current_pos')
     else:
-        return render(request, 'inventoryapp/update_po_consignee.html', {'PO':PO, 'products_ordered':products_ordered, 'products':products, 'consignees':all_consignees})
+        return render(request, 'inventoryapp/update_po_consignee.html', {'PO':PO, 'C':C, 'products_ordered':products_ordered, 'products':products, 'consignees':all_consignees})
     
 def history_PO(request):
     all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
@@ -1078,6 +1189,13 @@ def view_category(request, category_id):
     except Category.DoesNotExist:
         return JsonResponse({'error': 'Category not found'}, status=404)
     
+def generate_inventory_summary(request):
+    all_inventory = Product.objects.all()
+    all_consignee_products = Consignee_Product.objects.all()
+    all_categories = Category.objects.all()
+    all_consignees = Consignee.objects.all()
+    return render(request, 'inventoryapp/inventory_summary.html',{'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products})
+
 def view_category_details(request, category_id):
     try:
         category = Category.objects.get(pk=category_id)
