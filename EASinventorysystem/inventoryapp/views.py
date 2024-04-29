@@ -979,9 +979,48 @@ def history_PRO(request):
     all_requisition_orders = Product_Requisition_Order.objects.all().order_by('Creation_Date')
     return render(request, 'inventoryapp/history_pro.html', {'requisition_orders':all_requisition_orders})
 
-def CatsAndTags(request):
+def categories_consignee_tags(request):
     consignees = Consignee.objects.all()
     categories = Category.objects.all()
 
     # Render the template with the consignees and categories
-    return render(request, 'inventoryapp/CatsAndTags.html', {'consignees': consignees, 'categories': categories})
+    return render(request, 'inventoryapp/categories_consignee_tags.html', {'consignees': consignees, 'categories': categories})
+
+def add_category(request):
+    if request.method == 'POST':
+        Category_Name = request.POST.get('category_name')
+        Category_Hex_Color_ID = request.POST.get('category_hex_color_id')
+        Description = request.POST.get('description')
+        Category_Product_Low_Stock_Threshold = request.POST.get('category_product_low_stock_threshold')
+        Notes = request.POST.get('notes')
+
+        existing_category = Category.objects.filter(Category_Name=Category_Name)
+        if existing_category.exists():
+            error_msg = 'Category Already Exists'
+            return render(request, 'inventoryapp/categories_consignee_tags.html', {'error_msg': error_msg})
+        else:
+            Category.objects.create(
+                Category_Name=Category_Name,
+                Category_Hex_Color_ID=Category_Hex_Color_ID,
+                Description=Description,
+                Category_Product_Low_Stock_Threshold=Category_Product_Low_Stock_Threshold,
+                Notes=Notes
+            )
+            return redirect('categories_consignee_tags')
+    else:
+        return render(request, 'inventoryapp/add_category.html')
+    
+def view_category(request, category_id):
+    try:
+        category = Category.objects.get(Category_ID=category_id)
+        response_data = {
+            'category_id': category.Category_ID,
+            'name': category.Category_Name,
+            'hex_color_id': category.Category_Hex_Color_ID,
+            'description': category.Description,
+            'low_stock_threshold': category.Category_Product_Low_Stock_Threshold,
+            'notes': category.Notes,
+        }
+        return JsonResponse(response_data)
+    except Category.DoesNotExist:
+        return JsonResponse({'error': 'Category not found'}, status=404)

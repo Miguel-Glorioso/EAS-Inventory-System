@@ -10,9 +10,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='consignee',
-            name='Consignee_Name',
-            field=models.CharField(max_length=32, unique=True),
-        ),
     ]
