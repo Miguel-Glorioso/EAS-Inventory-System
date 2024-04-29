@@ -8,8 +8,6 @@ from django.contrib.auth.models import User
 class Account(models.Model):
     Account_ID = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    First_name = models.CharField(max_length = 32)
-    Last_name = models.CharField(max_length = 32)
     Profile_Picture = models.ImageField(upload_to='account_pfps/', null=True, blank=True)
     Role = models.CharField(max_length = 32)
     Visibility = models.BooleanField(default=True)
@@ -21,7 +19,7 @@ class Account(models.Model):
         return self.Password
     
     def __str__(self):
-        return str(self.First_name) + " " + str(self.Last_name)
+        return str(self.user)
 
 class Product(models.Model):
     Product_ID = models.AutoField(primary_key=True)            
@@ -62,7 +60,7 @@ class Purchase_Order(models.Model):
     Progress = models.CharField(max_length=16, default = "Pending")
     PO_Status = models.CharField(max_length=16, default = "Unfulfilled")
     Shipping_Method = models.CharField(max_length=32)
-    Order_Method = models.CharField(max_length=32)
+    Order_Method = models.CharField(max_length=32,  null=True, blank=True)
     Customer_ID = models.ForeignKey('Customer', on_delete=models.PROTECT, null=True, blank=True) #null if it is a consignee
     Consignee_ID = models.ForeignKey('Consignee', on_delete=models.PROTECT, null=True, blank=True) #null if it is a customer
     Account_ID_Closed_by = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='po_closed', null=True, blank=True)
@@ -110,7 +108,7 @@ class Customer(models.Model):
     Barangay = models.CharField(max_length=64)
     Municipality = models.CharField(max_length=64)
     Province = models.CharField(max_length=64)
-    Zip_Code = models.PositiveIntegerField(validators=[MaxValueValidator(9999)])
+    Zip_Code = models.CharField(max_length=4)
     Primary_Contact_Number = models.CharField(max_length=11)
     Customer_Type = models.CharField(max_length=16)
     Notes = models.TextField(null=True, blank=True, validators=[MaxLengthValidator(1024)])
@@ -126,7 +124,7 @@ class Consignee(models.Model):
     Barangay = models.CharField(max_length=64)
     Municipality = models.CharField(max_length=64)
     Province = models.CharField(max_length=64)
-    Zip_Code = models.PositiveIntegerField(validators=[MaxValueValidator(9999)])
+    Zip_Code = models.CharField(max_length=4)
     Primary_Contact_Number = models.CharField(max_length=11)
     Customer_Type = models.CharField(max_length=16)
     Notes = models.TextField(null=True, blank=True, validators=[MaxLengthValidator(1024)])
