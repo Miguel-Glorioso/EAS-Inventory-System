@@ -1,0 +1,134 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<body>
+    <style>
+        .required:after {
+          content:" *";
+          color: red;
+        }
+      </style>
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">Edit Category</h4>
+            </div>
+        </div>
+        {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_msg }}
+            </div>
+        {% endif %}
+        <form id="editCategoryForm" method="POST" action="{% url 'update_category' category.id %}">
+            {% csrf_token %}
+            <legend>Category Information</legend>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_category_name" class="form-label custom-text">Category Name:</label>
+                        <input type="text" name="category_name" class="form-control" maxlength="32" required id="id_category_name" placeholder="Category Name" value="{{ category.Category_Name }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_category_hex_color_id" class="form-label custom-text">Hex Color ID:</label>
+                        <input type="text" name="category_hex_color_id" class="form-control" maxlength="16" required id="id_category_hex_color_id" placeholder="Hex Color ID" value="{{ category.Category_Hex_Color_ID }}">
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_description" class="form-label custom-text">Description:</label>
+                <textarea name="description" class="form-control" id="id_description" rows="3" placeholder="Description">{{ category.Description }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="id_category_product_low_stock_threshold" class="form-label custom-text">Low Stock Threshold:</label>
+                <input type="number" name="category_product_low_stock_threshold" class="form-control" id="id_category_product_low_stock_threshold" placeholder="Low Stock Threshold" value="{{ category.Category_Product_Low_Stock_Threshold }}">
+            </div>
+            <div class="mb-3">
+                <label for="id_notes" class="form-label custom-text">Notes:</label>
+                <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes">{{ category.Notes }}</textarea>
+            </div>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button type="button" class="btn btn-success" id="editCategoryBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal" disabled>Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Cancel Modal -->
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Cancel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cancel editing this category?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <a href="{% url 'categories_consignee_tags' %}" class="btn btn-danger">Yes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to update this category?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmEditCategoryBtn">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Function to check if all required fields are filled
+        function checkRequiredFields() {
+            var categoryName = document.getElementById('id_category_name').value.trim();
+            var hexColorId = document.getElementById('id_category_hex_color_id').value.trim();
+
+            return categoryName !== '' && hexColorId !== '';
+        }
+
+        // Function to enable/disable the Update button based on required fields
+        function toggleUpdateButton() {
+            var updateButton = document.getElementById('editCategoryBtn');
+            updateButton.disabled = !checkRequiredFields();
+        }
+
+        // Event listener for input fields to check validation on change
+        var inputFields = document.querySelectorAll('input, textarea, select');
+        inputFields.forEach(function(field) {
+            field.addEventListener('input', function() {
+                toggleUpdateButton();
+            });
+        });
+
+        // Handle click event on "Yes" button in confirmation modal
+        document.getElementById('confirmEditCategoryBtn').addEventListener('click', function() {
+            document.getElementById('editCategoryForm').submit(); // Submit the form
+        });
+    </script>
+
+</body>
+{% endblock %}
+</html>

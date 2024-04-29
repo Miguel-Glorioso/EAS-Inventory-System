@@ -62,4 +62,7 @@ urlpatterns = [
     path('categories_consignee_tags', views.categories_consignee_tags, name='categories_consignee_tags'),
     path('add_category', views.add_category, name='add_category'),
     path('view_category/<int:category_id>/', views.view_category, name='view_category'),
+    path('view_category_details/<int:category_id>/', views.view_category_details, name='view_category_details'),
+    path('view_consignee_details/<int:consignee_id>/', views.view_consignee_tag_details, name='view_consignee_details'),
+    path('update_category/<int:category_id>/', views.update_category, name='update_category'),
 ]
