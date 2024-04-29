@@ -96,6 +96,22 @@
             </div>
 
             <div class="bottom-content">
+                <!-- add if else statement if admin or employee -->
+                <li class="nav-link">
+                    <a href="{% url 'employee_accounts' %}">
+                        <i class='bx bxs-contact icon'></i>
+                        <span class="text nav-text">Employee Accounts</span>
+                    </a>
+                    <span class="tooltip">Employee Accounts</span>
+                </li>
+                <!-- if else statement end here -->
+                <li class="nav-link">
+                    <a href="{% url 'my_account' %}">
+                        <i class='bx bxs-user icon'></i>
+                        <span class="text nav-text">My Account</span>
+                    </a>
+                    <span class="tooltip">My Account</span>
+                </li>
                 <li class="nav-link">
                     <a href="{% url 'account_login' %}">
                         <i class='bx bxs-log-out icon' ></i>

@@ -1,0 +1,107 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+  <title>My Account</title>
+  <style>
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; 
+    }
+    .card {
+      width: 50%; 
+      margin: 0 auto; 
+      padding: 20px;
+      background-color: #eee;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .image-column {
+      display: flex;
+      justify-content: center;
+    }
+    .image-column img {
+      width: 50px;
+      height: auto; 
+    }
+    .row {
+      margin-bottom: 15px; 
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+      border: 1px solid #ccc; 
+      border-radius: 5px; 
+      padding: 8px; 
+      background-color: white; 
+      width: 100%; 
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+          <div class="col-md-auto d-flex align-items-center">
+            <h4 class="m-0 mr-3">My Account</h4>
+          </div>
+        </div>
+    </div>
+    <div class="row p-5"></div>
+    <div class="card">
+        <!-- Role -->
+        <div class="row mt-2 mb-4">
+          <!-- Adjustable height row -->
+          <div class="col d-flex justify-content-end">
+            <h6>Role: Administrator</h6>
+          </div>
+        </div>
+
+        <!-- User details -->
+        <div class="row">
+            <!-- Image -->
+          <div class="col image-column"> 
+            <img src="#" alt="User Image">
+          </div>
+          <!-- User info -->
+          <div class="col">
+            <div class="row">
+                <div class="col">
+                  <h2>Drexler Jordan</h2> 
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label for="username">Username</label><br>
+                  <input type="text" id="username" value="Drexler Jordan" disabled>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label for="password">Password</label><br>
+                  <input type="password" id="password" value="************" disabled>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                    <a href="#">Reveal password</a>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <!-- Edit button row -->
+        <div class="row">
+          <div class="col">
+          </div>
+          <div class="col-md-auto">
+            <button class="btn btn-primary">Edit</button>
+          </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

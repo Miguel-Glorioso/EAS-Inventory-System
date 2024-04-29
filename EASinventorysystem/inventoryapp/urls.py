@@ -69,4 +69,8 @@ urlpatterns = [
     
     path('update_category/<int:category_id>/', views.update_category, name='update_category'),
     path('update_tags/<int:pk>/', views.update_tags, name='update_tags'),
+
+    path('my_account', views.my_account, name='my_account'),
+    path('employee_accounts', views.employee_accounts, name='employee_accounts'),
+
 ]

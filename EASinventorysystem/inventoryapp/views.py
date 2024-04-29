@@ -1319,3 +1319,10 @@ def update_tags(request, pk):
 
     else:
         return render(request, 'inventoryapp/update_tags.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string})
+
+
+def my_account(request):
+    return render(request, 'inventoryapp/my_account.html')
+
+def employee_accounts(request):
+    return render(request, 'inventoryapp/employee_accounts.html')
