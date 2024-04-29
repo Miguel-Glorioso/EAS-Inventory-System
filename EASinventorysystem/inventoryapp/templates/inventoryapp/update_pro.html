@@ -16,7 +16,7 @@
         </div>
 
         <div class="row">
-            <form method="POST" action="{% url 'update_pro' requisition_order.pk %}">
+            <form method="POST" action="{% url 'update_pro' pk=requisition_order.pk %}">
                 {% csrf_token %}
                 <main>
                     <div id="step1">
@@ -27,7 +27,7 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="estimated_receiving_date">Estimated Receiving Date:</label><br>
-                                    <input type="date" id="estimated_receiving_date" name="estimated_receiving_date" class="form-control rounded-10" value="{{ requisition_order.estimated_receiving_date }}"><br><br>
+                                    <input type="date" id="estimated_receiving_date" name="estimated_receiving_date" class="form-control rounded-10" value="{{ requisition_order.Estimated_Receiving_Date|date:'Y-m-d'}}"><br><br>
                                 </div>
                                 <div class="col">
                                     <label for="manufacturer_name">Manufacturer:</label><br>
