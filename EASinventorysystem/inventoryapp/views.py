@@ -1542,6 +1542,19 @@ def partially_fulfill(request, pk):
     all_inventory = Product.objects.all()
     stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=PRO)
 
+        visible_users = Account.objects.filter(Visibility=True)
+        user_count = visible_users.count()
+        return render(request, 'inventoryapp/employee_accounts.html', {'users': all_users, 'user_count': user_count})
+    
+def partially_fulfill_pro(request, pro_pk):
+    pro = get_object_or_404(PRO, pk=pro_pk)
+    # Add your logic here to partially fulfill the PRO
+    # For example, you can reduce the quantity of a specific product in the PRO
+    # Then, redirect back to the PRO details page
+    return redirect('pro_details', pro.pk)
+
+def edit_count(request):
+    return render(request,'inventoryapp/edit_count.html')
     if request.method == 'POST':
         Products = request.POST.get('all_products')
 
