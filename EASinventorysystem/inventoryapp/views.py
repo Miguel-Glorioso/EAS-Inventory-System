@@ -1526,35 +1526,13 @@ def hide_account(request, pk):
         return redirect('employee_accounts')
     else:
         return redirect('employee_accounts')
-    
-def show_account(request, pk):
-    if request.method == 'POST':
-        # Perform account hiding logic
-        employee = get_object_or_404(Account, Account_ID=pk)
-        employee.Visibility = False
-        employee.save()
-        return redirect('employee_accounts')
-    else:
-        return redirect('employee_accounts')
+
 
 def partially_fulfill(request, pk):
     PRO = get_object_or_404(Product_Requisition_Order, pk=pk)
     all_inventory = Product.objects.all()
     stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=PRO)
 
-        visible_users = Account.objects.filter(Visibility=True)
-        user_count = visible_users.count()
-        return render(request, 'inventoryapp/employee_accounts.html', {'users': all_users, 'user_count': user_count})
-    
-def partially_fulfill_pro(request, pro_pk):
-    pro = get_object_or_404(PRO, pk=pro_pk)
-    # Add your logic here to partially fulfill the PRO
-    # For example, you can reduce the quantity of a specific product in the PRO
-    # Then, redirect back to the PRO details page
-    return redirect('pro_details', pro.pk)
-
-def edit_count(request):
-    return render(request,'inventoryapp/edit_count.html')
     if request.method == 'POST':
         Products = request.POST.get('all_products')
 
@@ -1596,3 +1574,6 @@ def edit_count(request):
 
     return render(request, 'inventoryapp/partially_fulfill.html', {'requisition_order': PRO, 'products': all_inventory, 'stock_ordered_items': stocks_ordered})
     # return render(request, 'inventoryapp/partially_fulfill.html')
+
+def edit_count(request):
+    return render(request, 'inventoryapp/edit_count.html')
