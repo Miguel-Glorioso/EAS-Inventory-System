@@ -76,7 +76,7 @@ urlpatterns = [
     path('edit_my_account', views.edit_my_account, name='edit_my_account'),
     path('add_new_employee', views.add_new_employee, name='add_new_employee'),
     path('view_employee/<int:pk>/', views.view_employee, name='view_employee'),
-    path('update_employee', views.update_employee, name='update_employee'),
+    path('update_employee/<int:pk>/', views.update_employee, name='update_employee'),
     path('hide_account/<int:pk>/', views.hide_account, name='hide_account'),
 
     path('generate_inventory_summary_screen', views.generate_inventory_summary_screen, name='generate_inventory_summary_screen'),

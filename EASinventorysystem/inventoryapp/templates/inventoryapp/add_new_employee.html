@@ -59,10 +59,10 @@
     </div>
     <div class="row p-5"></div>
     <div class="card">
-        <!-- Image-->
+      <form method="POST" action="{% url 'add_new_employee' %}" enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="row mt-2 mb-4">
-            <div class="col image-coliumn"><img src="#" alt="User Image"></div>
-            <div class="col"><h5>Profiel Picture</h5></div>
+            <div class="col"><h4>Employee Profile</h4></div>
             <div class="col d-flex justify-content-end">
                 <h6>Role: Employee</h6>
             </div>
@@ -73,27 +73,44 @@
             <!-- First Name -->
             <div class="col">
                 <label for="employee_first_name">First Name</label><br>
-                <input type="text" id="username">
+                <input type="text" id="first_name" name="first_name">
             </div>
             
             <!-- Last Name -->
             <div class="col">
                 <label for="employee_last_password">Last Name</label><br>
-                <input type="text" id="old_password">
+                <input type="text" id="last_name" name="last_name">
             </div>
         </div>
 
         <!-- Account details -->
+        {% if error_msg %}
+        <div class="alert alert-danger" role="alert">
+            {{ error_msg }}
+        </div>
+        {% endif %}
         <div class="row">
             <div class="col">
                 <label for="employee_username">Username</label><br>
-                <input type="text" id="new_password">
+                <input type="text" id="username", name="username">
             </div>
             <div class="col">
                 <label for="employee_password">Password</label><br>
-                <input type="password" id="reenter_new_password">
+                <input type="password" id="password" name="password">
             </div>
         </div>
+        <div class="mb-3">
+          <div class="row">
+              <div class="col-md-10">
+                  <label for="profile_picture" class="form-label custom-text">Picture:</label>
+                  <div id="image-preview" class="mb-3"></div>
+                  <div class="input-group">
+                      <input type="file" name="profile_picture" accept="image/*" id="profile_picture" class="form-control">
+                      <button type="button" id="remove-image" style="display: none; margin-left: 10px;" class="btn btn-outline-danger">Remove Image</button>
+                  </div>
+              </div>
+          </div>
+      </div>  
 
         <!-- Cancel & Save button row -->
         <div class="row mt-3">
@@ -106,4 +123,42 @@
         </div>
     </div>
 </body>
+
+<script>
+  // JavaScript for image preview and remove functionality
+  document.addEventListener("DOMContentLoaded", function() {
+        const pictureInput = document.getElementById("profile_picture");
+        const imagePreview = document.getElementById("image-preview");
+        const removeImageButton = document.getElementById("remove-image");
+
+        function updatePreview() {
+            const file = pictureInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const image = new Image();
+                    image.src = event.target.result;
+                    image.width = 200;
+                    imagePreview.innerHTML = '';
+                    imagePreview.appendChild(image);
+                    removeImageButton.style.display = "inline-block";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.innerHTML = '';
+                removeImageButton.style.display = "none";
+            }
+        }
+
+        pictureInput.addEventListener("change", updatePreview);
+
+        removeImageButton.addEventListener("click", function() {
+            event.preventDefault();
+            pictureInput.value = null;
+            imagePreview.innerHTML = '';
+            removeImageButton.style.display = "none";
+        });
+    });
+
+</script>
 {% endblock %}

@@ -95,7 +95,6 @@ def add_product(request):
             else:
                 Stock_Status = 'Regular Stock'
         else:
-            print('yes prod stock')
             if int(Product_Initial_Count) == 0:
                 Stock_Status = 'No Stock'
             elif int(Product_Initial_Count) <= int(Product_Stock_threshold):
@@ -1466,7 +1465,7 @@ def employee_accounts(request):
     
     all_users = User.objects.filter(is_superuser=False)
 
-    visible_users = Account.objects.filter(Visibility=True)
+    visible_users = User.objects.filter(is_superuser=False, account__Visibility=True)
     user_count = visible_users.count()
     show_hidden = False
 
@@ -1476,6 +1475,7 @@ def employee_accounts(request):
         show_hidden = True
         user_count = all_users.count()
         print("hide")
+    print(all_users)
 
     return render(request, 'inventoryapp/employee_accounts.html', {'users': all_users, 'user_count':user_count, 'show_hidden':show_hidden})
 
@@ -1486,20 +1486,20 @@ def edit_my_account(request):
         user = request.user
 
         # Get the form data
-        new_password = request.POST.get('new_password')
-        reenter_new_password = request.POST.get('reenter_new_password')
-        new_username = request.POST.get('username')
+        New_password = request.POST.get('new_password')
+        Reenter_new_password = request.POST.get('reenter_new_password')
+        New_username = request.POST.get('username')
 
         # Check if passwords match
-        if new_password != reenter_new_password:
+        if New_password != Reenter_new_password:
             error_msg = "Passwords do not match"
             return render(request, 'inventoryapp/edit_my_account.html', {'error_msg': error_msg})
 
         # Update password if it's provided
-        if new_password:
-            user.set_password(new_password)
-        if new_username:
-            user.username = new_username
+        if New_password:
+            user.set_password(New_password)
+        if New_username:
+            user.username = New_username
         user.save()
         logout(request)
         return redirect('account_login')
@@ -1508,14 +1508,64 @@ def edit_my_account(request):
 
 @login_required 
 def add_new_employee(request):
-    return render(request, 'inventoryapp/add_new_employee.html')
+    if request.method == 'POST':
+        First_name = request.POST.get("first_name")
+        Last_name = request.POST.get("last_name")
+        Username = request.POST.get("username")
+        Password = request.POST.get("password")
+        Profile_picture = request.FILES.get('profile_picture') 
+        
+        existing_user = User.objects.filter(
+            username = Username
+        )
+
+        if existing_user:
+            error_msg = 'Username Already Exists'
+            return render(request, 'inventoryapp/add_new_employee.html',{'error_msg': error_msg})
+        
+        user = User.objects.create_user(username=Username, password=Password)
+        
+        Account.objects.create(
+            user=user,
+            Profile_Picture=Profile_picture,
+            First_Name=First_name,
+            Last_Name=Last_name,
+            Role='Employee',
+            Visibility=True
+        )
+        
+        return redirect('employee_accounts')
+    else:
+        return render(request, 'inventoryapp/add_new_employee.html')
 
 def view_employee(request, pk):
     Employee = get_object_or_404(Account, Account_ID=pk)
     return render(request, 'inventoryapp/view_employee.html', {"Employee":Employee})
 
-def update_employee(request):
-    return render(request, 'inventoryapp/update_employee.html')
+def update_employee(request, pk):
+    Employee = get_object_or_404(Account, Account_ID=pk)
+    if request.method == 'POST':
+
+        user =  Employee.user
+        
+        New_password = request.POST.get('new_password')
+        Reenter_new_password = request.POST.get('reenter_new_password')
+        New_username = request.POST.get('username')
+
+        # Check if passwords match
+        if New_password != Reenter_new_password:
+            error_msg = "Passwords do not match"
+            return render(request, 'inventoryapp/update_employee.html', {'error_msg': error_msg, "Employee":Employee})
+
+        # Update password if it's provided
+        if New_password:
+            user.set_password(New_password)
+        if New_username:
+            user.username = New_username
+        user.save()
+        return redirect('employee_accounts')
+    else:
+        return render(request, 'inventoryapp/update_employee.html', {"Employee":Employee})
 
 def hide_account(request, pk):
     if request.method == 'POST':

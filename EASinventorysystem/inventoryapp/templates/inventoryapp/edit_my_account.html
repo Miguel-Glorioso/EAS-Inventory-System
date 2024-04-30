@@ -58,11 +58,17 @@
   </div>
   <div class="row p-5"></div>
   <div class="card">
-      <form method="post" action="{% url 'edit_my_account' %}">
+      <form method="POST" action="{% url 'edit_my_account' %}">
           {% csrf_token %}
           <!-- Image, Name, Role -->
           <div class="row mt-2 mb-4">
-              <div class="col image-coliumn"><img src="#" alt="User Image"></div>
+            <div class="col image-column"> 
+              {% if user.account.Profile_Picture %}
+                  <img src="{{ user.account.Profile_Picture.url }}" alt="User Image" width="400">
+              {% else %}
+                  <span>No image available</span>
+              {% endif %}
+            </div> 
               <div class="col"><h5>{{user.account.First_Name}} {{user.account.Last_Name}}</h5></div>
               <div class="col d-flex justify-content-end">
                   <h6>Role: Administrator</h6>
@@ -76,11 +82,7 @@
                   <label for="username">Username</label><br>
                   <input type="text" id="username" name="username" value="{{user.username}}">
               </div>
-              
-              <!-- Old Password -->
               <div class="col">
-                  <label for="old_password">Old Password</label><br>
-                  <input type="password" id="old_password" name="old_password" value="{{user.password}}" disabled>
               </div>
           </div>
 

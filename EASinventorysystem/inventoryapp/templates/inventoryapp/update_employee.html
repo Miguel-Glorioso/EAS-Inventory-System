@@ -53,16 +53,24 @@
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
           <div class="col-md-auto d-flex align-items-center">
-            <h4 class="m-0 mr-3">My Account</h4>
+            <h4 class="m-0 mr-3">Employee Account</h4>
           </div>
         </div>
     </div>
     <div class="row p-5"></div>
     <div class="card">
+      <form method="POST" action="{% url 'update_employee' pk=Employee.pk %}">
+        {% csrf_token %}
         <!-- Image, Name, Role -->
         <div class="row mt-2 mb-4">
-            <div class="col image-coliumn"><img src="#" alt="User Image"></div>
-            <div class="col"><h5>Phoebe Buffay</h5></div>
+          <div class="col image-column"> 
+            {% if Employee.Profile_Picture %}
+                <img src="{{ Employee.Profile_Picture.url }}" alt="User Image" width="400">
+            {% else %}
+                <span>No image available</span>
+            {% endif %}
+          </div> 
+            <div class="col"><h5>{{Employee.First_Name}} {{Employee.Last_Name}}</h5></div>
             <div class="col d-flex justify-content-end">
                 <!-- <h6>Role: Employee</h6> -->
             </div>
@@ -73,33 +81,38 @@
             <!-- Username -->
             <div class="col">
                 <label for="username">Username</label><br>
-                <input type="text" id="username" value="Phoebe's username">
+                <input type="text" id="username" name="username" value="{{Employee.user.username}}">
             </div>
             
-            <!-- Old Password -->
             <div class="col">
             </div>
         </div>
 
         <!-- New password -->
+        {% if error_msg %}
+        <div class="col-12 alert alert-danger" role="alert" style="margin-top: 20px;">
+          {{ error_msg }} 
+        </div>
+        {% endif %}
         <div class="row">
             <div class="col">
                 <label for="new_password">New Password</label><br>
-                <input type="password" id="new_password" value="Input your new password">
+                <input type="password" id="new_password" name="new_password" required>
             </div>
             <div class="col">
                 <label for="reenter_new_password">Re-enter New Password</label><br>
-                <input type="password" id="reenter_new_password" value="Re-enter your new password">
+                <input type="password" id="reenter_new_password" name="reenter_new_password" required>
             </div>
         </div>
 
         <!-- Cancel & Save button row -->
         <div class="row">
           <div class="col">
-            <a href="{% url 'view_employee' %}" class="btn btn-danger btn-edit">Cancel</a>
+            <a href="{% url 'view_employee' pk=Employee.pk %}" class="btn btn-danger btn-edit">Cancel</a>
           </div>
           <div class="col-md-auto">
-            <button class="btn btn-primary btn-edit" href="#">Save</button>
+            <button type="submit" class="btn btn-primary btn-edit" href="#">Save</button>
+            
           </div>
         </div>
     </div>

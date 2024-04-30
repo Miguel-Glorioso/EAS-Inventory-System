@@ -89,8 +89,7 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <label for="password">Password</label><br>
-                  <input type="password" id="password" value="{{Employee.user.password}}" disabled>
+                  <h5>Role:{{Employee.Role}}</h5> 
                 </div>
               </div>
           </div>
@@ -103,7 +102,7 @@
           <div class="col-md-auto">
             <div class="row">
                 <div class="col">
-                    <a href="{% url 'update_employee' %}" class="btn btn-primary btn-edit">Edit</a>
+                    <a href="{% url 'update_employee' pk=Employee.pk %}" class="btn btn-primary btn-edit">Edit</a>
                 </div>
                 <div class="col">
                     <form action="{% url 'hide_account' pk=Employee.Account_ID %}" method="post">
