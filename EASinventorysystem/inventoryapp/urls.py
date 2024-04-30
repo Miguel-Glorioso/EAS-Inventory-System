@@ -72,6 +72,7 @@ urlpatterns = [
 
     path('my_account', views.my_account, name='my_account'),
     path('employee_accounts', views.employee_accounts, name='employee_accounts'),
+    path('edit_my_account', views.edit_my_account, name='edit_my_account'),
 
     path('generate_inventory_summary_screen', views.generate_inventory_summary_screen, name='generate_inventory_summary_screen'),
 ]
