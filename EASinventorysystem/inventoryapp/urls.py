@@ -21,6 +21,7 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.account_login, name='account_login'),
+    path('account_logout/', views.account_logout, name='account_logout'),
     path('current_inventory', views.inventory_list, name='current_inventory'),
     path('add_product', views.add_product, name='add_product'),
     path('view_product/<int:product_pk>/', views.view_product, name='view_product'),
@@ -67,7 +68,7 @@ urlpatterns = [
     path('view_consignee_details/<int:consignee_id>/', views.view_consignee_tag_details, name='view_consignee_details'),
     path('create__consignee', views.create__consignee, name='create__consignee'),
     
-    path('update_category/<int:category_id>/', views.update_category, name='update_category'),
+    path('update_category/<int:pk>/', views.update_category, name='update_category'),
     path('update_tags/<int:pk>/', views.update_tags, name='update_tags'),
 
     path('my_account', views.my_account, name='my_account'),

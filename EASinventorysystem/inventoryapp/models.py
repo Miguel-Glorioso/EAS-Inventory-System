@@ -41,7 +41,7 @@ class Product(models.Model):
 
 class Category(models.Model):
     Category_ID = models.AutoField(primary_key=True)
-    Category_Name = models.CharField(max_length=32)
+    Category_Name = models.CharField(max_length=32, unique=True)
     Category_Hex_Color_ID = models.CharField(max_length=7, unique=True)
     Description = models.TextField(validators =[MaxLengthValidator(1024)])
     Category_Product_Low_Stock_Threshold = models.PositiveIntegerField(validators =[MaxValueValidator(99999)])

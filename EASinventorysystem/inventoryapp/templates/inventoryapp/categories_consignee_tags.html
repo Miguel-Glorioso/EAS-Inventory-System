@@ -96,7 +96,6 @@
       </div>
       <div class="modal-footer">
         <a class="btn btn-primary">Edit</a> 
-        <button type="button" class="btn btn-danger">Delete</button>
       </div>
     </div>
   </div>
@@ -144,10 +143,7 @@
               <li><strong>Notes:</strong> ${response.Notes}</li>
             </ul>
           `);
-          var categoryId = response.Category_ID;
-
-          var editUrl = '/update_category/' + categoryId + '/';
-          $('#categoryModal').find('.modal-footer').find('a.btn-primary').attr('href', editUrl);
+          $('#categoryModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_category/' + response.Category_ID + '/');
           $('#categoryModal').modal('show');
         },
         error: function(xhr, status, error) {

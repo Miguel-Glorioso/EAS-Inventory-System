@@ -15,6 +15,9 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Table, TableStyle, Image
 from reportlab.lib import colors
 from reportlab.lib.utils import ImageReader
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.contrib.auth import logout
 
 # Create your views here.
 
@@ -31,7 +34,13 @@ def account_login(request):
             return render(request, 'inventoryapp/login.html', {'error_msg': error_msg})
     else:
         return render(request, 'inventoryapp/login.html')
+    
+def account_logout(request):
+    logout(request)
 
+    return redirect('account_login')
+
+@login_required 
 def inventory_list(request):
     all_inventory = Product.objects.all()
     all_consignee_products = Consignee_Product.objects.all()
@@ -58,6 +67,7 @@ def inventory_list(request):
         all_inventory = all_inventory.filter(Product_ID__in=product_ids)
     return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products, 'show_hidden':show_hidden})
 
+@login_required 
 def add_product(request):
     categories = Category.objects.all()
     consignees = Consignee.objects.all()
@@ -140,6 +150,7 @@ def add_product(request):
     else:
         return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees})
 
+@login_required 
 def view_product(request, product_pk):
     try:
         product = Product.objects.get(pk=product_pk)
@@ -160,6 +171,7 @@ def view_product(request, product_pk):
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Product not found'}, status=404)
 
+@login_required 
 def update_product(request, pk):
     p = get_object_or_404(Product, pk=pk)
     con_p = Consignee_Product.objects.filter(Product_ID=pk)
@@ -247,11 +259,13 @@ def update_product(request, pk):
         return redirect('current_inventory')
     else:
         return render(request, 'inventoryapp/update_product.html', {'p':p, 'con_p':con_p, 'con_p_ids':con_p_ids, 'categories': categories,  'consignees': consignees})
-    
+
+@login_required 
 def purchase_order_list(request):
     all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
     return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
 
+@login_required 
 def update_PO_progress(request, PO_pk):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -385,6 +399,7 @@ def update_PO_progress(request, PO_pk):
 #     else:
 #         return render(request, 'inventoryapp/add_po.html', {'products': products})
 
+@login_required 
 def add_purchase_order_consignee(request):
     all_products = Product.objects.all()
     all_consignees = Consignee.objects.all()
@@ -431,6 +446,7 @@ def add_purchase_order_consignee(request):
     else:
         return render(request, 'inventoryapp/add_po_consignee.html', {'products': all_products, 'consignees':all_consignees})
 
+@login_required 
 def add_purchase_order_direct_customer(request):
     products = Product.objects.all()
     if request.method == 'POST':
@@ -519,11 +535,13 @@ def add_purchase_order_direct_customer(request):
 #     products = Product.objects.all()
 #     return render(request, 'inventoryapp/add_po_second.html', {'products': products})
 
+@login_required 
 def view_po(request, pk):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
     products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
     return render(request, 'inventoryapp/view_po.html', {'po':purchase_order, 'products':products_ordered})
 
+@login_required 
 def close_po(request, pk, account_id):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
     account = get_object_or_404(Account,pk=account_id )
@@ -574,10 +592,12 @@ def close_po(request, pk, account_id):
             
     return redirect('current_pos')
 
+@login_required 
 def requisition_order_list(request):
     all_requisition_orders = Product_Requisition_Order.objects.all()
     return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
 
+@login_required 
 def update_PRO_progress(request, PRO_pk):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -595,6 +615,7 @@ def update_PRO_progress(request, PRO_pk):
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
+@login_required 
 def add_requisition_order(request):
     products = Product.objects.all()
     if request.method == 'POST':
@@ -635,6 +656,7 @@ def add_requisition_order(request):
     else:
         return render(request, 'inventoryapp/add_pro.html', {'products': products})
 
+@login_required 
 def update_pro(request, pk):
     PRO = get_object_or_404(Product_Requisition_Order, pk=pk)
     all_inventory = Product.objects.all()
@@ -691,12 +713,14 @@ def update_pro(request, pk):
     else:
         
         return render(request, 'inventoryapp/update_pro.html', {'requisition_order': PRO, 'products': all_inventory, 'stock_ordered_items': stocks_ordered})
-    
+
+@login_required     
 def view_pro(request, pk):
     product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
     stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID = pk)
     return render(request, 'inventoryapp/view_pro.html', {'pro':product_requisition_order, 'stocks':stocks_ordered})
 
+@login_required 
 def close_pro(request, pk, account_id):
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
     account = get_object_or_404(Account,pk=account_id )
@@ -735,7 +759,7 @@ def close_pro(request, pk, account_id):
     
     return redirect('current_pros')
 
-
+@login_required 
 def customer_list(request):
     all_direct = Customer.objects.all()
     all_consignees = Consignee.objects.all()
@@ -751,6 +775,7 @@ def customer_list(request):
             
     return render(request, 'inventoryapp/current_customers.html', {'customers':all_customers    })
 
+@login_required 
 def create_direct_customer(request):
     if request.method == 'POST':
         Customer_Name = request.POST.get('customer_name')
@@ -794,6 +819,7 @@ def create_direct_customer(request):
     else:
         return render(request, 'inventoryapp/create_direct_customer.html')
 
+@login_required 
 def create_consignee(request):
     if request.method == 'POST':
         Consignee_Tag_ID = request.POST.get('consignee_tag_id')
@@ -846,7 +872,8 @@ def create_consignee(request):
 
     else:
         return render(request, 'inventoryapp/create_consignee.html')
-    
+
+@login_required     
 def create__consignee(request):
     if request.method == 'POST':
         Consignee_Tag_ID = request.POST.get('consignee_tag_id')
@@ -900,6 +927,7 @@ def create__consignee(request):
     else:
         return render(request, 'inventoryapp/create__consignee.html')
 
+@login_required 
 def view_customer(request, customer_type, customer_id):
     try:
         if customer_type == 'direct':
@@ -935,7 +963,8 @@ def view_customer(request, customer_type, customer_id):
     
     except (Customer.DoesNotExist, Consignee.DoesNotExist):
         return JsonResponse({'error': 'Customer not found'}, status=404)
-    
+
+@login_required     
 def update_direct_customer(request, pk):
     customer = get_object_or_404(Customer, Customer_ID=pk)
 
@@ -963,7 +992,8 @@ def update_direct_customer(request, pk):
         return redirect('current_customers')
     else:
         return render(request, 'inventoryapp/update_direct_customer.html', {'customer': customer})
-    
+
+@login_required     
 def update_consignee(request, pk):
     consignee = get_object_or_404(Consignee, pk=pk)
     Start_date = consignee.Consignment_Period_Start
@@ -1011,6 +1041,7 @@ def update_consignee(request, pk):
     else:
         return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string})
 
+@login_required 
 def update_PO_direct_customer(request, po_pk, c_pk):
     PO = get_object_or_404(Purchase_Order, pk=po_pk)
     C = get_object_or_404(Customer, pk=c_pk)
@@ -1087,6 +1118,7 @@ def update_PO_direct_customer(request, po_pk, c_pk):
     else:
         return render(request, 'inventoryapp/update_po_direct_customer.html', {'PO':PO, 'C':C, 'products_ordered':products_ordered, 'products':products})
 
+@login_required 
 def update_PO_consignee(request, po_pk, c_pk):
     PO = get_object_or_404(Purchase_Order, pk=po_pk)
     C = get_object_or_404(Consignee, pk=c_pk)
@@ -1148,15 +1180,18 @@ def update_PO_consignee(request, po_pk, c_pk):
         return redirect('current_pos')
     else:
         return render(request, 'inventoryapp/update_po_consignee.html', {'PO':PO, 'C':C, 'products_ordered':products_ordered, 'products':products, 'consignees':all_consignees})
-    
+
+@login_required     
 def history_PO(request):
     all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
     return render(request, 'inventoryapp/history_po.html', {'purchase_orders':all_purchase_orders})
 
+@login_required 
 def history_PRO(request):
     all_requisition_orders = Product_Requisition_Order.objects.all().order_by('Creation_Date')
     return render(request, 'inventoryapp/history_pro.html', {'requisition_orders':all_requisition_orders})
 
+@login_required 
 def categories_consignee_tags(request):
     consignees = Consignee.objects.all()
     categories = Category.objects.all()
@@ -1164,6 +1199,7 @@ def categories_consignee_tags(request):
     # Render the template with the consignees and categories
     return render(request, 'inventoryapp/categories_consignee_tags.html', {'consignees': consignees, 'categories': categories})
 
+@login_required 
 def add_category(request):
     if request.method == 'POST':
         Category_Name = request.POST.get('category_name')
@@ -1187,7 +1223,8 @@ def add_category(request):
             return redirect('categories_consignee_tags')
     else:
         return render(request, 'inventoryapp/add_category.html')
-    
+
+@login_required     
 def view_category(request, category_id):
     try:
         category = Category.objects.get(Category_ID=category_id)
@@ -1203,6 +1240,7 @@ def view_category(request, category_id):
     except Category.DoesNotExist:
         return JsonResponse({'error': 'Category not found'}, status=404)
 
+@login_required 
 def generate_inventory_summary_screen(request):
     all_inventory = Product.objects.all()
     all_consignee_products = Consignee_Product.objects.all()
@@ -1210,6 +1248,7 @@ def generate_inventory_summary_screen(request):
     all_consignees = Consignee.objects.all()
     return render(request, 'inventoryapp/generate_inventory_summary_screen.html',{'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products})
 
+@login_required 
 def generate_inventory_summary(request):
     # Retrieve all products
     all_inventory = Product.objects.all()
@@ -1280,6 +1319,7 @@ def generate_inventory_summary(request):
     # Return the PDF response
     return FileResponse(buf, as_attachment=True, filename="Summary Report.pdf")
 
+@login_required 
 def view_category_details(request, category_id):
     try:
         category = Category.objects.get(pk=category_id)
@@ -1296,7 +1336,8 @@ def view_category_details(request, category_id):
     except Category.DoesNotExist:
         # If the category doesn't exist, return a JSON response with an error message
         return JsonResponse({'error': 'Category does not exist'}, status=404)
-    
+
+@login_required     
 def view_consignee_tag_details(request, consignee_id):
     try:
         consignee = get_object_or_404(Consignee, pk=consignee_id)
@@ -1320,9 +1361,10 @@ def view_consignee_tag_details(request, consignee_id):
         return JsonResponse(consignee_details)
     except Consignee.DoesNotExist:
         return JsonResponse({'error': 'Consignee does not exist'}, status=404)
-    
-def update_category(request, category_id):
-    category = Category.objects.get(pk=category_id)
+
+@login_required     
+def update_category(request, pk):
+    category = Category.objects.get(pk=pk)
     
     if request.method == 'POST':
         Category_Name = request.POST.get('category_name')
@@ -1332,7 +1374,7 @@ def update_category(request, category_id):
         Notes = request.POST.get('notes')
 
         # Check if a category with the same name already exists excluding the current one
-        existing_category = Category.objects.filter(Category_Name=Category_Name).exclude(pk=category_id)
+        existing_category = Category.objects.filter(Category_Name=Category_Name).exclude(pk=pk)
         if existing_category.exists():
             error_msg = 'Category Already Exists'
             return render(request, 'inventoryapp/update_category.html', {'error_msg': error_msg, 'category': category})
@@ -1346,8 +1388,9 @@ def update_category(request, category_id):
             category.save()
             return redirect('categories_consignee_tags')
     else:
-        return render(request, 'inventoryapp/update_category.html', {'category': category, 'category_id': category_id})
-    
+        return render(request, 'inventoryapp/update_category.html', {'category': category, 'category_id': pk})
+
+@login_required     
 def update_tags(request, pk):
     consignee = get_object_or_404(Consignee, pk=pk)
     Start_date = consignee.Consignment_Period_Start
@@ -1395,16 +1438,19 @@ def update_tags(request, pk):
     else:
         return render(request, 'inventoryapp/update_tags.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string})
 
-
+@login_required 
 def my_account(request):
     return render(request, 'inventoryapp/my_account.html')
 
+@login_required 
 def employee_accounts(request):
     return render(request, 'inventoryapp/employee_accounts.html')
 
+@login_required 
 def edit_my_account(request):
     return render(request, 'inventoryapp/edit_my_account.html')
 
+@login_required 
 def add_new_employee(request):
     return render(request, 'inventoryapp/add_new_employee.html')
 
