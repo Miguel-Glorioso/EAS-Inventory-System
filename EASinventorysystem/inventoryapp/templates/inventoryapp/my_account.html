@@ -1,0 +1,135 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+  <title>My Account</title>
+  <style>
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; 
+    }
+    .card {
+      width: 50%; 
+      margin: 0 auto; 
+      padding: 20px;
+      background-color: #eee;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .image-column {
+      display: flex;
+      justify-content: center;
+    }
+    .image-column img {
+      width: 50px;
+      height: auto; 
+    }
+    .row {
+      margin-bottom: 15px; 
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+      border: 1px solid #ccc; 
+      border-radius: 5px; 
+      padding: 8px; 
+      background-color: white; 
+      width: 100%; 
+    }
+
+    .btn-edit {
+      font-size: 18px; 
+      padding: 6px 28px; 
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+          <div class="col-md-auto d-flex align-items-center">
+            <h4 class="m-0 mr-3">My Account</h4>
+          </div>
+        </div>
+    </div>
+    <div class="row p-5"></div>
+    <div class="card">
+        <!-- Role -->
+        <div class="row mt-2 mb-4">
+          <div class="col d-flex justify-content-end">
+            <h6>Role: Administrator</h6>
+          </div>
+        </div>
+
+        <!-- User details -->
+        <div class="row">
+            <!-- Image -->
+          <div class="col image-column"> 
+            <img src="#" alt="User Image">
+          </div>
+          <!-- User info -->
+          <div class="col">
+            <div class="row">
+                <div class="col">
+                  <h2>Drexler Jordan</h2> 
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label for="username">Username</label><br>
+                  <input type="text" id="username" value="Drexler Jordan" disabled>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label for="password">Password</label><br>
+                  <input type="password" id="password" value="************" disabled>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                    <!-- <a href="#">Reveal password</a> -->
+                  </div>
+              </div>
+          </div>
+        </div>
+        <!-- Edit button row -->
+        <div class="row">
+          <div class="col">
+          </div>
+          <div class="col-md-auto">
+            <button class="btn btn-primary btn-edit" data-bs-toggle="modal" data-bs-target="#passcodeModal">Edit</button>
+          </div>
+        </div>
+    </div>
+
+    <!-- Passcode Modal -->
+    <div class="modal fade" id="passcodeModal" tabindex="-1" role="dialog" aria-labelledby="passcodeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="passcodeModalLabel">Enter Passcode</h5>
+                </div>
+                <div class="modal-body">
+                  <label for="passcode">Input your passcode to proceed:</label>
+                  <input type="password" id="passcode" class="form-control">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <a href="{% url 'edit_my_account' %}" class="btn btn-primary">Proceed</a>
+                </div>
+              </div>
+        </div>
+    </div>
+  
+      <!-- Bootstrap JS (Popper.js and Bootstrap JS) -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+zJ3pUuMA+K1fK2xO8L6KVqK+P5S8kLcR+5zU5B" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-FA31p3o6Nq4S2n5T9vF4d4kpC25TIpmNh/V6ARcHfTz9QUFJ8mF4qzvSWw7xG2y2" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.4/js/bootstrap.min.js" integrity="sha384-U5rGAAYtLTSdPuO5PtQ3sbsbr7dxCsFkk9+KxQ+8tD+vUElZbn6Dtf2NQZqpo5it" crossorigin="anonymous"></script>
+</body>
+{% endblock %}

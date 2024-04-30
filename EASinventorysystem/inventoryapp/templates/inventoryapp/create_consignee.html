@@ -156,7 +156,8 @@
             
             <div class="mb-3">
                 <label for="id_notes" class="form-label custom-text">Notes:</label>
-                <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea>
+                <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes" oninput="if(this.value.length > 1024) this.value = this.value.substring(0, 1024);" maxlength="1024"></textarea>
+                <!-- <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea> -->
             </div>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-6">

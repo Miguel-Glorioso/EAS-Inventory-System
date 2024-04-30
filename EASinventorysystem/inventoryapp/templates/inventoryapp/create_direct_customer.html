@@ -39,7 +39,8 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="required" for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                        <input type="number" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11">
+                        <input type="tel" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number: 09xxxxxxxxx" pattern="09[0-9]{9}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 0;">
+                        <!-- <input type="number" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11"> -->
                     </div>                    
                 </div>
                 </div>
@@ -76,7 +77,8 @@
             </div>
             <div class="mb-3">
                 <label for="id_notes" class="form-label custom-text">Notes:</label>
-                <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea>
+                <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes" oninput="if(this.value.length > 1024) this.value = this.value.substring(0, 1024);" maxlength="1024"></textarea>
+                <!-- <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea> -->
             </div>
             <div class="row">
                 <div class="col">

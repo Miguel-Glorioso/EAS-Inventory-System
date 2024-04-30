@@ -35,16 +35,39 @@
                                     <label class="required" for="estimated_receiving_date">Estimated Receiving Date:</label><br>
                                     <input type="date" id="estimated_receiving_date" name="estimated_receiving_date" class="form-control rounded-10"><br><br>
                                 </div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var today = new Date();
+                                        var dd = String(today.getDate()).padStart(2, '0');
+                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                                        var yyyy = today.getFullYear();
+                                
+                                        today = yyyy + '-' + mm + '-' + dd;
+                                
+                                        var estimatedReceivingDateInput = document.getElementById('estimated_receiving_date');
+                                        estimatedReceivingDateInput.setAttribute('min', today);
+                                    });
+                                </script>
                                 <div class="col">
                                     <label class="required" for="manufacturer_name">Manufacturer:</label><br>
-                                    <input type="text" id="manufacturer_name" name="manufacturer_name" class="form-control rounded-10"><br><br>
+                                    <input type="text" id="manufacturer_name" name="manufacturer_name" class="form-control rounded-10" maxlength="32"><br><br>
                                 </div>
                                 <div class="col">
                                     <label class="required" for="total_cost">Total Cost:</label><br>
                                     <div class="input-group">
                                         <span class="input-group-text">PHP</span>
-                                        <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="99999.99" maxlength="9" class="form-control rounded-10"><br><br>
+                                        <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" class="form-control rounded-10" oninput="validateInput(event)" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.key === '.'" size="9">
+                                        <!-- <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" oninput="maxLengthCheck(this)" class="form-control rounded-10"><br><br> -->
+                                        <!-- <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" maxlength="9" class="form-control rounded-10"><br><br> -->
                                     </div>
+                                    <script>
+                                        function validateInput(event) {
+                                            var input = event.target;
+                                            if (input.value.length > 10) {
+                                                input.value = input.value.slice(0, 10);
+                                            }
+                                        }
+                                    </script>
                                 </div>
                             </div>
 
