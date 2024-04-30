@@ -1,0 +1,196 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <title>Employee Accounts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">Edit Inventory Count </h4>
+            </div>
+        </div>
+
+        <!-- NO TOUCHIES; WIP -->
+
+        <form method="POST" action="#">
+            <!-- First Tab: Choose products  -->
+            <div id="step1" style="display: none;">
+
+                {% csrf_token %}
+                <fieldset>
+                    <legend>Choose a Product to update its stock</legend>
+
+                    <div class="row mt-4">
+                        <div class="d-flex justify-content-center">
+                            <!-- Left column for Products Ordered -->
+                            <div class="col-md-6" style="padding-right: 2%; overflow-y: auto; height: 630px;">
+                                <h5>Products Ordered:</h5>
+                                <div class="container mt-2">
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless text-center" id="PO_products">
+                                            <thead class="border-bottom border-dark">
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>ID</th>
+                                                    <th>Price</th>
+                                                    <th>Quantity</th>
+                                                    <th>Stock</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="product-list">
+                                                <!-- Products will be appended here as rows -->
+                                            </tbody>
+                                        </table>
+                                        <input type="hidden" name="all_products" id="all_products" value="">
+                                        <input type="hidden" name="total_price" id="total_price" value="">
+                                        <input type="hidden" name="account" id="account" value="{{ request.user.account.pk }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right column for Product List -->
+                            <div class="col-md-6" style="border-left: 2px solid gray; padding-left: 2%;">
+                                <div class="row mb-3">
+                                    <h5>List of Products:</h5>
+                                    <div class="input-group mb-4 mr-3">
+                                        <input type="text" class="form-control" id="search-input"
+                                            placeholder="Search products..." aria-label="Search products"
+                                            aria-describedby="search-button">
+                                    </div>
+                                </div>
+                                <div class="row mx-4" id="product-list" style="overflow-y: auto; height: 520px;">
+                                    {% for p in products %}
+                                    <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}">
+                                        <!-- Product information -->
+                                        <div class="col">
+                                            {% if p.Picture %}
+                                            <!-- Image -->
+                                            <img src="{{ p.Picture.url }}" width="120" class="mr-3">
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="col">
+                                            <!-- Product details -->
+                                            <h5>{{ p.Name }}</h5>
+                                            <p>ID: {{ p.EAS_Product_ID }}</p>
+                                            <p class="product-price">Php {{ p.Price }}</p>
+                                            <p><strong>Stock: </strong><span class="product_count">{{ p.Actual_Inventory_Count }}</span></p>
+                                            <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
+                                        </div>
+
+                                        <div class="col">
+                                            <!-- Add to Cart button -->
+                                            <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Buttons for navigation -->
+                    <div class="row mb-3">
+                        <div class="col">
+                            <a href="#" class="btn btn-danger" onclick="showCancelWarningModal()">Cancel</a>
+                        </div>
+                        <div class="col text-end">
+                            <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Second Tab: Product Selection -->
+            <div id="step2" style="display: none;">
+                <div class="container-fluid">
+
+                    <!-- Buttons: back and cancel -->
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button type="button" class="btn btn-success" onclick="validateQuantityAndNext()">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Third View: Summary -->
+            <div id="step3" style="display: none;">
+                <div class="container-fluid">
+                    <legend>Summary</legend>
+
+                    <!-- Consignee Information -->
+                    <h5>Consignee Information:</h5>
+                    <div class="row mb-1">
+                        <div class="col">
+                            <p><strong>Consignee Name:</strong> <span id="consignee_customer_name"></span></p>
+                            <p><strong>Email:</strong> <span id="consignee_email"></span></p>
+                            <p><strong>Primary Contact:</strong> <span id="consignee_primary_contact"></span></p>
+                            <p><strong>Emergency Contact:</strong> <span id="consignee_emergency_contact"></span></p>
+                            <p><strong>Selected Shipping Method:</strong> <span id="selected_shipping_method"></span>
+                            </p>
+                        </div>
+                        <div class="col">
+                            <p><strong>Address:</strong><br>
+                                <span id="consignee_address_line1"></span><br>
+                                <span id="consignee_barangay_municipality_province"></span><br>
+                                <span id="consignee_zip_code"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col">
+                            <h5>Consignee Notes:</h5>
+                            <p id="consignee_notes_summary"></p>
+                        </div>
+                        <div class="col">
+                            <h5>Order Notes:</h5>
+                            <p id="order_notes_summary"></p>
+                        </div>
+                    </div>
+
+                    <!-- Products Table -->
+                    <h5>Products Selected:</h5><br>
+                    <p><strong>Total Price:</strong> <span id="total_price_summary"></span></p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>ID</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody id="selected-products-table">
+                                <!-- Selected products will be dynamically filled here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Buttons: back and submit -->
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <!-- <button type="submit" class="btn btn-success" id="submit_po">Submit</button> -->
+                            <button type="submit" class="btn btn-success" id="submit_po" onclick="return confirm('Are you sure you want to create this purchase order?')">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+{% endblock %}

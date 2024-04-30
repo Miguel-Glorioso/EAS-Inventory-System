@@ -48,22 +48,20 @@
         </header>
 
         <div class="menu-bar">
-            <a>{{user.account}} logged in</a>
+            <!-- <div class="row">
+                <span class="text nav-text">Welcome, {{user.account}}</span>
+            </div> -->
             <div class="menu">
                 <ul class="menu-links">
+                    <li class="nav-link">
+                        <span class="text m-6 nav-text">Welcome, {{user.account}}</span>
+                    </li>
                     <li class="nav-link">
                         <a href="{% url 'current_inventory' %}">
                             <i class='bx bxs-cabinet icon' ></i>
                             <span class="text nav-text">Current Inventory</span>
                         </a>
                         <span class="tooltip">Current Inventory</span>
-                    </li>
-                    <li class="nav-link">
-                        <a href="#">
-                            <i class='bx bxs-report icon'></i>
-                            <span class="text nav-text">Order Analytics</span>
-                        </a>
-                        <span class="tooltip">Order Analytics</span>
                     </li>
                     <li class="nav-link">
                         <a href="{% url 'categories_consignee_tags' %}">

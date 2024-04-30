@@ -1533,3 +1533,6 @@ def partially_fulfill_pro(request, pro_pk):
     # For example, you can reduce the quantity of a specific product in the PRO
     # Then, redirect back to the PRO details page
     return redirect('pro_details', pro.pk)
+
+def edit_count(request):
+    return render(request,'inventoryapp/edit_count.html')

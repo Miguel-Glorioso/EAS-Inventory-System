@@ -82,4 +82,6 @@ urlpatterns = [
     path('generate_inventory_summary_screen', views.generate_inventory_summary_screen, name='generate_inventory_summary_screen'),
 
     path('pro/<int:pro_pk>/partially_fulfill/', views.partially_fulfill_pro, name='partially_fulfill_pro'),
+
+    path('edit_count', views.edit_count, name='edit_count'),
 ]
