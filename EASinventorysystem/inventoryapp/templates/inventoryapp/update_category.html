@@ -20,7 +20,7 @@
                 {{ error_msg }}
             </div>
         {% endif %}
-        <form method="POST" action="{% url 'update_category' category_id=c.Category_ID %}">
+        <form id=editCategoryForm method="POST" action="{% url 'update_category' pk=category.Category_ID %}">
 
             {% csrf_token %}
             <legend>Category Information</legend>
@@ -93,7 +93,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmEditCategoryBtn">Yes</button>
+                    <button type="submit" class="btn btn-primary" id="confirmEditCategoryBtn">Yes</button>
                 </div>
             </div>
         </div>
@@ -131,5 +131,6 @@
     </script>
 
 </body>
-{% endblock %}
+
 </html>
+{% endblock %}

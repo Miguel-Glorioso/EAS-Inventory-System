@@ -1246,8 +1246,8 @@ def view_consignee_tag_details(request, consignee_id):
     except Consignee.DoesNotExist:
         return JsonResponse({'error': 'Consignee does not exist'}, status=404)
     
-def update_category(request, category_id):
-    category = Category.objects.get(pk=category_id)
+def update_category(request, pk):
+    category = Category.objects.get(pk=pk)
     
     if request.method == 'POST':
         Category_Name = request.POST.get('category_name')
@@ -1257,7 +1257,7 @@ def update_category(request, category_id):
         Notes = request.POST.get('notes')
 
         # Check if a category with the same name already exists excluding the current one
-        existing_category = Category.objects.filter(Category_Name=Category_Name).exclude(pk=category_id)
+        existing_category = Category.objects.filter(Category_Name=Category_Name).exclude(pk=pk)
         if existing_category.exists():
             error_msg = 'Category Already Exists'
             return render(request, 'inventoryapp/update_category.html', {'error_msg': error_msg, 'category': category})
@@ -1271,7 +1271,7 @@ def update_category(request, category_id):
             category.save()
             return redirect('categories_consignee_tags')
     else:
-        return render(request, 'inventoryapp/update_category.html', {'category': category, 'category_id': category_id})
+        return render(request, 'inventoryapp/update_category.html', {'category': category, 'category_id': pk})
     
 def update_tags(request, pk):
     consignee = get_object_or_404(Consignee, pk=pk)
