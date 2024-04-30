@@ -64,8 +64,11 @@
                         <a href="#" type="button" class="btn btn-danger">Delete</a>
                     </td>   
                     <td> 
-                      <a href="{% url 'close_pro' pk=pro.pk account_id=request.user.account.pk %}" type="button" class="btn btn-primary">Close</a>
-                    </td>   
+                      <form id="closePRoForm" action="{% url 'close_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-success" onclick="submitClosePRoForm(this)">Close</button>
+                      </form>  
+                    </td> 
                     <td> 
                       <a href="{% url 'view_pro' pk=pro.pk %}" type="button" class="btn btn-primary">View</a>
                     </td>             
@@ -106,6 +109,11 @@
           console.error(error);
         }
       });
+    }
+    function submitClosePRoForm(button) {
+        var form = button.closest('form'); // Find the parent form element
+        var formId = form.id; // Get the ID of the form
+        form.submit(); // Submit the form
     }
   </script>  
 </body>

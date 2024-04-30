@@ -1,69 +1,108 @@
-<link rel ="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-<link rel ="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
 {% block content %}
-
 <head>
     <title>Employee Accounts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
     <style>
-    img {
-          width: 50px;
-          height: auto; 
+        img {
+            width: 50px;
+            height: auto; 
         }
     </style>
 </head>
 
 <body class="bg-light">
     <div class="container-fluid">
+        <!-- Header -->
         <div class="row p-1" style="background-color: #eee;">
-          <div class="col-md-auto d-flex align-items-center">
-            <h4 class="m-0 mr-3">Manage Employee Accounts</h4>
-          </div>
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">Manage Employee Accounts</h4>
+            </div>
         </div>
 
-     <!-- Buttons row -->
-     <div class="row mt-3">
-        <!-- Buttons column -->
-        <div class="col-md-auto">
-          <a href="{% url 'add_new_employee' %}" class="btn btn-primary">Add New Employee</a>
+        <!-- Buttons row -->
+        <div class="row mt-3">
+            <div class="col-md-auto">
+                <a href="{% url 'add_new_employee' %}" class="btn btn-primary">Add New Employee</a>
+            </div>
+            <div class="col mx-3">
+                <h5>Total accounts: {{ user_count }}</h5>
+            </div>
+            <div class="col mx-3">
+                <div class="col-md-auto d-flex align-items-center">
+                    <input class="mx-2" type="checkbox" id="showHidden" name="showHidden" {% if show_hidden %}checked{% endif %}>
+                    <label for="showHidden">Show Hidden Accounts</label>
+                </div>
+            </div>
         </div>
 
-        <div class="col mx-3">
-          <h5>Total accounts: 4</h5>
+        <!-- Table Inventory row -->
+        <div class="row mt-4 mx-5">
+            <div class="table-responsive">
+                <table id="employee_accounts" class="table text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"></th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Username</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">First Name</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Last Name</th>
+                            <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        {% if u.account.Visibility or show_hidden %}
+                        <tr>
+                            {% if u.account.Profile_Picture %}
+                            <td class="employee_image" style="text-align: center;">
+                                <img src="{{ u.account.Profile_Picture.url }}" alt="User Image" style="width: 20px; height: 20px;">
+                            </td>
+                            {% else %}
+                            <td class="employee_image" style="text-align: center;">
+                                
+                            </td>
+                            {% endif %}
+                            <td class="employee_username" style="text-align: center;">{{ u.username }}</td>
+                            <td class="employee_first_name" style="text-align: center;">{{ u.account.First_Name }}</td>
+                            <td class="employee_last_name" style="text-align: center;">{{ u.account.Last_Name }}</td>
+                            <td>
+                                <a href="{% url 'view_employee' pk=u.account.Account_ID %}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <!-- Table Inventory row -->
-    <div class="row mt-4 mx-5">
-        <div class="table-responsive">
-            <table id="employee_accounts" class="table text-center">
-                <thead>
-                    <tr>
-                        <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"> </th>
-                        <th scope="col" style="background-color: #C2C1C1; text-align: center;">Username</th>
-                        <th scope="col" style="background-color: #C2C1C1; text-align: center;">First Name</th>
-                        <th scope="col" style="background-color: #C2C1C1; text-align: center;">Last Name</th>
-                        <th scope="col" style="background-color: #C2C1C1;" data-orderable="false">  </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>  
-                        <td class="employee_image" style="text-align: center;">
-                            <img src="#" alt="User Image" style="width: 20px; height: 20px;">
-                        </td>
-                        <td class="employee_username" style="text-align: center;">Phoebe's username</td>
-                        <td class="employee_first_name" style="text-align: center;">Phoebe</td>
-                        <td class="employee_last_name" style="text-align: center;">Buffay</td>
-                        <td>
-                            <a href="{% url 'view_employee' %}" class="btn btn-primary">View</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+
+    <!-- Custom JavaScript for checkbox functionality -->
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#employee_accounts').DataTable();
+
+            // Handle checkbox change event
+            $('#showHidden').on('change', function() {
+                var showHidden = $(this).prop('checked');
+                var url = window.location.pathname; // Get the current URL
+                var params = new URLSearchParams(window.location.search); // Get the existing query parameters
+                if (showHidden) {
+                    params.set('showHidden', showHidden); // Set the 'showHidden' parameter to the checkbox value
+                } else {
+                    params.delete('showHidden'); // Remove the 'showHidden' parameter if the checkbox is unchecked
+                }
+                window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
+            });
+        });
+    </script>
 </body>
 {% endblock %}
