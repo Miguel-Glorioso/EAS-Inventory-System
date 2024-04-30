@@ -71,7 +71,7 @@
             <!-- Image -->
           <div class="col image-column"> 
             {% if user.account.Profile_Picture %}
-                <img src="{{ MEDIA_URL }}{{ user.account.Profile_Picture.url }}" alt="User Image" width="400">
+                <img src="{{ user.account.Profile_Picture.url }}" alt="User Image" width="400">
             {% else %}
                 <span>No image available</span>
             {% endif %}

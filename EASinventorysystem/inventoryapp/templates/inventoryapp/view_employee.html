@@ -70,31 +70,28 @@
         <div class="row">
             <!-- Image -->
           <div class="col image-column"> 
-            <img src="#" alt="User Image">
+            {% if Employee.Profile_Picture %}
+              <img src="{{ Employee.Profile_Picture.url }}" alt="User Image">
+            {% endif %}
           </div>
           <!-- User info -->
           <div class="col">
             <div class="row">
                 <div class="col">
-                  <h2>Phoebe Buffay</h2> 
+                  <h2>{{Employee.First_Name}} {{Employee.Last_Name}}</h2> 
                 </div>
               </div>
               <div class="row">
                 <div class="col">
                   <label for="username">Username</label><br>
-                  <input type="text" id="username" value="Phoebe's username" disabled>
+                  <input type="text" id="username" value="{{Employee.user.username}}" disabled>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
                   <label for="password">Password</label><br>
-                  <input type="password" id="password" value="************" disabled>
+                  <input type="password" id="password" value="{{Employee.user.password}}" disabled>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                    <!-- <a href="#">Reveal password</a> -->
-                  </div>
               </div>
           </div>
         </div>
@@ -104,9 +101,18 @@
             <a href="{% url 'employee_accounts' %}" class="btn btn-secondary btn-edit">Go Back</a>
           </div>
           <div class="col-md-auto">
-            <a href="{% url 'update_employee' %}" class="btn btn-primary btn-edit">Edit</a>
-            <a href="#" class="btn btn-danger btn-edit">Hide Account</a>
-          </div>
+            <div class="row">
+                <div class="col">
+                    <a href="{% url 'update_employee' %}" class="btn btn-primary btn-edit">Edit</a>
+                </div>
+                <div class="col">
+                    <form action="{% url 'hide_account' pk=Employee.Account_ID %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Hide</button>
+                    </form>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 

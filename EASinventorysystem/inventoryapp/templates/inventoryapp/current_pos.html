@@ -84,8 +84,11 @@
                       <a href="#" type="button" class="btn btn-danger">Delete</a>
                     </td>   
                   <td> 
-                      <a href="{% url 'close_po' pk=po.pk account_id=request.user.account.pk %}" type="button" class="btn btn-success">Close</a>
-                    </td>   
+                      <form id="closePoForm" action="{% url 'close_po' pk=po.pk account_id=request.user.account.pk %}" method="post">
+                          {% csrf_token %}
+                          <button type="button" class="btn btn-success" onclick="submitClosePoForm(this)">Close</button>
+                      </form>
+                  </td> 
                   <td> 
                     <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
                   </td>             
@@ -125,6 +128,12 @@
           console.error(error);
         }
       });
+    }
+    
+    function submitClosePoForm(button) {
+        var form = button.closest('form'); // Find the parent form element
+        var formId = form.id; // Get the ID of the form
+        form.submit(); // Submit the form
     }
   </script>
 
