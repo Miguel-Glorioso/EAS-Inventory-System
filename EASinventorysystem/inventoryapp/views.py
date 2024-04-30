@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . models import Product, Category,  User, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered
+from . models import Product, Category, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered, Partially_Fulfilled_History
 from django.http import  JsonResponse, FileResponse, HttpResponseForbidden
 import json
 from django.core.files.storage import default_storage
@@ -544,54 +544,52 @@ def view_po(request, pk):
 def close_po(request, pk, account_id):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
     account = get_object_or_404(Account,pk=account_id )
-    if request.method == 'POST':
-        if purchase_order.PO_Status != 'Closed':
-            products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
-            Sufficient_Stock = True
+    if purchase_order.PO_Status != 'Closed':
+        products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
+
+        Sufficient_Stock = True
+        for product in products_ordered:
+            product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID)
+            if product_listing.Actual_Inventory_Count < product.Quantity:
+                Sufficient_Stock = False
+        
+        if Sufficient_Stock:
+
             for product in products_ordered:
-                product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID)
-                if product_listing.Actual_Inventory_Count < product.Quantity:
-                    Sufficient_Stock = False
+                product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID) #this is the actual product not the product ordered
+                product_listing.Actual_Inventory_Count -= product.Quantity #product inventory count gets deducted
+                product_listing.Reserved_Inventory_Count -= product.Quantity #product reserved invetory count gets deducted
+
+                #have not yet been checked
+                if product_listing.Product_Low_Stock_Threshold:
+
+                    if int(product_listing.Actual_Inventory_Count) == 0: 
+                        product_listing.Product_Stock_Status = 'No Stock'
+                    elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Product_Low_Stock_Threshold):
+                        product_listing.Product_Stock_Status = 'Low Stock'
+
+                else:
+                    if int(product_listing.Actual_Inventory_Count) == 0: 
+                        product_listing.Product_Stock_Status = 'No Stock'
+                    elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Category.Category_Product_Low_Stock_Threshold):
+                        product_listing.Product_Stock_Status = 'Low Stock'
+                
+                print(product_listing.Product_Stock_Status)
+
+                product_listing.save()
+
+            purchase_order.Fulfilled_Date = timezone.now()
+            purchase_order.PO_Status = 'Closed'
+            purchase_order.Progress = 'Shipped'
+            purchase_order.Account_ID_Closed_by = account
+            purchase_order.save()
+        
+        else:
+            error_msg = 'Sufficient Stock for Purchase Order'
+            all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+            return render(request, 'inventoryapp/current_pos.html', {'error_msg':error_msg, 'purchase_orders':all_purchase_orders})
             
-            if Sufficient_Stock:
-
-                for product in products_ordered:
-                    product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID) #this is the actual product not the product ordered
-                    product_listing.Actual_Inventory_Count -= product.Quantity #product inventory count gets deducted
-                    product_listing.Reserved_Inventory_Count -= product.Quantity #product reserved invetory count gets deducted
-
-                    #have not yet been checked
-                    if product_listing.Product_Low_Stock_Threshold:
-
-                        if int(product_listing.Actual_Inventory_Count) == 0: 
-                            product_listing.Product_Stock_Status = 'No Stock'
-                        elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Product_Low_Stock_Threshold):
-                            product_listing.Product_Stock_Status = 'Low Stock'
-
-                    else:
-                        if int(product_listing.Actual_Inventory_Count) == 0: 
-                            product_listing.Product_Stock_Status = 'No Stock'
-                        elif int(product_listing.Actual_Inventory_Count) <= int(product_listing.Category.Category_Product_Low_Stock_Threshold):
-                            product_listing.Product_Stock_Status = 'Low Stock'
-                    
-
-                    product_listing.save()
-
-                purchase_order.Fulfilled_Date = timezone.now()
-                purchase_order.PO_Status = 'Closed'
-                purchase_order.Progress = 'Shipped'
-                purchase_order.Account_ID_Closed_by = account
-                purchase_order.save()
-            
-            else:
-                error_msg = 'Sufficient Stock for Purchase Order'
-                all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
-                return render(request, 'inventoryapp/current_pos.html', {'error_msg':error_msg, 'purchase_orders':all_purchase_orders})
-            
-        return redirect('current_pos')
-    else:
-        all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
-        return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
+    return redirect('current_pos')
 
 @login_required 
 def requisition_order_list(request):
@@ -712,8 +710,9 @@ def update_pro(request, pk):
 
         return redirect('current_pros')
     else:
+        
         return render(request, 'inventoryapp/update_pro.html', {'requisition_order': PRO, 'products': all_inventory, 'stock_ordered_items': stocks_ordered})
-    
+
 @login_required     
 def view_pro(request, pk):
     product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
@@ -724,43 +723,40 @@ def view_pro(request, pk):
 def close_pro(request, pk, account_id):
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
     account = get_object_or_404(Account,pk=account_id )
-    if request.method == 'POST':
-        if requisition_order.PRO_Status != 'Closed':
-            stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+    if requisition_order.PRO_Status != 'Closed':
+        stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
 
-            for stock in stocks_ordered:
-                stock_listing = Product.objects.get(Product_ID=stock.Product_ID.Product_ID) #this is the actual product not the product ordered
-                stock_listing.Actual_Inventory_Count += stock.Quantity #product inventory count gets deducted
-                stock_listing.To_Be_Received_Inventory_Count -= stock.Quantity #product reserved invetory count gets deducted
+        for stock in stocks_ordered:
+            stock_listing = Product.objects.get(Product_ID=stock.Product_ID.Product_ID) #this is the actual product not the product ordered
+            stock_listing.Actual_Inventory_Count += stock.Quantity #product inventory count gets deducted
+            stock_listing.To_Be_Received_Inventory_Count -= stock.Quantity #product reserved invetory count gets deducted
 
-                #have not yet been checked
-                if stock_listing.Product_Low_Stock_Threshold:
+            #have not yet been checked
+            if stock_listing.Product_Low_Stock_Threshold:
 
-                    if int(stock_listing.Actual_Inventory_Count) <= int(stock_listing.Product_Low_Stock_Threshold):
-                        stock_listing.Product_Stock_Status = 'Low Stock'
-                    else:
-                        stock_listing.Product_Stock_Status = 'Regular Stock'
-
+                if int(stock_listing.Actual_Inventory_Count) <= int(stock_listing.Product_Low_Stock_Threshold):
+                    stock_listing.Product_Stock_Status = 'Low Stock'
                 else:
-                    if int(stock_listing.Actual_Inventory_Count) <= int(stock_listing.Category.Category_Product_Low_Stock_Threshold):
-                        stock_listing.Product_Stock_Status = 'Low Stock'
-                    else:
-                        stock_listing.Product_Stock_Status = 'Regular Stock'
+                    stock_listing.Product_Stock_Status = 'Regular Stock'
 
-                stock_listing.save()
+            else:
+                if int(stock_listing.Actual_Inventory_Count) <= int(stock_listing.Category.Category_Product_Low_Stock_Threshold):
+                    stock_listing.Product_Stock_Status = 'Low Stock'
+                else:
+                    stock_listing.Product_Stock_Status = 'Regular Stock'
+                    
+            
+            print(stock_listing.Product_Stock_Status)
 
-            requisition_order.Received_Date = timezone.now()
-            requisition_order.PRO_Status = 'Closed'
-            requisition_order.Progress = 'To be Picked Up'
-            requisition_order.Account_ID_Closed_by = account
-            requisition_order.save()
-        
-        return redirect('current_pros')
+            stock_listing.save()
 
-    else:
-        all_requisition_orders = Product_Requisition_Order.objects.all()
-        return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
-
+        requisition_order.Received_Date = timezone.now()
+        requisition_order.PRO_Status = 'Closed'
+        requisition_order.Progress = 'To be Picked Up'
+        requisition_order.Account_ID_Closed_by = account
+        requisition_order.save()
+    
+    return redirect('current_pros')
 
 @login_required 
 def customer_list(request):
@@ -1431,6 +1427,7 @@ def update_tags(request, pk):
         consignee.Consignment_Period_End = Consignment_Period_End
         consignee.Emergency_Contact_Number = Emergency_Contact_Number
         consignee.Email_Address = Email_Address
+        print(Tag_Hex_Color_ID,'CHECKIS')
         consignee.Tag_Hex_Color_ID = Tag_Hex_Color_ID
 
         consignee.save()
@@ -1458,21 +1455,8 @@ def employee_accounts(request):
     if not request.user.is_superuser:
         previous_page = request.META.get('HTTP_REFERER', '/') 
         return redirect(previous_page)
-    
-    all_users = User.objects.filter(is_superuser=False)
+    return render(request, 'inventoryapp/employee_accounts.html')
 
-    visible_users = Account.objects.filter(Visibility=True)
-    user_count = visible_users.count()
-    show_hidden = False
-
-    hidden_param = request.GET.get('showHidden')
-
-    if hidden_param:
-        show_hidden = True
-        user_count = all_users.count()
-        print("hide")
-
-    return render(request, 'inventoryapp/employee_accounts.html', {'users': all_users, 'user_count':user_count, 'show_hidden':show_hidden})
 
 @login_required 
 def edit_my_account(request):
@@ -1495,7 +1479,7 @@ def edit_my_account(request):
         if new_username:
             user.username = new_username
         user.save()
-        logout(request) 
+        logout(request)
         return redirect('account_login')
 
     return render(request, 'inventoryapp/edit_my_account.html')
@@ -1504,24 +1488,16 @@ def edit_my_account(request):
 def add_new_employee(request):
     return render(request, 'inventoryapp/add_new_employee.html')
 
-def view_employee(request, pk):
-    Employee = get_object_or_404(Account, Account_ID=pk)
-    return render(request, 'inventoryapp/view_employee.html', {"Employee":Employee})
+def view_employee(request):
+    return render(request, 'inventoryapp/view_employee.html')
 
 def update_employee(request):
     return render(request, 'inventoryapp/update_employee.html')
 
-def hide_account(request, pk):
-    if request.method == 'POST':
-        # Perform account hiding logic
-        employee = get_object_or_404(Account, Account_ID=pk)
-        print(employee)
-        employee.Visibility = False
-        employee.save()
-        return redirect('employee_accounts')
-    else:
-        # If it's not a POST request, render the employee_accounts page
-        all_users = User.objects.filter(is_superuser=False)
+def partially_fulfill(request, pk):
+    PRO = get_object_or_404(Product_Requisition_Order, pk=pk)
+    all_inventory = Product.objects.all()
+    stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=PRO)
 
         visible_users = Account.objects.filter(Visibility=True)
         user_count = visible_users.count()
@@ -1536,3 +1512,44 @@ def partially_fulfill_pro(request, pro_pk):
 
 def edit_count(request):
     return render(request,'inventoryapp/edit_count.html')
+    if request.method == 'POST':
+        Products = request.POST.get('all_products')
+
+        Products = Products[:-1]
+        Ordered_Products = Products.split("-")
+        new_stocks_ordered = []
+
+        for op in Ordered_Products:
+            values = op.split(":")
+            product_object = Product.objects.get(Product_ID=values[0])
+
+            ordered_products = stocks_ordered.filter(Product_ID=values[0])
+
+            if ordered_products.exists():
+                ordered_product = ordered_products.first()
+                quantity_diff = int(values[1]) - ordered_product.Quantity
+                ordered_product.Quantity = values[1]
+                product_object.To_Be_Received_Inventory_Count += quantity_diff
+                ordered_product.save()
+                product_object.save()
+                new_stocks_ordered.append(ordered_product)
+            else:
+                product_object.To_Be_Received_Inventory_Count += int(values[1])
+                product_object.save()
+                new_product_ordered = Stock_Ordered.objects.create(Product_ID=product_object, Product_Requisition_ID=PRO, Quantity=values[1])
+                new_stocks_ordered.append(new_product_ordered)
+
+        # Create a list of Product_Ordered objects to delete
+        products_to_delete = [s_o for s_o in stocks_ordered if s_o not in new_stocks_ordered]
+
+        # Delete the Product_Ordered objects
+        for s_o in products_to_delete:
+            product_object = Product.objects.get(Product_ID=s_o.Product_ID.Product_ID)
+            product_object.To_Be_Received_Inventory_Count -= s_o.Quantity
+            product_object.save()
+            s_o.delete()
+
+        return redirect('current_pros')
+
+    return render(request, 'inventoryapp/partially_fulfill.html', {'requisition_order': PRO, 'products': all_inventory, 'stock_ordered_items': stocks_ordered})
+    # return render(request, 'inventoryapp/partially_fulfill.html')

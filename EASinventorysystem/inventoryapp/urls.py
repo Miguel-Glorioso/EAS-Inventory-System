@@ -84,4 +84,5 @@ urlpatterns = [
     path('pro/<int:pro_pk>/partially_fulfill/', views.partially_fulfill_pro, name='partially_fulfill_pro'),
 
     path('edit_count', views.edit_count, name='edit_count'),
+    path('partially_fulfill/<int:pk>/', views.partially_fulfill, name='partially_fulfill'),
 ]
