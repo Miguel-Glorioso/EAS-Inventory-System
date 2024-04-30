@@ -22,6 +22,7 @@
             </div>
             <div class="col-auto">
                 <button class="btn btn-danger me-2">Delete</button>
+                <a href="{% url 'partially_fulfill_pro' pro.pk %}" class="btn btn-primary me-2">Partially Fulfill</a>
                 <a href="{% url 'update_pro' pro.pk %}" class="btn btn-primary me-2">Edit</a>
                 <button class="btn btn-success me-2">Close</button>
             </div>

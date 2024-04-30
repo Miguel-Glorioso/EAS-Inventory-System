@@ -79,4 +79,6 @@ urlpatterns = [
     path('update_employee', views.update_employee, name='update_employee'),
 
     path('generate_inventory_summary_screen', views.generate_inventory_summary_screen, name='generate_inventory_summary_screen'),
+
+    path('pro/<int:pro_pk>/partially_fulfill/', views.partially_fulfill_pro, name='partially_fulfill_pro'),
 ]

@@ -1493,3 +1493,10 @@ def view_employee(request):
 
 def update_employee(request):
     return render(request, 'inventoryapp/update_employee.html')
+
+def partially_fulfill_pro(request, pro_pk):
+    pro = get_object_or_404(PRO, pk=pro_pk)
+    # Add your logic here to partially fulfill the PRO
+    # For example, you can reduce the quantity of a specific product in the PRO
+    # Then, redirect back to the PRO details page
+    return redirect('pro_details', pro.pk)
