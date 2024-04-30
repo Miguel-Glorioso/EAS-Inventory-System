@@ -42,6 +42,19 @@
                             <label class="required" for="requested_date">Requested Date:</label><br>
                             <input type="date" id="requested_date" name="requested_date" class="form-control" required><br><br>
                         </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var today = new Date();
+                                var dd = String(today.getDate()).padStart(2, '0');
+                                var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                                var yyyy = today.getFullYear();
+                        
+                                today = yyyy + '-' + mm + '-' + dd;
+                        
+                                var estimatedReceivingDateInput = document.getElementById('requested_date');
+                                estimatedReceivingDateInput.setAttribute('min', today);
+                            });
+                        </script>
 
                         <div class="col">
                         </div>
