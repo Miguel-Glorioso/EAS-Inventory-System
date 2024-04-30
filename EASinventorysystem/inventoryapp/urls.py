@@ -80,4 +80,6 @@ urlpatterns = [
     path('hide_account/<int:pk>/', views.hide_account, name='hide_account'),
 
     path('generate_inventory_summary_screen', views.generate_inventory_summary_screen, name='generate_inventory_summary_screen'),
+
+    path('pro/<int:pro_pk>/partially_fulfill/', views.partially_fulfill_pro, name='partially_fulfill_pro'),
 ]

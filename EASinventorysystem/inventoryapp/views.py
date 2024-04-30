@@ -1526,3 +1526,10 @@ def hide_account(request, pk):
         visible_users = Account.objects.filter(Visibility=True)
         user_count = visible_users.count()
         return render(request, 'inventoryapp/employee_accounts.html', {'users': all_users, 'user_count': user_count})
+    
+def partially_fulfill_pro(request, pro_pk):
+    pro = get_object_or_404(PRO, pk=pro_pk)
+    # Add your logic here to partially fulfill the PRO
+    # For example, you can reduce the quantity of a specific product in the PRO
+    # Then, redirect back to the PRO details page
+    return redirect('pro_details', pro.pk)

@@ -471,14 +471,25 @@
                 zipCodeInput.classList.remove('is-invalid');
             }
 
-            // Validate minimum length for contact number
+            // Validate minimum length and pattern for contact number
             var contactNumberInput = document.getElementById('contact_info');
-            if (contactNumberInput.value.trim().length !== 11) {
+            var contactNumberValue = contactNumberInput.value.trim();
+            var contactNumberPattern = /^09\d{9}$/; // Regex pattern to match "09" followed by 9 digits
+
+            if (contactNumberValue.length !== 11 || !contactNumberPattern.test(contactNumberValue)) {
                 isValid = false;
                 contactNumberInput.classList.add('is-invalid');
             } else {
                 contactNumberInput.classList.remove('is-invalid');
             }
+            // Validate minimum length for contact number
+            // var contactNumberInput = document.getElementById('contact_info');
+            // if (contactNumberInput.value.trim().length !== 11) {
+            //     isValid = false;
+            //     contactNumberInput.classList.add('is-invalid');
+            // } else {
+            //     contactNumberInput.classList.remove('is-invalid');
+            // }
 
             return isValid;
         }
