@@ -98,13 +98,15 @@
 
             <div class="bottom-content">
                 <!-- add if else statement if admin or employee -->
-                <li class="nav-link">
-                    <a href="{% url 'employee_accounts' %}">
-                        <i class='bx bxs-contact icon'></i>
-                        <span class="text nav-text">Employee Accounts</span>
-                    </a>
-                    <span class="tooltip">Employee Accounts</span>
-                </li>
+                {% if request.user.is_superuser %}
+                    <li class="nav-link">
+                        <a href="{% url 'employee_accounts' %}">
+                            <i class='bx bxs-contact icon'></i>
+                                <span class="text nav-text">Employee Accounts</span>
+                        </a>
+                        <span class="tooltip">Employee Accounts</span>
+                    </li>
+                {% endif %}
                 <!-- if else statement end here -->
                 <li class="nav-link">
                     <a href="{% url 'my_account' %}">

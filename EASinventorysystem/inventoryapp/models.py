@@ -9,6 +9,8 @@ class Account(models.Model):
     Account_ID = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     Profile_Picture = models.ImageField(upload_to='account_pfps/', null=True, blank=True)
+    First_Name = models.CharField(max_length=32)
+    Last_Name = models.CharField(max_length=32)
     Role = models.CharField(max_length = 32)
     Visibility = models.BooleanField(default=True)
 

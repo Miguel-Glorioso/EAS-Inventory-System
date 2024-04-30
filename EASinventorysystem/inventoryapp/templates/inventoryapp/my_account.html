@@ -62,7 +62,7 @@
         <!-- Role -->
         <div class="row mt-2 mb-4">
           <div class="col d-flex justify-content-end">
-            <h6>Role: Administrator</h6>
+            <h6>Role: {{user.account.Role}}</h6>
           </div>
         </div>
 
@@ -70,27 +70,32 @@
         <div class="row">
             <!-- Image -->
           <div class="col image-column"> 
-            <img src="#" alt="User Image">
-          </div>
+            {% if user.account.Profile_Picture %}
+                <img src="{{ MEDIA_URL }}{{ user.account.Profile_Picture.url }}" alt="User Image" width="400">
+            {% else %}
+                <span>No image available</span>
+            {% endif %}
+          </div>    
           <!-- User info -->
           <div class="col">
             <div class="row">
                 <div class="col">
-                  <h2>Drexler Jordan</h2> 
+                  <h2>{{user.account.First_Name}} {{user.account.Last_Name}}</h2> 
                 </div>
               </div>
               <div class="row">
                 <div class="col">
                   <label for="username">Username</label><br>
-                  <input type="text" id="username" value="Drexler Jordan" disabled>
+                  <input type="text" id="username" value="{{user.username}}" disabled>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <label for="password">Password</label><br>
-                  <input type="password" id="password" value="************" disabled>
+                    <label for="password">Password</label><br>
+                    <input type="password" id="password" value="{{ user.password }}" disabled>
+                    <button type="button" id="togglePassword">Show Password</button>
                 </div>
-              </div>
+            </div>
               <div class="row">
                 <div class="col">
                     <!-- <a href="#">Reveal password</a> -->
@@ -107,29 +112,73 @@
           </div>
         </div>
     </div>
-
     <!-- Passcode Modal -->
     <div class="modal fade" id="passcodeModal" tabindex="-1" role="dialog" aria-labelledby="passcodeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
                   <h5 class="modal-title" id="passcodeModalLabel">Enter Passcode</h5>
-                </div>
-                <div class="modal-body">
-                  <label for="passcode">Input your passcode to proceed:</label>
-                  <input type="password" id="passcode" class="form-control">
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <a href="{% url 'edit_my_account' %}" class="btn btn-primary">Proceed</a>
-                </div>
               </div>
-        </div>
+              <div class="modal-body">
+                  <label for="passcode">Input your passcode to proceed:</label>
+                  <input type="password" id="passcode" name="passcode" class="form-control">
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary" onclick="validatePassword()">Proceed</button>
+              </div>
+          </div>
+      </div>
     </div>
   
       <!-- Bootstrap JS (Popper.js and Bootstrap JS) -->
       <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+zJ3pUuMA+K1fK2xO8L6KVqK+P5S8kLcR+5zU5B" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-FA31p3o6Nq4S2n5T9vF4d4kpC25TIpmNh/V6ARcHfTz9QUFJ8mF4qzvSWw7xG2y2" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.4/js/bootstrap.min.js" integrity="sha384-U5rGAAYtLTSdPuO5PtQ3sbsbr7dxCsFkk9+KxQ+8tD+vUElZbn6Dtf2NQZqpo5it" crossorigin="anonymous"></script>
+      <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            var passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = 'Hide Password';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = 'Show Password';
+            }
+        });
+    </script>
+    <script>
+      function validatePassword() {
+          var passcodeInput = document.getElementById("passcode").value;
+          console.log(passcodeInput); 
+      
+          fetch('{% url "my_account" %}', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}' 
+              },
+              body: JSON.stringify({ passcode: passcodeInput })
+          })
+          .then(response => {
+              if (response.ok) {
+                  return response.json();
+              } else {
+                  throw new Error('Network response was not ok.');
+              }
+          })
+          .then(data => {
+              if (data.valid) {
+                  // Proceed to the desired action
+                  window.location.href = '{% url "edit_my_account" %}';
+              } else {
+                  alert('Incorrect passcode. Please try again.');
+              }
+          })
+          .catch(error => {
+              console.error('There was a problem with the fetch operation:', error);
+          });
+      }
+      </script>
 </body>
 {% endblock %}

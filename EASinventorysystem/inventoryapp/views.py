@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from . models import Product, Category, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered
-from django.http import  JsonResponse, FileResponse
+from django.http import  JsonResponse, FileResponse, HttpResponseForbidden
 import json
 from django.core.files.storage import default_storage
 from django.core.files import File
@@ -16,9 +16,8 @@ from reportlab.platypus import Table, TableStyle, Image
 from reportlab.lib import colors
 from reportlab.lib.utils import ImageReader
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from django.shortcuts import render
-from django.contrib.auth import logout
-
 # Create your views here.
 
 def account_login(request):
@@ -1440,14 +1439,49 @@ def update_tags(request, pk):
 
 @login_required 
 def my_account(request):
-    return render(request, 'inventoryapp/my_account.html')
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        passcode_input = data.get('passcode')
+        user = request.user
+        if check_password(passcode_input, user.password):
+            return JsonResponse({'valid': True})
+        else:
+            return JsonResponse({'valid': False})
+    else:
+        return render(request, 'inventoryapp/my_account.html')
 
 @login_required 
 def employee_accounts(request):
+    if not request.user.is_superuser:
+        previous_page = request.META.get('HTTP_REFERER', '/') 
+        return redirect(previous_page)
     return render(request, 'inventoryapp/employee_accounts.html')
+
 
 @login_required 
 def edit_my_account(request):
+    if request.method == 'POST':
+        user = request.user
+
+        # Get the form data
+        new_password = request.POST.get('new_password')
+        reenter_new_password = request.POST.get('reenter_new_password')
+        new_username = request.POST.get('username')
+
+        # Check if passwords match
+        if new_password != reenter_new_password:
+            error_msg = "Passwords do not match"
+            return render(request, 'inventoryapp/edit_my_account.html', {'error_msg': error_msg})
+
+        # Update password if it's provided
+        if new_password:
+            user.set_password(new_password)
+        if new_username:
+            user.username = new_username
+        user.save()
+        logout(request)
+        return redirect('account_login')
+
     return render(request, 'inventoryapp/edit_my_account.html')
 
 @login_required 
