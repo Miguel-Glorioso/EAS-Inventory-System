@@ -80,5 +80,5 @@ urlpatterns = [
 
     path('generate_inventory_summary_screen', views.generate_inventory_summary_screen, name='generate_inventory_summary_screen'),
 
-    path('pro/<int:pro_pk>/partially_fulfill/', views.partially_fulfill_pro, name='partially_fulfill_pro'),
+    path('partially_fulfill/<int:pk>/', views.partially_fulfill, name='partially_fulfill'),
 ]

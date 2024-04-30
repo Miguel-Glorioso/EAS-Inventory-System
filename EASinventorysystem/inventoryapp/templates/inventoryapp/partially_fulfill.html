@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Partially Fulfill</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+</head>
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">Partially Fulfill</h4>
+            </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <h5>Notes:</h5>
+                    <textarea class="form-control" rows="3" id="notes"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Ordered -->
+        <div class="row mt-4">
+            <div class="d-flex justify-content-center">
+                <!-- Left column for Products Ordered -->
+                <div class="col-md-12" style="padding-right: 2%; overflow-y: auto; height: 580px;">
+                    <h5>Products Ordered:</h5>
+                    <div class="container mt-2">
+                        <div class="table-responsive">
+                            <table class="table table-borderless text-center" id="PRO_products">
+                                <thead class="border-bottom border-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>ID</th>
+                                        <th>Quantity</th>
+                                        <th>Stock</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="product-list">
+                                    {% for stock in stock_ordered_items %}
+                                    <tr>
+                                        <td>{{ stock.Product_ID.Name }}</td>
+                                        <td>{{ stock.Product_ID.EAS_Product_ID }}</td>
+                                        <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value= {{stock.Quantity}}></td>
+                                        <td>{{ stock.Product_ID.Actual_Inventory_Count }}</td>
+                                        <input type="hidden" class="product_pk" value={{stock.Product_ID.Product_ID}} >
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="{% url 'current_pros' %}" class="btn btn-danger">Cancel</a>
+            </div>
+            <div class="col-md-6 text-end">
+                <!-- Add data-bs-toggle and data-bs-target attributes to trigger the modal -->
+                <button type="button" class="btn btn-success">Create</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

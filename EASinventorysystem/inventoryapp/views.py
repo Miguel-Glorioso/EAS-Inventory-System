@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . models import Product, Category, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered
+from . models import Product, Category, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered, Partially_Fulfilled_History
 from django.http import  JsonResponse, FileResponse, HttpResponseForbidden
 import json
 from django.core.files.storage import default_storage
@@ -1494,9 +1494,49 @@ def view_employee(request):
 def update_employee(request):
     return render(request, 'inventoryapp/update_employee.html')
 
-def partially_fulfill_pro(request, pro_pk):
-    pro = get_object_or_404(PRO, pk=pro_pk)
-    # Add your logic here to partially fulfill the PRO
-    # For example, you can reduce the quantity of a specific product in the PRO
-    # Then, redirect back to the PRO details page
-    return redirect('pro_details', pro.pk)
+def partially_fulfill(request, pk):
+    PRO = get_object_or_404(Product_Requisition_Order, pk=pk)
+    all_inventory = Product.objects.all()
+    stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=PRO)
+
+    if request.method == 'POST':
+        Products = request.POST.get('all_products')
+
+        Products = Products[:-1]
+        Ordered_Products = Products.split("-")
+        new_stocks_ordered = []
+
+        for op in Ordered_Products:
+            values = op.split(":")
+            product_object = Product.objects.get(Product_ID=values[0])
+
+            ordered_products = stocks_ordered.filter(Product_ID=values[0])
+
+            if ordered_products.exists():
+                ordered_product = ordered_products.first()
+                quantity_diff = int(values[1]) - ordered_product.Quantity
+                ordered_product.Quantity = values[1]
+                product_object.To_Be_Received_Inventory_Count += quantity_diff
+                ordered_product.save()
+                product_object.save()
+                new_stocks_ordered.append(ordered_product)
+            else:
+                product_object.To_Be_Received_Inventory_Count += int(values[1])
+                product_object.save()
+                new_product_ordered = Stock_Ordered.objects.create(Product_ID=product_object, Product_Requisition_ID=PRO, Quantity=values[1])
+                new_stocks_ordered.append(new_product_ordered)
+
+        # Create a list of Product_Ordered objects to delete
+        products_to_delete = [s_o for s_o in stocks_ordered if s_o not in new_stocks_ordered]
+
+        # Delete the Product_Ordered objects
+        for s_o in products_to_delete:
+            product_object = Product.objects.get(Product_ID=s_o.Product_ID.Product_ID)
+            product_object.To_Be_Received_Inventory_Count -= s_o.Quantity
+            product_object.save()
+            s_o.delete()
+
+        return redirect('current_pros')
+
+    return render(request, 'inventoryapp/partially_fulfill.html', {'requisition_order': PRO, 'products': all_inventory, 'stock_ordered_items': stocks_ordered})
+    # return render(request, 'inventoryapp/partially_fulfill.html')
