@@ -5,7 +5,7 @@
 {% load static %}
 
 {% block content %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.min.js"></script>
 </head>
 <style>
     .required:after {
@@ -127,7 +127,7 @@
                                         <input type="text" class="form-control" id="search-input" placeholder="Search products..." aria-label="Search products" aria-describedby="search-button">
                                     </div>
                                 </div>
-                                <div class="row mx-4" id="product-list" style="overflow-y: auto; height: 520px;">
+                                <div class="row mx-4" id="product-list-right" style="overflow-y: auto; height: 520px;"> <!-- Updated ID -->
                                     {% for p in products %}
                                         <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
                                             <!-- Product information -->
@@ -400,6 +400,30 @@
                 }
             });
         });
+
+        document.getElementById("search-input").addEventListener("input", function() {
+        var searchValue = this.value.trim().toLowerCase();
+        var productItems = document.querySelectorAll(".product-item");
+        var addedProductIds = getAddedProductIds(); // Get product IDs already added to the left column
+        productItems.forEach(function(item) {
+            var productId = item.dataset.id; // Get the product ID from dataset
+            var productName = item.querySelector("h5").textContent.trim().toLowerCase();
+            if (!addedProductIds.includes(productId) && productName.includes(searchValue)) {
+                item.style.display = ""; // Show the product item if not already added and matches search
+            } else {
+                item.style.display = "none"; // Hide the product item otherwise
+            }
+        });
+    });
+
+    function getAddedProductIds() {
+        var addedProducts = document.querySelectorAll("#product-list tr");
+        var productIds = [];
+        addedProducts.forEach(function(product) {
+            productIds.push(product.dataset.id);
+        });
+        return productIds;
+    }
     </script>
 </body>
 
