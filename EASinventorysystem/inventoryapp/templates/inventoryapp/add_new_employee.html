@@ -1,0 +1,109 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+  <title>Add New Employee Account</title>
+  <style>
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; 
+    }
+    .card {
+      width: 50%; 
+      margin: 0 auto; 
+      padding: 20px;
+      background-color: #eee;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .image-column {
+      display: flex;
+      justify-content: center;
+    }
+    .image-column img {
+      width: 50px;
+      height: auto; 
+    }
+    .row {
+      margin-bottom: 15px; 
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+      border: 1px solid #ccc; 
+      border-radius: 5px; 
+      padding: 8px; 
+      background-color: white; 
+      width: 100%; 
+    }
+
+    .btn-edit {
+      font-size: 18px; 
+      padding: 6px 28px; 
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+          <div class="col-md-auto d-flex align-items-center">
+            <h4 class="m-0 mr-3">Add New Employee Account</h4>
+          </div>
+        </div>
+    </div>
+    <div class="row p-5"></div>
+    <div class="card">
+        <!-- Image-->
+        <div class="row mt-2 mb-4">
+            <div class="col image-coliumn"><img src="#" alt="User Image"></div>
+            <div class="col"><h5>Profiel Picture</h5></div>
+            <div class="col d-flex justify-content-end">
+                <h6>Role: Employee</h6>
+            </div>
+        </div>
+
+        <!-- Employee Name -->
+        <div class="row">
+            <!-- First Name -->
+            <div class="col">
+                <label for="employee_first_name">First Name</label><br>
+                <input type="text" id="username">
+            </div>
+            
+            <!-- Last Name -->
+            <div class="col">
+                <label for="employee_last_password">Last Name</label><br>
+                <input type="text" id="old_password">
+            </div>
+        </div>
+
+        <!-- Account details -->
+        <div class="row">
+            <div class="col">
+                <label for="employee_username">Username</label><br>
+                <input type="text" id="new_password">
+            </div>
+            <div class="col">
+                <label for="employee_password">Password</label><br>
+                <input type="password" id="reenter_new_password">
+            </div>
+        </div>
+
+        <!-- Cancel & Save button row -->
+        <div class="row mt-3">
+          <div class="col">
+            <a href="{% url 'employee_accounts' %}" class="btn btn-danger btn-edit">Cancel</a>
+          </div>
+          <div class="col-md-auto">
+            <button class="btn btn-primary btn-edit" href="#">Save New Employee</button>
+          </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

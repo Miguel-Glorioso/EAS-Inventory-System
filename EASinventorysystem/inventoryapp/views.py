@@ -1404,3 +1404,6 @@ def employee_accounts(request):
 
 def edit_my_account(request):
     return render(request, 'inventoryapp/edit_my_account.html')
+
+def add_new_employee(request):
+    return render(request, 'inventoryapp/add_new_employee.html')
