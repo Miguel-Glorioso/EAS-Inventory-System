@@ -155,15 +155,16 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="cancelModalLabel">Cancel</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="cancelModalLabel">Warning</h5>
             </div>
             <div class="modal-body">
-                Are you sure you want to cancel updating this consignee?
+                Exit form? Any changes you have made may not be saved.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                <a href="{% url 'categories_consignee_tags' %}" class="btn btn-danger">Yes</a>
+                <div class="col">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                </div>
+                <a href="{% url 'categories_consignee_tags' %}" class="btn btn-danger">Exit Anyways</a>
             </div>
         </div>
     </div>
@@ -175,7 +176,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Are you sure you want to update this consignee?

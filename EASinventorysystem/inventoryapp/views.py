@@ -53,6 +53,7 @@ def inventory_list(request):
     
     category_param = request.GET.get('category')
     consignee_param = request.GET.get('consignee')
+    stock_status_param = request.GET.get('stock_status')
     hidden_param = request.GET.get('showHidden')
 
     if hidden_param:
@@ -67,6 +68,16 @@ def inventory_list(request):
         consignee_products = all_consignee_products.filter(Consignee_ID=consignee)
         product_ids = consignee_products.values_list('Product_ID', flat=True)
         all_inventory = all_inventory.filter(Product_ID__in=product_ids)
+        
+    if stock_status_param:
+        if stock_status_param == 'low_stock':
+            all_inventory = all_inventory.filter(Product_Stock_Status='Low Stock')
+        elif stock_status_param == 'no_stock':
+            all_inventory = all_inventory.filter(Product_Stock_Status='No Stock')
+        elif stock_status_param == 'regular_stock':
+            all_inventory = all_inventory.filter(Product_Stock_Status='Regular Stock')
+            
+    total_products_count = all_inventory.count()
 
     # Count products with different stock statuses
     low_stock_count = all_inventory.filter(Product_Stock_Status='Low Stock').count()
@@ -1675,6 +1686,13 @@ def partially_fulfill(request, pk):
         return redirect('current_pros')
 
     return render(request, 'inventoryapp/partially_fulfill.html', {'requisition_order': PRO, 'stock_ordered_items': stocks_ordered, 'previous_parfills':previous_parfills_combined, 'no_parfills':no_parfills})
+
+def history_partially_fulfilled(request):
+    partially_fulfilled_history = Partially_Fulfilled_History.objects.all()
+    context = {
+        'partially_fulfilled_history': partially_fulfilled_history
+    }
+    return render(request, 'inventoryapp/history_partially_fulfilled.html', context)
 
 def edit_count(request):
     products = Product.objects.all()
