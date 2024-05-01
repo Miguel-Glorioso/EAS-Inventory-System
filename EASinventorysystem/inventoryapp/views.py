@@ -18,6 +18,7 @@ from reportlab.lib.utils import ImageReader
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import render
+from django.contrib import messages
 # Create your views here.
 
 def account_login(request):
@@ -27,6 +28,7 @@ def account_login(request):
         user = authenticate(request, username=login_username, password=login_password)
         if user is not None:
             login(request, user)
+            messages.success(request, "You have successfully logged in.")
             return redirect('current_inventory')
         else:
             error_msg = "Invalid Username/Password"

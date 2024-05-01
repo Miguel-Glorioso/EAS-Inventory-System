@@ -17,19 +17,18 @@
             </div>
         </div>
 
-        <div class="row p-1">
-            <div class="col d-flex align-items-center">
-                <legend>Choose a Product to update its stock</legend>
-            </div>
-            <div class="col d-flex justify-content-end">
-                <a href="{% url 'inventory_update_history' %}" class="btn btn-primary">View Update History</a>
-            </div>
-        </div>
-
         <form method="POST" action="#">
             <!-- First Tab: Choose products  -->
             <div id="step1">
                 {% csrf_token %}
+                <div class="row m-2">
+                    <div class="col d-flex align-items-center">
+                        <legend>Choose a Product to update its stock</legend>
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        <a href="{% url 'inventory_update_history' %}" class="btn btn-primary">View Update History</a>
+                    </div>
+                </div>
                 <fieldset>
                     <div class="row mt-4">
                         <div class="d-flex justify-content-center">
@@ -300,7 +299,7 @@
                                 <div class="col"></div>
                             </div>
                             <div class="mb-3">
-                                <label for="report-${productId}" class="form-label"><strong>*Report:</strong></label>
+                                <label for="report-${productId}" class="form-label"><strong>Report:</strong></label>
                                 <input type="text" class="form-control" id="report-${productId}" name="report_${productId}" required>
                             </div>
                             <div class="mb-3">
