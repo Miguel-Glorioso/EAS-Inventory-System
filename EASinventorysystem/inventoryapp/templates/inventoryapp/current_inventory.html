@@ -62,14 +62,14 @@
 </div>
 
 <div class="row mt-3">
-  <div class="col-md-auto">
+  <!-- <div class="col-md-auto">
     <select id="stockStatusFilter" class="form-select" aria-label="Filter by Stock Status">
       <option value="">All Stock Status</option>
       <option value="no_stock" {% if stock_status_param == "no_stock" %}selected{% endif %}>No Stock</option>
       <option value="low_stock" {% if stock_status_param == "low_stock" %}selected{% endif %}>Low Stock</option>
       <option value="regular_stock" {% if stock_status_param == "regular_stock" %}selected{% endif %}>Regular Stock</option>
   </select>
-</div>
+</div> -->
 <script>
 // Add event listener for stock status filter
 $('#stockStatusFilter').on('change', function() {
