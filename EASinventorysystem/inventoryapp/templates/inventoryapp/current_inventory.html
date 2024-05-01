@@ -39,74 +39,81 @@
         </div>
       </div>
 
-    <!-- Buttons row -->
-    <div class="row mt-3">
-      <!-- Buttons column -->
-      <div class="col-md-auto">
-        <a href="{% url 'add_product' %}" class="btn btn-primary">Add Product</a>
-      </div>
+<!-- Buttons row -->
+<div class="row mt-3">
+  <!-- Buttons column -->
+  <div class="col-md-auto">
+    <a href="{% url 'add_product' %}" class="btn btn-primary">Add Product</a>
+  </div>
+  <div class="col-md-auto">
+    <a href="{% url 'edit_count' %}" class="btn btn-primary">Edit Count</a>
+  </div>
+  <div class="col-md-auto">
+    <a href="{% url 'generate_inventory_summary_screen' %}" class="btn btn-primary">Generate Inventory Summary</a>
+  </div>
+</div>
 
-      <div class="col-md-auto">
-        <a href="{% url 'edit_count' %}" class="btn btn-primary">Edit Count</a>
-      </div>
+<div class="row mt-3">
+  <div class="col-md-auto">
+    <select id="categoryFilter" class="form-select" aria-label="Filter by Category">
+      <option value="">All Categories</option>
+      <!-- Populate options dynamically using Django template -->
+      {% for category in categories %}
+        <option value="{{ category.Category_ID }}"
+                {% if category.Category_ID|stringformat:"s" == request.GET.category|stringformat:"s" %}
+                  selected
+                {% endif %}>
+          {{ category.Category_Name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-auto">
+    <select id="consigneeFilter" class="form-select" aria-label="Filter by Consignee">
+      <option value="">All Consignees</option>
+      <!-- Populate options dynamically using Django template -->
+      {% for consignee in consignees %}
+        <option value="{{ consignee.Consignee_ID }}"
+                {% if consignee.Consignee_ID|stringformat:"s" == request.GET.consignee|stringformat:"s" %}
+                  selected
+                {% endif %}>
+          {{ consignee.Consignee_Tag_ID }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-auto">
+    <button id="resetFilters" class="btn btn-danger">Reset Filters</button>
+  </div>
+  <div class="col-md-auto d-flex align-items-center">
+    <input class="mx-2" type="checkbox" id="showHidden" name="showHidden" {% if show_hidden %}checked{% endif %}>
+    <label for="showHidden">Show Hidden Products</label>
+  </div>
+</div>
 
-      <div class="col-md-auto">
-        <a href="{% url 'generate_inventory_summary_screen' %}" class="btn btn-primary">Generate Inventory Summary</a>
-      </div>
+<div class="card-group" style="margin-top: 25px;">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-text">Total Products Count: {{ total_products_count }}</h5>
     </div>
-
-
-    
-      <div class="row mt-3">
-        <div class="col-md-auto">
-            <select id="categoryFilter" class="form-select" aria-label="Filter by Category">
-                <option value="">All Categories</option>
-                <!-- Populate options dynamically using Django template -->
-                {% for category in categories %}
-                    <option value="{{ category.Category_ID }}"
-                            {% if category.Category_ID|stringformat:"s" == request.GET.category|stringformat:"s" %}
-                                selected
-                            {% endif %}>
-                        {{ category.Category_Name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-auto">
-            <select id="consigneeFilter" class="form-select" aria-label="Filter by Consignee">
-                <option value="">All Consignees</option>
-                <!-- Populate options dynamically using Django template -->
-                {% for consignee in consignees %}
-                    <option value="{{ consignee.Consignee_ID }}"
-                            {% if consignee.Consignee_ID|stringformat:"s" == request.GET.consignee|stringformat:"s" %}
-                                selected
-                            {% endif %}>
-                        {{ consignee.Consignee_Tag_ID }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class=" col-md-auto">
-          <button id="resetFilters" class="btn btn-danger">Reset Filters</button>
-        </div>
-        <div class="col-md-auto d-flex align-items-center">
-          <input class="mx-2" type="checkbox" id="showHidden" name="showHidden" {% if show_hidden %}checked{% endif %}>
-          <label for="showHidden">Show Hidden Products</label>
-        </div>
-      </div>
-  
-      <div class="card">
-        <div class="card-header">
-            <h5>Product Stock Status Counts:</h5>
-        </div>
-        <div class="card-body">
-            <p>Low Stock Count: {{ low_stock_count }}</p>
-            <p>No Stock Count: {{ no_stock_count }}</p>
-            <p>Regular Stock Count: {{ regular_stock_count }}</p>
-            <p>Total Products Count: {{ total_products_count }}</p>
-        </div>
-    </div>.
-
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-text">No Stock Count: {{ no_stock_count }}</h5>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-text">Low Stock Count: {{ low_stock_count }}</h5>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-text">Regular Stock Count: {{ regular_stock_count }}</h5>
+    </div>
+  </div>
+</div>
+      
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">
