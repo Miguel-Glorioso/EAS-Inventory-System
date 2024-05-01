@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <title>Partially Fulfilled Orders History</title>
+</head>
+
+<body class="bg-light">
+<div class="container-fluid">
+
+    <div class="row p-1" style="background-color: #eee;">
+        <div class="col-md-auto d-flex align-items-center">
+            <h4 class="m-0 mr-3">Partially Fulfilled Orders History</h4>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <!-- Buttons column -->
+        <div class="col-md-auto">
+          <a href="{% url 'current_pros' %}" class="btn btn-primary">Back</a>
+        </div>
+      </div>
+    {% if error_msg %}
+    <div class="alert alert-danger" role="alert">
+        {{ error_msg }}
+    </div>
+    {% endif %}
+    <!-- Table Partially Fulfilled Orders row -->
+    <div class="row mt-3">
+        <div class="table-responsive">
+            <table id="partiallyFulfilledOrders" class="table text-center">
+                <thead>
+                <tr>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Edit ID</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Date Updated</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Partially Fulfilled Quantity</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Stock Ordered</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Closed by</th>
+                    <th scope="col" style="background-color: #C2C1C1;">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in partially_fulfilled_history %}
+                <tr>
+                    <td style="text-align: center;">{{ item.Partially_Fulfill_Edit_ID }}</td>
+                    <td style="text-align: center;">{{ item.Date_Updated }}</td>
+                    <td style="text-align: center;">{{ item.Partially_Fulfilled_Quantity }}</td>
+                    <td style="text-align: center;">{{ item.Stock }}</td>
+                    <td style="text-align: center;">{{ item.Account_ID }}</td>
+                    <td>
+                        <!-- Add actions here if needed -->
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+
+</body>
+{% endblock %}

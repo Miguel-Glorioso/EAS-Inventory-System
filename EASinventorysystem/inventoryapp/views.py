@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . models import Product, Category,  User, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered
+from . models import Product, Category,  User, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered, Partially_Fulfilled_History
 from django.http import  JsonResponse, FileResponse, HttpResponseForbidden
 import json
 from django.core.files.storage import default_storage
@@ -1665,6 +1665,13 @@ def partially_fulfill(request, pk):
 
     return render(request, 'inventoryapp/partially_fulfill.html', {'requisition_order': PRO, 'products': all_inventory, 'stock_ordered_items': stocks_ordered})
     # return render(request, 'inventoryapp/partially_fulfill.html')
+
+def history_partially_fulfilled(request):
+    partially_fulfilled_history = Partially_Fulfilled_History.objects.all()
+    context = {
+        'partially_fulfilled_history': partially_fulfilled_history
+    }
+    return render(request, 'inventoryapp/history_partially_fulfilled.html', context)
 
 def edit_count(request):
     products = Product.objects.all()
