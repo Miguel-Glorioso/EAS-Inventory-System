@@ -17,10 +17,10 @@
             </div>
         </div>
 
-        <form method="POST" action="#">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
             <!-- First Tab: Choose products  -->
             <div id="step1">
-                {% csrf_token %}
                 <div class="row m-2">
                     <div class="col d-flex align-items-center">
                         <legend>Choose a Product to update its stock</legend>
@@ -43,13 +43,14 @@
                                                     <th>Name</th>
                                                     <th>ID</th>
                                                     <th>Stock</th>
+                                                    <th>Reserve Stock</th>
+                                                    <th>To be Received Stock</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="product-list">
                                                 <!-- Products will be appended here as rows -->
                                             </tbody>
                                         </table>
-                                        <input type="hidden" name="all_products" id="all_products" value="">
                                         <input type="hidden" name="account" id="account" value="{{ request.user.account.pk }}">
                                     </div>
                                 </div>
@@ -81,6 +82,8 @@
                                             <h5>{{ p.Name }}</h5>
                                             <p>ID: {{ p.EAS_Product_ID }}</p>
                                             <p><strong>Stock: </strong><span class="product_count">{{ p.Actual_Inventory_Count }}</span></p>
+                                            <input type="hidden" class="product_tbrcount" value="{{ p.Reserved_Inventory_Count }}">
+                                            <input type="hidden" class="product_rescount" value="{{ p.To_Be_Received_Inventory_Count }}">
                                             <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
                                         </div>
 
@@ -193,13 +196,15 @@
                 var productName = button.getAttribute('data-name');
                 var productId = button.parentNode.parentNode.dataset.id;
                 var productPK = button.closest('.product-item').querySelector('.product_pk').value;
+                var reserveCount = button.closest('.product-item').querySelector('.product_rescount').value;
+                var tbrCount = button.closest('.product-item').querySelector('.product_tbrcount').value;
                 var productCount = button.closest('.product-item').querySelector('.product_count').textContent.trim();
-                addToCart(productName, productId, productPK, productCount);
+                addToCart(productName, productId, productPK, reserveCount, tbrCount, productCount);
             });
         });
 
         // add a product to the cart
-        function addToCart(productName, productId, productPK, productCount) {
+        function addToCart(productName, productId, productPK, reserveCount, tbrCount, productCount) {
             // get the table body where products will be appended
             var productList = document.getElementById("product-list");
 
@@ -211,6 +216,8 @@
                 <td>${productName}</td>
                 <td>${productId}</td>
                 <td>${productCount}</td> 
+                <td>${tbrCount}</td>
+                <td>${reserveCount}</td>
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
             `;
@@ -265,6 +272,9 @@
                 var productName = product.cells[0].textContent.trim();
                 var productId = product.cells[1].textContent.trim();
                 var actualCount = product.cells[2].textContent.trim();
+                var reserveCount = product.cells[3].textContent.trim();
+                var tbrCount = product.cells[4].textContent.trim();
+                var productPK = product.querySelector('.product_pk').value;
 
                 // Create card element
                 var card = document.createElement('div');
@@ -281,30 +291,30 @@
                                 </div>
                                 <div class="col">
                                     <label><strong>Reserved:</strong></label>
-                                    <p>0</p>
+                                    <p>${reserveCount}</p>
                                 </div>
                                 <div class="col">
                                     <label><strong>To be Received:</strong></label>
-                                    <p>0</p>
+                                    <p>${tbrCount}</p>
                                 </div>
                                 <div class="col"></div>
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <label for="updated-count-${productId}"><strong>Updated Count:</strong></label>
-                                    <input type="number" class="form-control" id="updated-count-${productId}" name="updated_count_${productId}" required>
+                                    <label for="updated_count_${productPK}"><strong>Updated Count:</strong></label>
+                                    <input type="number" class="form-control" id="updated_count_${productPK}" name="updated_count_${productPK}" required>
                                 </div>
                                 <div class="col"></div>
                                 <div class="col"></div>
                                 <div class="col"></div>
                             </div>
                             <div class="mb-3">
-                                <label for="report-${productId}" class="form-label"><strong>Report:</strong></label>
-                                <input type="text" class="form-control" id="report-${productId}" name="report_${productId}" required>
+                                <label for="text_report_${productPK}" class="form-label"><strong>Text Report:</strong></label>
+                                <input type="text" class="form-control" id="text_report_${productPK}" name="text_report_${productPK}" required>
                             </div>
                             <div class="mb-3">
-                                <label for="image-${productId}" class="form-label"><strong>Upload Image</strong></label>
-                                <input type="file" class="form-control" id="image-${productId}" name="image_${productId}">
+                                <label for="image_report_${productPK}" class="form-label"><strong>Upload Image Report</strong></label>
+                                <input type="file" class="form-control" accept="image/*" id="image_report_${productPK}" name="image_report_${productPK}">
                             </div>
                         </div>
                     </div>

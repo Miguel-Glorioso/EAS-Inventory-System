@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . models import Product, Category,  User, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered, Partially_Fulfilled_History
+from . models import Product, Category,  User, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered, Partially_Fulfilled_History, Count_Edit_History
 from django.http import  JsonResponse, FileResponse, HttpResponseForbidden
 import json
 from django.core.files.storage import default_storage
@@ -239,13 +239,7 @@ def update_product(request, pk):
             
             if previous_picture_filename:
                 default_storage.delete(previous_picture_filename)
-        
-        if int(product.Actual_Inventory_Count) == 0:
-            Stock_Status = 'No Stock'
-        elif int(product.Actual_Inventory_Count) <= int(Product_Stock_threshold):
-            Stock_Status = 'Low Stock'
-        else:
-            Stock_Status = 'Regular Stock'
+    
 
         if int(Product_Stock_threshold) == 0:
             Product_Stock_threshold = None
@@ -1655,7 +1649,7 @@ def partially_fulfill(request, pk):
     previous_parfills_combined = Partially_Fulfilled_History.objects.filter(Stock__in=stocks_ordered).values('Stock').annotate(total_quantity=Sum('Partially_Fulfilled_Quantity'))
     
     no_parfills = {}
-    
+
     for stock in stocks_ordered:
         if stock.pk not in [item['Stock'] for item in previous_parfills_combined]:
             no_parfills[stock.pk] = stock 
@@ -1710,14 +1704,61 @@ def partially_fulfill(request, pk):
 
 def history_partially_fulfilled(request):
     partially_fulfilled_history = Partially_Fulfilled_History.objects.all()
-    context = {
-        'partially_fulfilled_history': partially_fulfilled_history
-    }
-    return render(request, 'inventoryapp/history_partially_fulfilled.html', context)
+    return render(request, 'inventoryapp/history_partially_fulfilled.html' , {'partially_fulfilled_history':partially_fulfilled_history})
 
 def edit_count(request):
     products = Product.objects.all()
-    return render(request, 'inventoryapp/edit_count.html', {'products': products})
+    if request.method == 'POST':
+            cEdit_account = request.POST.get('account')
+
+            cEdit_account = get_object_or_404(Account,pk=cEdit_account)
+            for key in request.POST.keys():
+                if key.startswith('updated_count_'):
+                    product_pk = key.split('_')[-1]
+                    updated_count = request.POST[key]
+                    image_report= request.FILES.get(f'image_report_{product_pk}')
+                    text_report = request.POST.get(f'text_report_{product_pk}')
+
+                    product = Product.objects.get(Product_ID=product_pk)
+
+                    initial_count = product.Actual_Inventory_Count
+
+                    product.Actual_Inventory_Count = int(updated_count)
+
+                    if product.Product_Low_Stock_Threshold:
+                        if int(product.Actual_Inventory_Count) == 0:
+                            product.Product_Stock_Status = 'No Stock'
+                        elif int(product.Actual_Inventory_Count) <= int(product.Product_Low_Stock_Threshold):
+                            product.Product_Stock_Status = 'Low Stock'
+                        else:
+                            product.Product_Stock_Status = 'Regular Stock'
+                    else:
+                        if int(product.Actual_Inventory_Count) == 0:
+                            product.Product_Stock_Status = 'No Stock'
+                        elif int(product.Actual_Inventory_Count) <= int(product.Category.Category_Product_Low_Stock_Threshold):
+                            product.Product_Stock_Status = 'Low Stock'
+                        else:
+                            product.Product_Stock_Status = 'Regular Stock'
+                    product.save()
+
+                    current_date = timezone.now()
+                    Count_Edit_History.objects.create(
+                        Date_Updated = current_date,
+                        Initial_Inventory_Count = initial_count,
+                        Updated_Inventory_Count = updated_count,
+                        Image_Report = image_report,
+                        Text_Report = text_report,
+                        Product_ID = product,
+                        Account_ID = cEdit_account
+                    )
+            messages.success(request, "Product count succesfully updated")
+            return redirect('current_inventory')
+                    
+
+
+    else:
+        return render(request, 'inventoryapp/edit_count.html', {'products': products})
 
 def inventory_update_history(request):
-    return render(request, 'inventoryapp/inventory_update_history.html')
+    Count_Edits = Count_Edit_History.objects.all()
+    return render(request, 'inventoryapp/inventory_update_history.html',{'Count_Edits':Count_Edits})

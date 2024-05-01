@@ -41,16 +41,22 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for edit in Count_Edits %}
                         <tr>
-                            <td class="count_id" style="text-align: center;"></td>
-                            <td class="item_name" style="text-align: center;"></td>
-                            <td class="date_updated" style="text-align: center;"></td>
-                            <td class="initial_count" style="text-align: center;"></td>
-                            <td class="updated_count" style="text-align: center;"></td>
-                            <td class="image_report" style="text-align: center;"></td>
-                            <td class="report" style="text-align: center;"></td>
-                            <td class="updated_by" style="text-align: center;"></td>
+                            <td class="count_id" style="text-align: center; vertical-align: middle;">{{ edit.Count_Edit_ID }}</td>
+                            <td class="item_name" style="text-align: center; vertical-align: middle;">{{ edit.Product_ID }}</td>
+                            <td class="initial_count" style="text-align: center; vertical-align: middle;">{{ edit.Date_Updated }}</td>
+                            <td class="initial_count" style="text-align: center; vertical-align: middle;">{{ edit.Initial_Inventory_Count }}</td>
+                            <td class="updated_count" style="text-align: center; vertical-align: middle;">{{ edit.Updated_Inventory_Count }}</td>
+                            <td class="image_report" style="text-align: center; vertical-align: middle;">
+                                {% if edit.Image_Report %}
+                                    <img src="{{ edit.Image_Report.url }}" alt="Image Report" style="max-width: 100px; max-height: 100px;">
+                                {% endif %}
+                            </td>
+                            <td class="report" style="text-align: center; vertical-align: middle;">{{ edit.Text_Report }}</td>
+                            <td class="updated_by" style="text-align: center; vertical-align: middle;">{{ edit.Account_ID }}</td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

@@ -160,7 +160,7 @@ class Count_Edit_History(models.Model):
     Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT)
     
     def __str__(self):
-        return 
+        return f"Count Edit #{self.Count_Edit_ID} Product: {self.Product_ID}"
 
 class Partially_Fulfilled_History(models.Model):
     Partially_Fulfill_Edit_ID = models.AutoField(primary_key=True)
