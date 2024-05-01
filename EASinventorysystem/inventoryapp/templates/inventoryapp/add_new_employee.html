@@ -46,10 +46,14 @@
       font-size: 18px; 
       padding: 6px 28px; 
     }
+
+    .invalid-input {
+      border: 1px solid red !important;
+    }
   </style>
 </head>
 
-<body class="bg-light">
+<body class="bg-light">  
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
           <div class="col-md-auto d-flex align-items-center">
@@ -73,13 +77,13 @@
             <!-- First Name -->
             <div class="col">
                 <label for="employee_first_name">First Name</label><br>
-                <input type="text" id="first_name" name="first_name">
+                <input type="text" id="first_name" name="first_name" required>
             </div>
             
             <!-- Last Name -->
             <div class="col">
                 <label for="employee_last_password">Last Name</label><br>
-                <input type="text" id="last_name" name="last_name">
+                <input type="text" id="last_name" name="last_name" required>
             </div>
         </div>
 
@@ -92,11 +96,11 @@
         <div class="row">
             <div class="col">
                 <label for="employee_username">Username</label><br>
-                <input type="text" id="username", name="username">
+                <input type="text" id="username", name="username" required>
             </div>
             <div class="col">
                 <label for="employee_password">Password</label><br>
-                <input type="password" id="password" name="password">
+                <input type="password" id="password" name="password" required>
             </div>
         </div>
         <div class="mb-3">
@@ -115,50 +119,107 @@
         <!-- Cancel & Save button row -->
         <div class="row mt-3">
           <div class="col">
-            <a href="{% url 'employee_accounts' %}" class="btn btn-danger btn-edit">Cancel</a>
+            <a class="btn btn-danger btn-edit" onclick="showCancelWarningModal()">Cancel</a>
           </div>
           <div class="col-md-auto">
-            <button class="btn btn-primary btn-edit" href="#">Save New Employee</button>
+            <button class="btn btn-primary btn-edit" href="#" onclick="validateForm()">Save New Employee</button>
           </div>
         </div>
     </div>
-</body>
 
-<script>
-  // JavaScript for image preview and remove functionality
-  document.addEventListener("DOMContentLoaded", function() {
-        const pictureInput = document.getElementById("profile_picture");
-        const imagePreview = document.getElementById("image-preview");
-        const removeImageButton = document.getElementById("remove-image");
+    <script>
+       // Function to display the cancel warning modal
+       function showCancelWarningModal() {
+        var myModal = new bootstrap.Modal(document.getElementById('cancelWarningModal'));
+        myModal.show();
+      }
 
-        function updatePreview() {
-            const file = pictureInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const image = new Image();
-                    image.src = event.target.result;
-                    image.width = 200;
+      // Function to direct back to current inventory
+      function cancelForm() {
+        window.location.href = "{% url 'employee_accounts' %}";
+      }
+
+      // Function to validate form inputs
+      function validateForm() {
+        var inputs = document.querySelectorAll('input[required]');
+        var isValid = true;
+
+        inputs.forEach(function(input) {
+          input.classList.remove('invalid-input'); // Remove any existing invalid-input class
+          if (!input.value.trim()) {
+            isValid = false;
+            input.classList.add('invalid-input'); // Add red outline for empty fields
+          }
+        });
+
+        if (isValid) {
+          // All required fields are filled, prompt for confirmation
+          var confirmation = confirm('Are you sure you want to save a new account?');
+          if (confirmation) {
+            // If user confirms, proceed with saving
+            return true;
+          } else {
+            // If user cancels confirmation, prevent form submission
+            return false;
+          }
+        } else {
+          // There are blank fields, do not proceed and prevent form submission
+          return false;
+        }
+      }
+
+      
+      // JavaScript for image preview and remove functionality
+      document.addEventListener("DOMContentLoaded", function() {
+            const pictureInput = document.getElementById("profile_picture");
+            const imagePreview = document.getElementById("image-preview");
+            const removeImageButton = document.getElementById("remove-image");
+    
+            function updatePreview() {
+                const file = pictureInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const image = new Image();
+                        image.src = event.target.result;
+                        image.width = 200;
+                        imagePreview.innerHTML = '';
+                        imagePreview.appendChild(image);
+                        removeImageButton.style.display = "inline-block";
+                    };
+                    reader.readAsDataURL(file);
+                } else {
                     imagePreview.innerHTML = '';
-                    imagePreview.appendChild(image);
-                    removeImageButton.style.display = "inline-block";
-                };
-                reader.readAsDataURL(file);
-            } else {
+                    removeImageButton.style.display = "none";
+                }
+            }
+    
+            pictureInput.addEventListener("change", updatePreview);
+    
+            removeImageButton.addEventListener("click", function() {
+                event.preventDefault();
+                pictureInput.value = null;
                 imagePreview.innerHTML = '';
                 removeImageButton.style.display = "none";
-            }
-        }
-
-        pictureInput.addEventListener("change", updatePreview);
-
-        removeImageButton.addEventListener("click", function() {
-            event.preventDefault();
-            pictureInput.value = null;
-            imagePreview.innerHTML = '';
-            removeImageButton.style.display = "none";
+            });
         });
-    });
+    </script>
+</body>
 
-</script>
+<div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="cancelWarningModalLabel">Warning</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              You will lose progress. Confirm to exit form?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-danger" onclick="cancelForm()">Confirm</button>
+          </div>
+      </div>
+  </div>
+</div>
 {% endblock %}

@@ -46,6 +46,10 @@
       font-size: 18px; 
       padding: 6px 28px; 
     }
+
+    .invalid-input {
+      border: 1px solid red !important;
+    }
   </style>
 </head>
 
@@ -108,13 +112,74 @@
         <!-- Cancel & Save button row -->
         <div class="row">
           <div class="col">
-            <a href="{% url 'view_employee' pk=Employee.pk %}" class="btn btn-danger btn-edit">Cancel</a>
+            <a class="btn btn-danger btn-edit" onclick="showCancelWarningModal()">Cancel</a>
           </div>
           <div class="col-md-auto">
-            <button type="submit" class="btn btn-primary btn-edit" href="#">Save</button>
+            <button type="submit" class="btn btn-primary btn-edit" href="#" onclick=validateForm()>Save</button>
             
           </div>
         </div>
     </div>
+
+    <script>
+
+      // Function to display the cancel warning modal
+      function showCancelWarningModal() {
+          var myModal = new bootstrap.Modal(document.getElementById('cancelWarningModal'));
+          myModal.show();
+      }
+
+      // Function to direct back to current inventoRY
+      function cancelForm() {
+          window.location.href = "{% url 'view_employee' pk=Employee.pk %}";
+      }
+      
+      // Function to validate form inputs
+      function validateForm() {
+        var inputs = document.querySelectorAll('input[required]');
+        var isValid = true;
+
+        inputs.forEach(function(input) {
+          input.classList.remove('invalid-input'); // Remove any existing invalid-input class
+          if (!input.value.trim()) {
+            isValid = false;
+            input.classList.add('invalid-input'); // Add red outline for empty fields
+          }
+        });
+
+        if (isValid) {
+          // All required fields are filled, prompt for confirmation
+          var confirmation = confirm('Are you sure you want to save a new account?');
+          if (confirmation) {
+            // If user confirms, proceed with saving
+            return true;
+          } else {
+            // If user cancels confirmation, prevent form submission
+            return false;
+          }
+        } else {
+          // There are blank fields, do not proceed and prevent form submission
+          return false;
+        }
+      }
+
+    </script>
 </body>
+
+<div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="cancelWarningModalLabel">Warning</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              You will lose progress. Confirm to exit form?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-danger" onclick="cancelForm()">Confirm</button>
+          </div>
+      </div>
+  </div>
+</div>
 {% endblock %}
