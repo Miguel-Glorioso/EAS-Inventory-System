@@ -1,0 +1,64 @@
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <title>Inventory Update History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">Inventory Update History</h4>
+            </div>
+        </div>
+
+        <!-- Buttons row -->
+        <div class="row mt-3">
+            <div class="col-md-auto">
+                <a href="{% url 'edit_count' %}" class="btn btn-primary">Go Back</a>
+            </div>
+        </div>
+
+        <!-- Table Inventory History row -->
+        <div class="row mt-4 mx-5">
+            <div class="table-responsive">
+                <table id="inventory_update_history" class="table text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Count Edit ID</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Item</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Date Updated</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Initial Count</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Updated Count</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Image Report</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Report</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Updated by</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="count_id" style="text-align: center;"></td>
+                            <td class="item_name" style="text-align: center;"></td>
+                            <td class="date_updated" style="text-align: center;"></td>
+                            <td class="initial_count" style="text-align: center;"></td>
+                            <td class="updated_count" style="text-align: center;"></td>
+                            <td class="image_report" style="text-align: center;"></td>
+                            <td class="report" style="text-align: center;"></td>
+                            <td class="updated_by" style="text-align: center;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+</body>
+{% endblock %}

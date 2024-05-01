@@ -17,21 +17,25 @@
             </div>
         </div>
 
-        <!-- NO TOUCHIES; WIP -->
+        <div class="row p-1">
+            <div class="col d-flex align-items-center">
+                <legend>Choose a Product to update its stock</legend>
+            </div>
+            <div class="col d-flex justify-content-end">
+                <a href="{% url 'inventory_update_history' %}" class="btn btn-primary">View Update History</a>
+            </div>
+        </div>
 
         <form method="POST" action="#">
             <!-- First Tab: Choose products  -->
-            <div id="step1" style="display: none;">
-
+            <div id="step1">
                 {% csrf_token %}
                 <fieldset>
-                    <legend>Choose a Product to update its stock</legend>
-
                     <div class="row mt-4">
                         <div class="d-flex justify-content-center">
-                            <!-- Left column for Products Ordered -->
+                            <!-- Left column for Products Chosen -->
                             <div class="col-md-6" style="padding-right: 2%; overflow-y: auto; height: 630px;">
-                                <h5>Products Ordered:</h5>
+                                <h5>Products Chosen:</h5>
                                 <div class="container mt-2">
                                     <div class="table-responsive">
                                         <table class="table table-borderless text-center" id="PO_products">
@@ -39,8 +43,6 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>ID</th>
-                                                    <th>Price</th>
-                                                    <th>Quantity</th>
                                                     <th>Stock</th>
                                                 </tr>
                                             </thead>
@@ -49,7 +51,6 @@
                                             </tbody>
                                         </table>
                                         <input type="hidden" name="all_products" id="all_products" value="">
-                                        <input type="hidden" name="total_price" id="total_price" value="">
                                         <input type="hidden" name="account" id="account" value="{{ request.user.account.pk }}">
                                     </div>
                                 </div>
@@ -80,7 +81,6 @@
                                             <!-- Product details -->
                                             <h5>{{ p.Name }}</h5>
                                             <p>ID: {{ p.EAS_Product_ID }}</p>
-                                            <p class="product-price">Php {{ p.Price }}</p>
                                             <p><strong>Stock: </strong><span class="product_count">{{ p.Actual_Inventory_Count }}</span></p>
                                             <input type="hidden" class="product_pk" value="{{ p.Product_ID }}">
                                         </div>
@@ -109,88 +109,245 @@
                 </fieldset>
             </div>
 
-            <!-- Second Tab: Product Selection -->
+            <!-- Second Tab: Chosen Product Stock Inventory Update -->
             <div id="step2" style="display: none;">
                 <div class="container-fluid">
 
+                    <!-- Cards for selected products -->
+                    <legend>Products Selected:</legend><br>
+                    <div class="row row-cols-1 row-cols-md-1 g-4" id="selected-products-cards">
+                        <!-- Selected products cards will be dynamically filled here -->
+                    </div>
+
                     <!-- Buttons: back and cancel -->
                     <div class="row mt-2">
-                        <div class="col-md-6">
-                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <button type="button" class="btn btn-success" onclick="validateQuantityAndNext()">Next</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Third View: Summary -->
-            <div id="step3" style="display: none;">
-                <div class="container-fluid">
-                    <legend>Summary</legend>
-
-                    <!-- Consignee Information -->
-                    <h5>Consignee Information:</h5>
-                    <div class="row mb-1">
-                        <div class="col">
-                            <p><strong>Consignee Name:</strong> <span id="consignee_customer_name"></span></p>
-                            <p><strong>Email:</strong> <span id="consignee_email"></span></p>
-                            <p><strong>Primary Contact:</strong> <span id="consignee_primary_contact"></span></p>
-                            <p><strong>Emergency Contact:</strong> <span id="consignee_emergency_contact"></span></p>
-                            <p><strong>Selected Shipping Method:</strong> <span id="selected_shipping_method"></span>
-                            </p>
-                        </div>
-                        <div class="col">
-                            <p><strong>Address:</strong><br>
-                                <span id="consignee_address_line1"></span><br>
-                                <span id="consignee_barangay_municipality_province"></span><br>
-                                <span id="consignee_zip_code"></span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col">
-                            <h5>Consignee Notes:</h5>
-                            <p id="consignee_notes_summary"></p>
-                        </div>
-                        <div class="col">
-                            <h5>Order Notes:</h5>
-                            <p id="order_notes_summary"></p>
-                        </div>
-                    </div>
-
-                    <!-- Products Table -->
-                    <h5>Products Selected:</h5><br>
-                    <p><strong>Total Price:</strong> <span id="total_price_summary"></span></p>
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>ID</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody id="selected-products-table">
-                                <!-- Selected products will be dynamically filled here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Buttons: back and submit -->
-                    <div class="row m-3">
-                        <div class="col-md-6">
-                            <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <!-- <button type="submit" class="btn btn-success" id="submit_po">Submit</button> -->
-                            <button type="submit" class="btn btn-success" id="submit_po" onclick="return confirm('Are you sure you want to create this purchase order?')">Submit</button>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <button type="submit" class="btn btn-success" id="submit_po" onclick="return confirm('Are you sure you want to update the quantity of the selected product/s?')">Submit</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </form>
     </div>
+    <script>
+        // Function to filter products as user types in the search bar
+        document.getElementById("search-input").addEventListener("input", function () {
+            var searchValue = this.value.trim().toLowerCase();
+            var productItems = document.querySelectorAll(".product-item");
+            var addedProductIds = getAddedProductIds(); // Get product IDs already added to the left column
+            productItems.forEach(function (item) {
+                var productId = item.dataset.id; // Get the product ID from dataset
+                var productName = item.querySelector("h5").textContent.trim().toLowerCase();
+                if (!addedProductIds.includes(productId) && productName.includes(searchValue)) {
+                    item.style.display = ""; // Show the product item if not already added and matches search
+                } else {
+                    item.style.display = "none"; // Hide the product item otherwise
+                }
+            });
+        });
+
+        // Function to retrieve product IDs already added to the left column
+        function getAddedProductIds() {
+            var addedProductIds = [];
+            var productListRows = document.querySelectorAll("#PO_products tbody tr");
+            productListRows.forEach(function (row) {
+                var productId = row.cells[1].textContent.trim(); // Get product ID from the table cell
+                addedProductIds.push(productId);
+            });
+            return addedProductIds;
+        }
+
+
+        function nextStep() {
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            populateSelectedProductsCards(); // Populate selected products cards on the second page
+        }
+
+        function prevStep() {
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step1').style.display = 'block';
+        }
+
+        // Function to retrieve selected product IDs from the form submission
+        function getSelectedProductIds() {
+            var selectedProductIds = [];
+            var selectedProducts = document.querySelectorAll("#product-list tr");
+            selectedProducts.forEach(function(product) {
+                var productId = product.cells[1].textContent.trim();
+                selectedProductIds.push(productId);
+            });
+            return selectedProductIds;
+        }
+
+
+        // Add to Cart
+        var addToCartButtons = document.querySelectorAll('.add-to-cart');
+        addToCartButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var productName = button.getAttribute('data-name');
+                var productId = button.parentNode.parentNode.dataset.id;
+                var productPK = button.closest('.product-item').querySelector('.product_pk').value;
+                var productCount = button.closest('.product-item').querySelector('.product_count').textContent.trim();
+                addToCart(productName, productId, productPK, productCount);
+            });
+        });
+
+        // add a product to the cart
+        function addToCart(productName, productId, productPK, productCount) {
+            // get the table body where products will be appended
+            var productList = document.getElementById("product-list");
+
+            // create a new row for the product
+            var newRow = document.createElement("tr");
+
+            // populate the row with product information
+            newRow.innerHTML = `
+                <td>${productName}</td>
+                <td>${productId}</td>
+                <td>${productCount}</td> 
+                <input type="hidden" class="product_pk" value=${productPK}>
+                <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
+            `;
+
+            // append the new row to the table body
+            productList.appendChild(newRow);
+
+            // hide the product in the right column list
+            hideProduct(productId);
+        }
+
+        // remove a product from the cart
+        function removeFromCart(row) {
+
+            // Remove the product from the DOM
+            row.parentNode.parentNode.remove();
+
+            // Get the product ID of the removed product
+            var productId = row.parentNode.parentNode.cells[1].textContent.trim();
+
+            // Unhide the product in the right column list
+            unhideProduct(productId);
+        }
+
+        // hide a product in the right column list
+        function hideProduct(productId) {
+            var productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
+            if (productItem) {
+                productItem.style.display = 'none';
+            }
+        }
+
+        // unhide a product in the right column list
+        function unhideProduct(productId) {
+            var productItem = document.querySelector(`.product-item[data-id="${productId}"]`);
+            if (productItem) {
+                productItem.style.display = '';
+            }
+        }
+
+
+        // Function to populate selected products cards on the second page
+        function populateSelectedProductsCards() {
+            var selectedProductIds = getSelectedProductIds();
+
+            var selectedProductsCards = document.getElementById('selected-products-cards');
+            selectedProductsCards.innerHTML = ''; // Clear contents
+
+            var selectedProducts = document.querySelectorAll("#product-list tr"); // Corrected this line
+
+            selectedProducts.forEach(function(product) {
+                var productName = product.cells[0].textContent.trim();
+                var productId = product.cells[1].textContent.trim();
+                var actualCount = product.cells[2].textContent.trim();
+
+                // Create card element
+                var card = document.createElement('div');
+                card.classList.add('col');
+                card.innerHTML = `
+                    <div class="card border-dark mb-3">
+                        <div class="card-body" style="border">
+                            <h5 class="card-title">${productName}</h5>
+                            <p class="card-text">ID: ${productId}</p>
+                            <div class="row">
+                                <div class="col">
+                                    <label><strong>Actual Count:</strong></label>
+                                    <p>${actualCount}</p>
+                                </div>
+                                <div class="col">
+                                    <label><strong>Reserved:</strong></label>
+                                    <p>0</p>
+                                </div>
+                                <div class="col">
+                                    <label><strong>To be Received:</strong></label>
+                                    <p>0</p>
+                                </div>
+                                <div class="col"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="updated-count-${productId}"><strong>Updated Count:</strong></label>
+                                    <input type="number" class="form-control" id="updated-count-${productId}" name="updated_count_${productId}" required>
+                                </div>
+                                <div class="col"></div>
+                                <div class="col"></div>
+                                <div class="col"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="report-${productId}" class="form-label"><strong>*Report:</strong></label>
+                                <input type="text" class="form-control" id="report-${productId}" name="report_${productId}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="image-${productId}" class="form-label"><strong>Upload Image</strong></label>
+                                <input type="file" class="form-control" id="image-${productId}" name="image_${productId}">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                selectedProductsCards.appendChild(card);
+            });
+        }
+
+        // Call the function to populate selected products cards on page load
+        window.onload = populateSelectedProductsCards;
+
+
+
+
+        // Function to display the cancel warning modal
+        function showCancelWarningModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('cancelWarningModal'));
+            myModal.show();
+        }
+
+        // Function to direct back to current inventoRY
+        function cancelForm() {
+            window.location.href = "{% url 'current_inventory' %}";
+        }
+        
+    </script>
 </body>
+
+<div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelWarningModalLabel">Warning</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                You will lose progress. Confirm to exit form?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="cancelForm()">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

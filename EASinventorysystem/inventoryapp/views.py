@@ -1626,4 +1626,8 @@ def partially_fulfill(request, pk):
     # return render(request, 'inventoryapp/partially_fulfill.html')
 
 def edit_count(request):
-    return render(request, 'inventoryapp/edit_count.html')
+    products = Product.objects.all()
+    return render(request, 'inventoryapp/edit_count.html', {'products': products})
+
+def inventory_update_history(request):
+    return render(request, 'inventoryapp/inventory_update_history.html')
