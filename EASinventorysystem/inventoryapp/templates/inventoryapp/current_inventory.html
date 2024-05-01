@@ -81,67 +81,79 @@ $('#stockStatusFilter').on('change', function() {
 });
 
 </script>
-  <div class="col-md-auto">
-    <select id="categoryFilter" class="form-select" aria-label="Filter by Category">
-      <option value="">All Categories</option>
-      <!-- Populate options dynamically using Django template -->
-      {% for category in categories %}
-        <option value="{{ category.Category_ID }}"
-                {% if category.Category_ID|stringformat:"s" == request.GET.category|stringformat:"s" %}
-                  selected
-                {% endif %}>
-          {{ category.Category_Name }}
-        </option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="col-md-auto">
-    <select id="consigneeFilter" class="form-select" aria-label="Filter by Consignee">
-      <option value="">All Consignees</option>
-      <!-- Populate options dynamically using Django template -->
-      {% for consignee in consignees %}
-        <option value="{{ consignee.Consignee_ID }}"
-                {% if consignee.Consignee_ID|stringformat:"s" == request.GET.consignee|stringformat:"s" %}
-                  selected
-                {% endif %}>
-          {{ consignee.Consignee_Tag_ID }}
-        </option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="col-md-auto">
-    <button id="resetFilters" class="btn btn-danger">Reset Filters</button>
-  </div>
-  <div class="col-md-auto" style="margin-left: 130px;">
-    <div class="row">
-      <div class="card-group" style="text-align: center;">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-text" style="font-size: 14px;">Total Products Count: <span id="total_products_count" style="font-size: 14px;"></span></h5>
-          </div>
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <div class="col-md-auto">
+          <select id="categoryFilter" class="form-select" aria-label="Filter by Category">
+            <option value="">All Categories</option>
+            <!-- Populate options dynamically using Django template -->
+            {% for category in categories %}
+              <option value="{{ category.Category_ID }}"
+                      {% if category.Category_ID|stringformat:"s" == request.GET.category|stringformat:"s" %}
+                        selected
+                      {% endif %}>
+                {{ category.Category_Name }}
+              </option>
+            {% endfor %}
+          </select>
         </div>
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-text" style="font-size: 14px;">No Stock Count: <span id="no_stock_count" style="font-size: 14px;"></span></h5>
-          </div>
+
+        <div class="col-md-auto">
+          <select id="consigneeFilter" class="form-select" aria-label="Filter by Consignee">
+            <option value="">All Consignees</option>
+            <!-- Populate options dynamically using Django template -->
+            {% for consignee in consignees %}
+              <option value="{{ consignee.Consignee_ID }}"
+                      {% if consignee.Consignee_ID|stringformat:"s" == request.GET.consignee|stringformat:"s" %}
+                        selected
+                      {% endif %}>
+                {{ consignee.Consignee_Tag_ID }}
+              </option>
+            {% endfor %}
+          </select>
         </div>
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-text" style="font-size: 14px;">Low Stock Count: <span id="low_stock_count" style="font-size: 14px;"></span></h5>
-          </div>
+
+        <div class="col-md-auto">
+          <button id="resetFilters" class="btn btn-danger">Reset Filters</button>
         </div>
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-text" style="font-size: 14px;">Regular Stock Count: <span id="regular_stock_count" style="font-size: 14px;"></span></h5>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-auto d-flex align-items-center">
+          <input class="mx-2" type="checkbox" id="showHidden" name="showHidden" {% if show_hidden %}checked{% endif %}>
+          <label for="showHidden">Show Hidden Products</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-auto" style="margin-left: 40px;">
+      <div class="row">
+        <div class="card-group" style="text-align: center;">
+          <div class="card">
+            <div class="card-body" style="background-color: #f0f0f0;">
+              <h5 class="card-text" style="font-size: 13.5px;">Total Products Count <br><span id="total_products_count" style="font-size: 19px;"></span></h5>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body" style="background-color: #f0f0f0;">
+              <h5 class="card-text" style="font-size: 13.5px;">No Stock Count <br> <br> <span id="no_stock_count" style="font-size: 19px;"></span></h5>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body" style="background-color: #f0f0f0;">
+              <h5 class="card-text" style="font-size: 13.5px;">Low Stock Count <br> <br> <span id="low_stock_count" style="font-size: 19px;"></span></h5>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body" style="background-color: #f0f0f0;">
+              <h5 class="card-text" style="font-size: 13.5px;">Regular Stock Count <br> <span id="regular_stock_count" style="font-size: 19px;"></span></h5>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<div class="col-md-auto d-flex align-items-center">
-  <input class="mx-2" type="checkbox" id="showHidden" name="showHidden" {% if show_hidden %}checked{% endif %}>
-  <label for="showHidden">Show Hidden Products</label>
 </div>
       
     <!-- Table Inventory row -->
