@@ -41,7 +41,13 @@
         <a href="{% url 'history_po' %}" class="btn btn-primary">Purchase Order History</a>
       </div>
     </div>
-
+    {% if messages %}
+      {% for message in messages %}
+          <div class="alert alert-success" role="alert">
+              {{ message }}
+          </div>
+      {% endfor %}
+    {% endif %}
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">
@@ -130,11 +136,11 @@
       });
     }
     
-    function submitClosePoForm(button) {
-        var form = button.closest('form'); // Find the parent form element
-        var formId = form.id; // Get the ID of the form
-        form.submit(); // Submit the form
-    }
+      function submitClosePoForm(button) {
+          var form = button.closest('form'); // Find the parent form element
+          var formId = form.id; // Get the ID of the form
+          form.submit(); // Submit the form
+      }
   </script>
 
 </body>

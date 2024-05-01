@@ -25,7 +25,13 @@
       <a href="{% url 'create__consignee' %}" class="btn btn-primary">Create New Tag-Consignee</a>
     </div>
   </div>
-
+  {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+  {% endif %}
   <!-- Table Categories and Tags row -->
   <div class="row mt-3">
     <!-- Categories Column -->

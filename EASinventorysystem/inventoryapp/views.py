@@ -175,6 +175,7 @@ def add_product(request):
                     Product_ID=product,
                     Consignee_ID=consignee
                 )
+            messages.success(request, "Product added successfully.")
             return redirect('current_inventory')
     else:
         return render(request, 'inventoryapp/add_product.html',  {'categories': categories, 'consignees': consignees})
@@ -286,7 +287,7 @@ def update_product(request, pk):
             if str(con_ids) not in Product_Consignees:
                 Consignee_Product.objects.filter(Consignee_ID=con_ids, Product_ID=pk).delete()
         
-        
+        messages.success(request, "Product updated successfully.")
         return redirect('current_inventory')
     else:
         return render(request, 'inventoryapp/update_product.html', {'p':p, 'con_p':con_p, 'con_p_ids':con_p_ids, 'categories': categories,  'consignees': consignees})
@@ -471,7 +472,8 @@ def add_purchase_order_consignee(request):
             product_object.save()
 
             Product_Ordered.objects.create(Product_ID=product_object, Purchase_Order_ID=PO, Quantity=values[1])
-
+        
+        messages.success(request, "Purchase order added successfully.")
         return redirect('current_pos')
     
     else:
@@ -555,7 +557,8 @@ def add_purchase_order_direct_customer(request):
             product_object.save()
 
             Product_Ordered.objects.create(Product_ID=product_object, Purchase_Order_ID=PO, Quantity=values[1])
-
+        
+        messages.success(request, "Purchase order added successfully.")
         return redirect('current_pos')
     else:
 
@@ -619,7 +622,8 @@ def close_po(request, pk, account_id):
                 error_msg = 'Sufficient Stock for Purchase Order'
                 all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
                 return render(request, 'inventoryapp/current_pos.html', {'error_msg':error_msg, 'purchase_orders':all_purchase_orders})
-                
+        
+        messages.success(request, "Purchase order closed successfully.")
         return redirect('current_pos')
     else:
         all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
@@ -685,6 +689,7 @@ def add_requisition_order(request):
 
             Stock_Ordered.objects.create(Product_ID=product_object, Product_Requisition_ID=PRO, Quantity=values[1])
 
+        messages.success(request, "Product requisition order added successfully.")
         return redirect('current_pros')
     else:
         return render(request, 'inventoryapp/add_pro.html', {'products': products})
@@ -742,6 +747,7 @@ def update_pro(request, pk):
             product_object.save()
             s_o.delete()
 
+        messages.success(request, "Product requisition order updated successfully.")
         return redirect('current_pros')
     else:
         
@@ -798,6 +804,7 @@ def close_pro(request, pk, account_id):
             requisition_order.Account_ID_Closed_by = account
             requisition_order.save()
         
+        messages.success(request, "Product requisition order closed successfully.")
         return redirect('current_pros')
     
     else:
@@ -860,7 +867,7 @@ def create_direct_customer(request):
                 Zip_Code=Zip_Code,
                 Notes=Notes
             )
-
+            messages.success(request, "Direct customer added successfully.")
             return redirect('current_customers')
     else:
         return render(request, 'inventoryapp/create_direct_customer.html')
@@ -914,6 +921,7 @@ def create_consignee(request):
             )
 
             # Redirect to some page after successful creation
+            messages.success(request, "Consignee added successfully.")
             return redirect('current_customers')
 
     else:
@@ -968,6 +976,7 @@ def create__consignee(request):
             )
 
             # Redirect to some page after successful creation
+            messages.success(request, "Tag-Consignee added successfully.")
             return redirect('categories_consignee_tags')
 
     else:
@@ -1035,6 +1044,7 @@ def update_direct_customer(request, pk):
 
         customer.save()
 
+        messages.success(request, "Direct customer updated successfully.")
         return redirect('current_customers')
     else:
         return render(request, 'inventoryapp/update_direct_customer.html', {'customer': customer})
@@ -1082,6 +1092,7 @@ def update_consignee(request, pk):
 
         consignee.save()
 
+        messages.success(request, "Consignee updated successfully.")
         return redirect('current_customers')
 
     else:
@@ -1159,6 +1170,8 @@ def update_PO_direct_customer(request, po_pk, c_pk):
             product_object.Reserved_Inventory_Count -= p_o.Quantity
             product_object.save()
             p_o.delete()
+        
+        messages.success(request, "Purchase order updated successfully.")
         return redirect('current_pos')
         
     else:
@@ -1223,6 +1236,8 @@ def update_PO_consignee(request, po_pk, c_pk):
             product_object.Reserved_Inventory_Count -= p_o.Quantity
             product_object.save()
             p_o.delete()
+
+        messages.success(request, "Purchase order updated successfully.")
         return redirect('current_pos')
     else:
         return render(request, 'inventoryapp/update_po_consignee.html', {'PO':PO, 'C':C, 'products_ordered':products_ordered, 'products':products, 'consignees':all_consignees})
@@ -1266,6 +1281,7 @@ def add_category(request):
                 Category_Product_Low_Stock_Threshold=Category_Product_Low_Stock_Threshold,
                 Notes=Notes
             )
+            messages.success(request, "Category added successfully.")
             return redirect('categories_consignee_tags')
     else:
         return render(request, 'inventoryapp/add_category.html')
@@ -1432,6 +1448,7 @@ def update_category(request, pk):
             category.Category_Product_Low_Stock_Threshold = Category_Product_Low_Stock_Threshold
             category.Notes = Notes
             category.save()
+            messages.success(request, "Category added successfully.")
             return redirect('categories_consignee_tags')
     else:
         return render(request, 'inventoryapp/update_category.html', {'category': category, 'category_id': pk})
@@ -1479,6 +1496,7 @@ def update_tags(request, pk):
 
         consignee.save()
 
+        messages.success(request, "Tag-Consignee added successfully.")
         return redirect('categories_consignee_tags')
 
     else:
@@ -1573,7 +1591,7 @@ def add_new_employee(request):
             Role='Employee',
             Visibility=True
         )
-        
+        messages.success(request, "Employee account added successfully.")
         return redirect('employee_accounts')
     else:
         return render(request, 'inventoryapp/add_new_employee.html')
@@ -1603,6 +1621,7 @@ def update_employee(request, pk):
         if New_username:
             user.username = New_username
         user.save()
+        messages.success(request, "Employee account updated successfully.")
         return redirect('employee_accounts')
     else:
         return render(request, 'inventoryapp/update_employee.html', {"Employee":Employee})
@@ -1613,6 +1632,7 @@ def hide_account(request, pk):
         employee = get_object_or_404(Account, Account_ID=pk)
         employee.Visibility = False
         employee.save()
+        messages.success(request, "Employee account hid successfully.")
         return redirect('employee_accounts')
     else:
         return redirect('employee_accounts')
@@ -1623,6 +1643,7 @@ def unhide_account(request, pk):
           employee = get_object_or_404(Account, Account_ID=pk)
           employee.Visibility = True
           employee.save()
+          messages.success(request, "Employee account unhid successfully.")
           return redirect('employee_accounts')
       else:
           return redirect('employee_accounts')
