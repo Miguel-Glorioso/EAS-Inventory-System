@@ -10,20 +10,21 @@
         <li><strong>SKU:</strong> {{ p.SKU }}</li>
         <li><strong>Price:</strong> {{ p.Price }}</li>
         <li><strong>Actual Count:</strong> {{ p.Actual_Inventory_Count }}</li>
+        <li><strong>Reserved Count:</strong> {{ p.Reserved_Inventory_Count }}</li> <!-- Added this line -->
+        <li><strong>To Be Received Count:</strong> {{ p.To_Be_Received_Inventory_Count }}</li> <!-- Added this line -->
         <li><strong>Category:</strong> {{ p.Category }}</li>
         <li><strong>Tags:</strong> 
-            {% for c_p in con_p%}
+            {% for c_p in con_p %}
                 <span class="rounded-pill badge bg-danger"> 
                     {{ c_p.Consignee_ID.Consignee_Tag_ID }}
                 </span> 
             {% endfor %}
         </li>
-        
         <li><strong>Stock Level Threshold:</strong> {{ p.Product_Low_Stock_Threshold }}</li>
     </ul>
     {% if p.Picture %}
     <div class="product-image"> 
-        <img src="{{p.Picture.url}}" width="50">
+        <img src="{{ p.Picture.url }}" width="50">
     </div>
     {% endif %}
     <div class="row">

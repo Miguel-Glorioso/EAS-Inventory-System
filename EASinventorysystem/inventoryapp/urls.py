@@ -78,6 +78,8 @@ urlpatterns = [
     path('view_employee/<int:pk>/', views.view_employee, name='view_employee'),
     path('update_employee/<int:pk>/', views.update_employee, name='update_employee'),
     path('hide_account/<int:pk>/', views.hide_account, name='hide_account'),
+    path('unhide_account/<int:pk>/', views.unhide_account, name='unhide_account'),
+
 
     path('generate_inventory_summary_screen', views.generate_inventory_summary_screen, name='generate_inventory_summary_screen'),
 

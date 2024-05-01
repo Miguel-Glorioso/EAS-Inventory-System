@@ -104,12 +104,21 @@
                 <div class="col">
                     <a href="{% url 'update_employee' pk=Employee.pk %}" class="btn btn-primary btn-edit">Edit</a>
                 </div>
+                {% if Employee.Visibility %}
                 <div class="col">
                     <form action="{% url 'hide_account' pk=Employee.Account_ID %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">Hide</button>
                     </form>
                 </div>
+                {% else %}
+                <div class="col">
+                    <form action="{% url 'unhide_account' pk=Employee.Account_ID %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Unhide</button>
+                    </form>
+                </div>
+                {% endif %}
             </div>
         </div>
         </div>

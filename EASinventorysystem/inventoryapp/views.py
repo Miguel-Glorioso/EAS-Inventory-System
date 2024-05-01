@@ -55,7 +55,6 @@ def inventory_list(request):
         show_hidden = True
 
     if category_param:
-         
         category = get_object_or_404(Category, Category_ID=category_param)
         all_inventory = all_inventory.filter(Category=category)
 
@@ -64,7 +63,24 @@ def inventory_list(request):
         consignee_products = all_consignee_products.filter(Consignee_ID=consignee)
         product_ids = consignee_products.values_list('Product_ID', flat=True)
         all_inventory = all_inventory.filter(Product_ID__in=product_ids)
-    return render(request, 'inventoryapp/current_inventory.html', {'products':all_inventory, 'categories':all_categories, 'consignees':all_consignees, 'consignee_products':all_consignee_products, 'show_hidden':show_hidden})
+
+    # Count products with different stock statuses
+    low_stock_count = all_inventory.filter(Product_Stock_Status='Low Stock').count()
+    no_stock_count = all_inventory.filter(Product_Stock_Status='No Stock').count()
+    regular_stock_count = all_inventory.filter(Product_Stock_Status='Regular Stock').count()
+    total_products_count = all_inventory.count()
+
+    return render(request, 'inventoryapp/current_inventory.html', {
+        'products': all_inventory,
+        'categories': all_categories,
+        'consignees': all_consignees,
+        'consignee_products': all_consignee_products,
+        'show_hidden': show_hidden,
+        'low_stock_count': low_stock_count,
+        'no_stock_count': no_stock_count,
+        'regular_stock_count': regular_stock_count,
+        'total_products_count': total_products_count,
+    })
 
 @login_required 
 def add_product(request):
@@ -160,6 +176,8 @@ def view_product(request, product_pk):
             'sku': product.SKU,
             'price': product.Price,
             'count': product.Actual_Inventory_Count,
+            'reserved_count': product.Reserved_Inventory_Count,  # Added this line at May 1
+            'to_be_received_count': product.To_Be_Received_Inventory_Count,  # Added this line at May 1
             'category': product.Category.Category_Name,
             'tags': [consignee_product.Consignee_ID.Consignee_Name for consignee_product in con_p], 
             'threshold': product.Product_Low_Stock_Threshold,
@@ -1576,6 +1594,16 @@ def hide_account(request, pk):
         return redirect('employee_accounts')
     else:
         return redirect('employee_accounts')
+    
+def unhide_account(request, pk):
+      if request.method == 'POST':
+          # Perform account unhiding logic
+          employee = get_object_or_404(Account, Account_ID=pk)
+          employee.Visibility = True
+          employee.save()
+          return redirect('employee_accounts')
+      else:
+          return redirect('employee_accounts')
 
 
 def partially_fulfill(request, pk):
