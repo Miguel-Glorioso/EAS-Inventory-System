@@ -1,110 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Partially Fulfill</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
 {% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.min.js"></script>
 </head>
 <body class="bg-light">
-    <div class="container-fluid">
-        <div class="row p-1" style="background-color: #eee;">
-            <div class="col-md-auto d-flex align-items-center">
-                <h4 class="m-0 mr-3">Partially Fulfill</h4>
-            </div>
-        </div>
-
-        <!-- Notes Section -->
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="mb-3">
-                    <h5>Notes:</h5>
-                    <textarea class="form-control" rows="3" id="notes"></textarea>
+    <form method="post" action="{% url 'partially_fulfill' pk=requisition_order.pk %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container-fluid">
+            <div class="row p-1" style="background-color: #eee;">
+                <div class="col-md-auto d-flex align-items-center">
+                    <h4 class="m-0 mr-3">Partially Fulfill</h4>
                 </div>
             </div>
-        </div>
 
-        <!-- Products Ordered -->
-        <div class="row mt-4">
-            <div class="d-flex justify-content-center">
-                <!-- Left column for Products Ordered -->
-                <div class="col-md-12" style="padding-right: 2%; overflow-y: auto; height: 580px;">
-                    <h5>Products Ordered:</h5>
-                    <div class="container mt-2">
-                        <div class="table-responsive">
-                            <table class="table table-borderless text-center" id="PRO_products">
-                                <thead class="border-bottom border-dark">
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>ID</th>
-                                        <th>Actual Count</th>
-                                        <th>Partially Fulfilled</th>
-                                        <th>To be Received</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="product-list">
-                                    {% for stock in stock_ordered_items %}
-                                    <tr>
-                                        <td>{{ stock.Product_ID.Name }}</td>
-                                        <td>{{ stock.Product_ID.EAS_Product_ID }}</td>
-                                        <td>{{ stock.Product_ID.Actual_Inventory_Count }}</td>
-                                        <td>Partially Fulfilled</td>
-                                        <td>To be Received</td>
-                                        <td>
-                                            <div class="input-group">
-                                                <button type="button" class="btn btn-secondary btn-minus" data-product-id="ADDDDDDDDDDDDDDDD IDDDDDDDDDDDDDDDDD">-</button> 
-                                                <input type="number" min="0" maxlength="5" name="" class="form-control quantity" required id="ADDDDDDDDDDDDDDDD IDDDDDDDDDDDDDDDDD" value="0">
-                                                <button type="button" class="btn btn-secondary btn-plus" data-product-id="ADDDDDDDDDDDDDDDD IDDDDDDDDDDDDDDDDD">+</button>
-                                            </div>
-                                        </td>
-                                        <input type="hidden" class="product_pk" value={{stock.Product_ID.Product_ID}} >
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+            <!-- Notes Section -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <h5>Notes:</h5>
+                        <textarea class="form-control" rows="3" name="notes" id="notes"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Ordered -->
+            <div class="row mt-4">
+                <div class="d-flex justify-content-center">
+                    <!-- Left column for Products Ordered -->
+                    <div class="col-md-12" style="padding-right: 2%; overflow-y: auto; height: 580px;">
+                        <h5>Stocks Ordered:</h5>
+                        <div class="container mt-2">
+                            <div class="table-responsive">
+                                <table class="table table-borderless text-center" id="PRO_products">
+                                    <thead class="border-bottom border-dark">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>ID</th>
+                                            <th>Actual Count</th>
+                                            <th>Partially Fulfilled</th>
+                                            <th>To be Received</th>
+                                            <th>Image Report</th>
+                                            <th>Action</th>
+                                            <th>Text Report</th>
+                                        </tr> 
+                                    </thead>
+                                    <tbody id="product-list">
+                                        {% for stock in stock_ordered_items %}
+                                            <td>{{ stock.Product_ID.Name }}</td>
+                                            <td>{{ stock.Product_ID.EAS_Product_ID }}</td>
+                                            <td>{{ stock.Product_ID.Actual_Inventory_Count }}</td>
+                                            {% if stock.pk in no_parfills %}
+                                                <td>0</td>
+                                            {% else %}
+                                                {% for parfill in previous_parfills %}
+                                                    {% if parfill.Stock == stock.pk %}
+                                                        <td>{{ parfill.total_quantity }}</td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                            <td>{{ stock.Quantity }}</td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="file" name="parfill_picture_{{ stock.Product_ID.Product_ID }}" accept="image/*" class="form-control parfill-picture-input">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="number" min="0" max="{{stock.Quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="0">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <textarea class="form-control text-report-input" rows="3" name="text_report_{{ stock.Product_ID.Product_ID }}"></textarea>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        <input type="hidden" name="account" id="account" value="{{ request.user.account.pk }}">
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <a href="{% url 'current_pros' %}" class="btn btn-danger">Cancel</a>
-            </div>
-            <div class="col-md-6 text-end">
-                <!-- Add data-bs-toggle and data-bs-target attributes to trigger the modal -->
-                <button type="button" class="btn btn-success">Create</button>
-            </div>
-        </div>
-    </div>
-</body>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const plusButtons = document.querySelectorAll(".btn-plus");
-      const minusButtons = document.querySelectorAll(".btn-minus");
-      const quantityInputs = document.querySelectorAll(".quantity");
-  
-      for (let i = 0; i < plusButtons.length; i++) {
-        plusButtons[i].addEventListener("click", function () {
-          const input = quantityInputs[i];
-          input.value = parseInt(input.value, 10) + 1;
-        });
-  
-        minusButtons[i].addEventListener("click", function () {
-          const input = quantityInputs[i];
-          const currentValue = parseInt(input.value, 10);
-          if (currentValue > 0) {
-            input.value = currentValue - 1;
-          }
-        });
-      }
-    });
-  </script>
 
-</html>
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="{% url 'current_pros' %}" class="btn btn-danger">Cancel</a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <!-- Add data-bs-toggle and data-bs-target attributes to trigger the modal -->
+                    <button type="submit" class="btn btn-success" id="submit_parfill" onclick="return confirm('Are you sure you want to create this partially fulfill order?')">Create</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block content %}
-
+{% load mathfilters %}
 <head>
     <title>Current Product Requisition Orders</title>
 </head>
@@ -46,7 +46,6 @@
                 </div>
             </div>
         </div>
-
         <div class="row mt-3">
             <div class="col">
                 <h6>Product Stocks Ordered:</h6>
@@ -66,10 +65,19 @@
                                 <td>{{ s.Product_ID.Name }}</td>
                                 <td>{{ s.Product_ID.EAS_Product_ID }}</td>
                                 <td>{{ s.Quantity }}</td>
-                                <!--will implement when partially fulfilled is implemented-->
-                                <td>0</td>
-                                {% load mathfilters %}
-                                <td>{{s.Quantity }}</td>
+                                <!-- Display combined partially fulfilled quantity for the stock -->
+                                {% if s.pk in no_parfills %}
+                                    <td>0</td>
+                                    <td>0</td> <!-- Add an additional column for subtraction -->
+                                {% else %}
+                                    {% for parfill in previous_parfills %}
+                                        {% if parfill.Stock == s.pk %}
+                                            <td class="fulfilled-quantity">{{ parfill.total_quantity }}</td>
+                                            <!-- Use data attributes to store quantity information -->
+                                            <td class="remaining-quantity" data-quantity="{{ s.Quantity }}" data-fulfilled="{{ parfill.total_quantity }}"></td>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -84,4 +92,20 @@
         </div>
     </div>
 </body>
+<script>
+    // Get all elements with class "remaining-quantity"
+    var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
+    
+    remainingQuantityElements.forEach(function(element) {
+        // Get the ordered quantity and fulfilled quantity from data attributes
+        var quantity = parseInt(element.dataset.quantity);
+        var fulfilledQuantity = parseInt(element.dataset.fulfilled);
+        
+        // Calculate remaining quantity
+        var remainingQuantity = quantity - fulfilledQuantity ;
+        
+        // Update the content of the element with the remaining quantity
+        element.textContent = remainingQuantity;
+    });
+</script>
 {% endblock %}

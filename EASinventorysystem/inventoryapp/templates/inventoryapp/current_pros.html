@@ -29,7 +29,13 @@
         <a href="{% url 'history_pro' %}" class="btn btn-primary">Product Requisition Order History</a>
       </div>
     </div>
-
+    {% if messages %}
+      {% for message in messages %}
+          <div class="alert alert-success" role="alert">
+              {{ message }}
+          </div>
+      {% endfor %}
+  {% endif %}
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">

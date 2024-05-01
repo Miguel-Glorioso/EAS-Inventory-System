@@ -172,4 +172,4 @@ class Partially_Fulfilled_History(models.Model):
     Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT)
     
     def __str__(self):
-        return 
+        return f" Partial fulfill #{self.Partially_Fulfill_Edit_ID} for {self.Stock}"

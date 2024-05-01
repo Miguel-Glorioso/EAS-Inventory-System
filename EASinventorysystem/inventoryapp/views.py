@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . models import Product, Category,  User, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered
+from . models import Product, Category,  User, Account, Consignee, Consignee_Product, Purchase_Order, Product_Ordered, Customer, Product_Requisition_Order, Stock_Ordered, Partially_Fulfilled_History
 from django.http import  JsonResponse, FileResponse, HttpResponseForbidden
 import json
 from django.core.files.storage import default_storage
@@ -19,6 +19,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import render
 from django.contrib import messages
+from django.db.models import Sum
+
 # Create your views here.
 
 def account_login(request):
@@ -737,9 +739,17 @@ def update_pro(request, pk):
 @login_required     
 def view_pro(request, pk):
     product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
-    stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID = pk)
-    return render(request, 'inventoryapp/view_pro.html', {'pro':product_requisition_order, 'stocks':stocks_ordered})
-
+    stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+    
+    previous_parfills_combined = Partially_Fulfilled_History.objects.filter(Stock__in=stocks_ordered).values('Stock').annotate(total_quantity=Sum('Partially_Fulfilled_Quantity'))
+    
+    no_parfills = {}
+    
+    for stock in stocks_ordered:
+        if stock.pk not in [item['Stock'] for item in previous_parfills_combined]:
+            no_parfills[stock.pk] = stock 
+    
+    return render(request, 'inventoryapp/view_pro.html', {'pro': product_requisition_order, 'stocks': stocks_ordered, 'previous_parfills': previous_parfills_combined, 'no_parfills': no_parfills})
 @login_required 
 def close_pro(request, pk, account_id):
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
@@ -753,7 +763,6 @@ def close_pro(request, pk, account_id):
                 stock_listing.Actual_Inventory_Count += stock.Quantity #product inventory count gets deducted
                 stock_listing.To_Be_Received_Inventory_Count -= stock.Quantity #product reserved invetory count gets deducted
 
-                #have not yet been checked
                 if stock_listing.Product_Low_Stock_Threshold:
 
                     if int(stock_listing.Actual_Inventory_Count) <= int(stock_listing.Product_Low_Stock_Threshold):
@@ -1610,50 +1619,62 @@ def unhide_account(request, pk):
 
 def partially_fulfill(request, pk):
     PRO = get_object_or_404(Product_Requisition_Order, pk=pk)
-    all_inventory = Product.objects.all()
     stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=PRO)
-
+    previous_parfills_combined = Partially_Fulfilled_History.objects.filter(Stock__in=stocks_ordered).values('Stock').annotate(total_quantity=Sum('Partially_Fulfilled_Quantity'))
+    
+    no_parfills = {}
+    
+    for stock in stocks_ordered:
+        if stock.pk not in [item['Stock'] for item in previous_parfills_combined]:
+            no_parfills[stock.pk] = stock 
+    
     if request.method == 'POST':
-        Products = request.POST.get('all_products')
+        Parfill_account = request.POST.get('account')
 
-        Products = Products[:-1]
-        Ordered_Products = Products.split("-")
-        new_stocks_ordered = []
+        Parfill_account = get_object_or_404(Account,pk=Parfill_account)
+        for key in request.POST.keys():
+            if key.startswith('quantity_'):
+                product_pk = key.split('_')[-1]
+                quantity = request.POST[key]
+                if int(quantity) > 0:
+                    image = request.FILES.get(f'parfill_picture_{product_pk}')
+                    text_report = request.POST.get(f'text_report_{product_pk}')
+                    
+                    product_object = Product.objects.get(Product_ID=product_pk)
 
-        for op in Ordered_Products:
-            values = op.split(":")
-            product_object = Product.objects.get(Product_ID=values[0])
+                    product_object.Actual_Inventory_Count += int(quantity)
+                    
+                    
+                    if product_object.Product_Low_Stock_Threshold:
+                        if int(product_object.Actual_Inventory_Count) <= int(product_object.Product_Low_Stock_Threshold):
+                            product_object.Product_Stock_Status = 'Low Stock'
+                        else:
+                            product_object.Product_Stock_Status = 'Regular Stock'
 
-            ordered_products = stocks_ordered.filter(Product_ID=values[0])
+                    else:
+                        if int(product_object.Actual_Inventory_Count) <= int(product_object.Category.Category_Product_Low_Stock_Threshold):
+                            product_object.Product_Stock_Status = 'Low Stock'
+                        else:
+                            product_object.Product_Stock_Status = 'Regular Stock'
+                    product_object.save()
+                    
+                    current_date = timezone.now()
 
-            if ordered_products.exists():
-                ordered_product = ordered_products.first()
-                quantity_diff = int(values[1]) - ordered_product.Quantity
-                ordered_product.Quantity = values[1]
-                product_object.To_Be_Received_Inventory_Count += quantity_diff
-                ordered_product.save()
-                product_object.save()
-                new_stocks_ordered.append(ordered_product)
-            else:
-                product_object.To_Be_Received_Inventory_Count += int(values[1])
-                product_object.save()
-                new_product_ordered = Stock_Ordered.objects.create(Product_ID=product_object, Product_Requisition_ID=PRO, Quantity=values[1])
-                new_stocks_ordered.append(new_product_ordered)
-
-        # Create a list of Product_Ordered objects to delete
-        products_to_delete = [s_o for s_o in stocks_ordered if s_o not in new_stocks_ordered]
-
-        # Delete the Product_Ordered objects
-        for s_o in products_to_delete:
-            product_object = Product.objects.get(Product_ID=s_o.Product_ID.Product_ID)
-            product_object.To_Be_Received_Inventory_Count -= s_o.Quantity
-            product_object.save()
-            s_o.delete()
-
+                    stock = Stock_Ordered.objects.get(Product_ID=product_object, Product_Requisition_ID=PRO)
+                    Partially_Fulfilled_History.objects.create(
+                        Date_Updated = current_date,
+                        Partially_Fulfilled_Quantity = int(quantity),
+                        Image_Report = image,
+                        Text_Report = text_report,
+                        Stock = stock,
+                        Account_ID = Parfill_account
+                    )
+                else:
+                    pass
+        messages.success(request, "Product requisition order partially fulfilled")
         return redirect('current_pros')
 
-    return render(request, 'inventoryapp/partially_fulfill.html', {'requisition_order': PRO, 'products': all_inventory, 'stock_ordered_items': stocks_ordered})
-    # return render(request, 'inventoryapp/partially_fulfill.html')
+    return render(request, 'inventoryapp/partially_fulfill.html', {'requisition_order': PRO, 'stock_ordered_items': stocks_ordered, 'previous_parfills':previous_parfills_combined, 'no_parfills':no_parfills})
 
 def edit_count(request):
     products = Product.objects.all()
