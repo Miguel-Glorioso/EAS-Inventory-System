@@ -55,6 +55,25 @@
 
 <div class="row mt-3">
   <div class="col-md-auto">
+    <select id="stockStatusFilter" class="form-select" aria-label="Filter by Stock Status">
+      <option value="">All Stock Status</option>
+      <option value="no_stock" {% if stock_status_param == "no_stock" %}selected{% endif %}>No Stock</option>
+      <option value="low_stock" {% if stock_status_param == "low_stock" %}selected{% endif %}>Low Stock</option>
+      <option value="regular_stock" {% if stock_status_param == "regular_stock" %}selected{% endif %}>Regular Stock</option>
+  </select>
+</div>
+<script>
+// Add event listener for stock status filter
+$('#stockStatusFilter').on('change', function() {
+    var stockStatus = $(this).val();
+    var url = window.location.pathname;
+    var params = new URLSearchParams(window.location.search);
+    params.set('stock_status', stockStatus);
+    window.location.href = url + '?' + params.toString();
+});
+
+</script>
+  <div class="col-md-auto">
     <select id="categoryFilter" class="form-select" aria-label="Filter by Category">
       <option value="">All Categories</option>
       <!-- Populate options dynamically using Django template -->
@@ -85,33 +104,36 @@
   <div class="col-md-auto">
     <button id="resetFilters" class="btn btn-danger">Reset Filters</button>
   </div>
-  <div class="col-md-auto d-flex align-items-center">
-    <input class="mx-2" type="checkbox" id="showHidden" name="showHidden" {% if show_hidden %}checked{% endif %}>
-    <label for="showHidden">Show Hidden Products</label>
+  <div class="col-md-auto" style="margin-left: 130px;">
+    <div class="row">
+      <div class="card-group" style="text-align: center;">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-text" style="font-size: 14px;">Total Products Count: <span id="total_products_count" style="font-size: 14px;"></span></h5>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-text" style="font-size: 14px;">No Stock Count: <span id="no_stock_count" style="font-size: 14px;"></span></h5>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-text" style="font-size: 14px;">Low Stock Count: <span id="low_stock_count" style="font-size: 14px;"></span></h5>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-text" style="font-size: 14px;">Regular Stock Count: <span id="regular_stock_count" style="font-size: 14px;"></span></h5>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
-<div class="card-group" style="margin-top: 25px;">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-text">Total Products Count: {{ total_products_count }}</h5>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-text">No Stock Count: {{ no_stock_count }}</h5>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-text">Low Stock Count: {{ low_stock_count }}</h5>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-text">Regular Stock Count: {{ regular_stock_count }}</h5>
-    </div>
-  </div>
+<div class="col-md-auto d-flex align-items-center">
+  <input class="mx-2" type="checkbox" id="showHidden" name="showHidden" {% if show_hidden %}checked{% endif %}>
+  <label for="showHidden">Show Hidden Products</label>
 </div>
       
     <!-- Table Inventory row -->
@@ -253,5 +275,38 @@
         }
       });
     });
+
+    $(document).ready(function() {
+    function updateCounts() {
+      var totalProductsCount = 0;
+      var noStockCount = 0;
+      var lowStockCount = 0;
+      var regularStockCount = 0;
+
+      {% for p in products %}
+        {% if p.Visibility or show_hidden == True %}
+          totalProductsCount++;
+          {% if p.Product_Stock_Status == 'Low Stock' %}
+            lowStockCount++;
+          {% elif p.Product_Stock_Status == 'No Stock' %}
+            noStockCount++;
+          {% elif p.Product_Stock_Status == 'Regular Stock' %}
+            regularStockCount++;
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      $('#total_products_count').text(totalProductsCount);
+      $('#no_stock_count').text(noStockCount);
+      $('#low_stock_count').text(lowStockCount);
+      $('#regular_stock_count').text(regularStockCount);
+    }
+
+    updateCounts(); // Call the function when the page loads
+
+    $('#showHidden').on('change', function() {
+      updateCounts(); // Call the function when the show hidden checkbox changes
+    });
+  });
   </script>
 {% endblock %}
