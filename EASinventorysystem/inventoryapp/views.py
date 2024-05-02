@@ -1497,69 +1497,59 @@ def generate_inventory_summary(request):
 
     # Create a PDF buffer
     buf = io.BytesIO()
-    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=1)
 
     # Set Title
     c.setFont("Helvetica-Bold", 14)
     c.drawString(100, 750, "Inventory Summary")
 
-    # Render the table
+    # Define table headers
     table_data = [
-        ["Name", "ID", "Actual Count", "Picture"]
+        ["Name", "ID", "Actual Count", "Reserved","To Be Received", "Categories"]
     ]
-    for product in all_inventory:
-        # Check if the product has a picture
-        if product.Picture:
-            # Get image dimensions
-            img_width, img_height = ImageReader(product.Picture.path).getSize()
-            # Calculate aspect ratio to maintain proportions
-            aspect_ratio = img_width / img_height
-            # Calculate new width and height to fit within 50x50
-            if img_width > img_height:
-                img_width = 50
-                img_height = 50 / aspect_ratio
-            else:
-                img_height = 50
-                img_width = 50 * aspect_ratio
-            # Rotate image by 180 degrees
-            c.saveState()
-            c.rotate(180)
-            # Add image to table data
-            c.drawImage(product.Picture.path, -100-img_width, -100-img_height, width=img_width, height=img_height)
-            c.restoreState()
-            table_data.append([
-                product.Name,
-                str(product.EAS_Product_ID),
-                str(product.Actual_Inventory_Count),
-                ""
-            ])
-        else:
-            table_data.append([
-                product.Name,
-                str(product.EAS_Product_ID),
-                str(product.Actual_Inventory_Count),
-                ""
-            ])
 
+    # Populate table data
+    for product in all_inventory:
+        table_data.append([
+            product.Name,
+            str(product.EAS_Product_ID),
+            str(product.Actual_Inventory_Count),
+            str(product.Reserved_Inventory_Count),
+            str(product.To_Be_Received_Inventory_Count),
+            str(product.Category),
+        ])
+
+    # Create the table
     table = Table(table_data)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('ALIGN', (0, 0), (0, 0), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
         ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Center text vertically
     ]))
 
-    table.wrapOn(c, inch, inch)
-    table.drawOn(c, inch, 2 * inch)
+    # Calculate the width and height of the table
+    table_width, table_height = table.wrap(inch, inch)
 
+    # Calculate the position of the table on the page
+    x = (letter[0] - table_width) / 2
+    y = (letter[1] - table_height) / 2
+
+    # Draw the table on the canvas
+    table.drawOn(c, x, y)
+
+    # Save the PDF
     c.showPage()
     c.save()
     buf.seek(0)
 
     # Return the PDF response
     return FileResponse(buf, as_attachment=True, filename="Summary Report.pdf")
+
 
 @login_required 
 def view_category_details(request, category_id):
