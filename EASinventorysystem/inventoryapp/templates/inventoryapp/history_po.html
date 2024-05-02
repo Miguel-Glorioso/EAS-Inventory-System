@@ -43,7 +43,7 @@
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Type of Customer</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Purchaser Name</th>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Closed By</th>
-              <th scope="col" style="background-color: #C2C1C1;">Action</th>
+              <th scope="col" style="background-color: #C2C1C1;"></th>
               <!-- <th scope="col" style="background-color: #C2C1C1; text-align: center;">Closed by</th> -->
             </tr>
           </thead>
@@ -88,6 +88,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
-
+  <script>
+$(document).ready(function() {
+    $('#currentpo').DataTable({
+      "columnDefs": [
+        { "targets": -1, "orderable": false, "searchable": false }
+      ]
+    });
+  });
+  </script>
 </body>
 {% endblock %}
