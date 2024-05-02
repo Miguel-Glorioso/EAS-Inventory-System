@@ -39,6 +39,7 @@ urlpatterns = [
     path('view_po_history/<int:pk>/', views.view_po_history, name='view_po_history'), 
 
     path('history_pro', views.history_PRO, name='history_pro'),
+    path('view_pro_history/<int:pk>/', views.view_pro_history, name='view_pro_history'), 
     
     path('current_pros', views.requisition_order_list, name='current_pros'),
     path('view_po/<int:pk>/', views.view_po, name='view_po'), 

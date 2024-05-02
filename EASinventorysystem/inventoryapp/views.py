@@ -293,12 +293,21 @@ def purchase_order_list(request):
     all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
 
     customer_type_param = request.GET.get('customer_type')
+    progress_type_param = request.GET.get('progress_type')
 
     if customer_type_param:
         if customer_type_param == 'Direct':
             all_purchase_orders = all_purchase_orders.exclude(Consignee_ID__isnull=True)
         elif customer_type_param == 'Consignee':
             all_purchase_orders = all_purchase_orders.exclude(Customer_ID__isnull=True)
+    print(progress_type_param)
+    if progress_type_param:
+            if progress_type_param == 'Pending':
+                all_purchase_orders = all_purchase_orders.filter(Progress='Pending')
+            elif progress_type_param == 'Ongoing':
+                all_purchase_orders = all_purchase_orders.filter(Progress='Ongoing')
+            elif progress_type_param == 'Shipped':
+                all_purchase_orders = all_purchase_orders.filter(Progress='Shipped')
 
     return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
 
@@ -717,7 +726,7 @@ def requisition_order_list(request):
     all_requisition_orders = Product_Requisition_Order.objects.all()
 
     progress_type_param = request.GET.get('progress_type')
-    print(progress_type_param)
+
     if progress_type_param:
             if progress_type_param == 'Pending':
                 all_requisition_orders = all_requisition_orders.filter(Progress='Pending')
@@ -1457,6 +1466,11 @@ def view_po_history(request, pk):
 def history_PRO(request):
     all_requisition_orders = Product_Requisition_Order.objects.all().order_by('Creation_Date')
     return render(request, 'inventoryapp/history_pro.html', {'requisition_orders':all_requisition_orders})
+
+def view_pro_history(request, pk):
+    requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+    stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+    return render(request, 'inventoryapp/view_po_history.html', {'pro':requisition_order, 'products':stocks_ordered})
 
 @login_required 
 def categories_consignee_tags(request):
