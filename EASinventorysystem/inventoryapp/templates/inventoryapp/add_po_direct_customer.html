@@ -195,6 +195,7 @@
                                 </div>
                                 <div class="row mx-4" id="product-list" style="overflow-y: auto; height: 520px;">
                                     {% for p in products %}
+                                    {% if p.Visibility %}
                                         <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
                                             <!-- Product information -->
                                             <div class="col">
@@ -218,6 +219,7 @@
                                                 <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
                                             </div>
                                         </div>
+                                    {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -660,6 +662,7 @@
                 }
             });
         });
+
 
         // Function to show the confirmation modal
         function showConfirmationModal() {

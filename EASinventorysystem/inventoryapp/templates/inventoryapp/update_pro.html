@@ -29,16 +29,38 @@
                                     <label for="estimated_receiving_date">Estimated Receiving Date:</label><br>
                                     <input type="date" id="estimated_receiving_date" name="estimated_receiving_date" class="form-control rounded-10" value="{{ requisition_order.Estimated_Receiving_Date|date:'Y-m-d'}}"><br><br>
                                 </div>
+                                <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                                var today = new Date();
+                                                var dd = String(today.getDate()).padStart(2, '0');
+                                                var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                                                var yyyy = today.getFullYear();
+
+                                                today = yyyy + '-' + mm + '-' + dd;
+
+                                                var estimatedReceivingDateInput = document.getElementById('estimated_receiving_date');
+                                                estimatedReceivingDateInput.min = today; // Directly set the min attribute
+                                            });
+                                </script>
                                 <div class="col">
                                     <label for="manufacturer_name">Manufacturer:</label><br>
-                                    <input type="text" id="manufacturer_name" name="manufacturer_name" class="form-control rounded-10" value="{{ requisition_order.PRO_Manufacturer }}"><br><br>
+                                    <input type="text" id="manufacturer_name" name="manufacturer_name" class="form-control rounded-10" value="{{ requisition_order.PRO_Manufacturer }}"maxlength="32"><br><br>
                                 </div>
                                 <div class="col">
-                                    <label for="total_cost">Total Cost:</label><br>
-                                    <div class="input-group">
-                                        <span class="input-group-text">PHP</span>
-                                        <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="99999.99" maxlength="9" class="form-control rounded-10" value="{{ requisition_order.Total_Cost }}"><br><br>
-                                    </div>
+                                    <div class="col">
+                                        <label class="required" for="total_cost">Total Cost:</label><br>
+                                        <div class="input-group">
+                                            <span class="input-group-text">PHP</span>
+                                            <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" value="{{ requisition_order.Total_Cost }}" class="form-control rounded-10" oninput="validateInput(event)" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.key === '.'" size="9" max="9999999.99">
+                                        </div>
+                                        <script>
+                                            function validateInput(event) {
+                                                var input = event.target;
+                                                if (input.value.length > 10) {
+                                                    input.value = input.value.slice(0, 10);
+                                                }
+                                            }
+                                        </script>
                                 </div>
                             </div>
 
@@ -46,7 +68,7 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="pro_notes">PRO Notes:</label><br>
-                                    <textarea id="pro_notes" name="pro_notes" rows="4" cols="50" class="form-control rounded-10">{{ requisition_order.Notes }}</textarea><br><br>
+                                    <textarea type="text" id="pro_notes" name="pro_notes" class="form-control rounded-10" maxlength="1024">{{ requisition_order.Notes }}</textarea><br><br>
                                 </div>
                             </div>
                             
@@ -91,7 +113,18 @@
                                                 <tr>
                                                     <td>{{ stock.Product_ID.Name }}</td>
                                                     <td>{{ stock.Product_ID.EAS_Product_ID }}</td>
-                                                    <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value= {{stock.Quantity}}></td>
+                                                    <td>
+                                                        <input type="number" 
+                                                               oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                               maxlength="5"
+                                                               min='1'
+                                                               id="quantityInput" 
+                                                               class="form-control text-center quantity-input" 
+                                                               style="width: 100px;" 
+                                                               value="{{ stock.Quantity }}" 
+                                                               oninput="validateQuantityInput(event)"
+                                                               onkeydown="return restrictNonNumericals(event)">
+                                                    </td>                                                    
                                                     <td>{{ stock.Product_ID.Actual_Inventory_Count }}</td>
                                                     <input type="hidden" class="product_pk" value={{stock.Product_ID.Product_ID}} >
                                                     <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
@@ -116,6 +149,7 @@
                                 </div>
                                 <div class="row mx-4" id="product-list-right" style="overflow-y: auto; height: 520px;">
                                     {% for p in products %}
+                                    {% if p.Visibility %}
                                         <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
                                             <!-- Product information -->
                                             <div class="col">
@@ -139,6 +173,7 @@
                                                 <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
                                             </div>
                                         </div>
+                                    {% endif %}
                                     {% endfor %}
                                     
                                 </div>
@@ -231,7 +266,18 @@
             newRow.innerHTML = `
                 <td>${productName}</td>
                 <td>${productId}</td>
-                <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value="0"></td>
+                <td>
+                    <input type="number" 
+                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                            maxlength="5"
+                            min='1'
+                            id="quantityInput" 
+                            class="form-control text-center quantity-input" 
+                            style="width: 100px;" 
+                            value="1"
+                            oninput="validateQuantityInput(event)"
+                            onkeydown="return restrictNonNumericals(event)">
+                </td>  
                 <td>${productCount}</td>
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
@@ -271,6 +317,7 @@
         }
     
         var currentStep = 1;
+        
     
         function nextStep() {
             if (currentStep === 1) {
@@ -406,6 +453,37 @@
                 var productId = input.value;
                 hideProduct(productId);
             });
+        }
+        function restrictNonNumericals(event) {
+            // Allow: backspace, delete, tab, escape, enter, and .
+            if (event.key === 'Backspace' || event.key === 'Delete' || event.key === 'Tab' || event.key === 'Escape' || event.key === 'Enter') {
+                return;
+            }
+            // Allow: Ctrl+A, Command+A
+            if ((event.ctrlKey === true || event.metaKey === true) && (event.key === 'a' || event.key === 'A')) {
+                return;
+            }
+            // Allow: home, end, left, right, down, up
+            if (event.key === 'Home' || event.key === 'End' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if (event.shiftKey || (event.key < '0' || event.key > '9')) {
+                event.preventDefault();
+            }
+        }
+        function validateQuantityInput(event) {
+            var inputElement = event.target; // Get the input element that triggered the event
+            var inputValue = inputElement.value; // Get the current value of the input
+
+            // Remove any non-numeric characters
+            inputElement.value = inputValue.replace(/\D/g, '');
+
+            // Example validation: Ensure that the input value is not negative
+            if (parseInt(inputValue) < 1) {
+                alert("Quantity cannot be negative!");
+                inputElement.value = 1; // Reset the value to 0
+            }
         }
     </script>
 </body>

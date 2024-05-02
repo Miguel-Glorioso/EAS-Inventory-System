@@ -12,7 +12,8 @@ import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import Table, TableStyle, Image
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.utils import ImageReader
 from django.contrib.auth.decorators import login_required,  user_passes_test
@@ -20,6 +21,8 @@ from django.contrib.auth.hashers import check_password
 from django.shortcuts import render
 from django.contrib import messages
 from django.db.models import Sum
+import math
+from django.templatetags.static import static
 
 # Create your views here.
 
@@ -788,7 +791,7 @@ def update_pro(request, pk):
         Products = Products[:-1]
         Ordered_Products= Products.split("-")
         new_stocks_ordered = []
-
+        print(Ordered_Products, 'dshjd')
         for op in Ordered_Products:
             values = op.split(":")
             product_object = Product.objects.get(Product_ID=values[0])
@@ -1497,69 +1500,73 @@ def generate_inventory_summary(request):
 
     # Create a PDF buffer
     buf = io.BytesIO()
-    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=1)
 
     # Set Title
     c.setFont("Helvetica-Bold", 14)
     c.drawString(100, 750, "Inventory Summary")
 
-    # Render the table
-    table_data = [
-        ["Name", "ID", "Actual Count", "Picture"]
-    ]
-    for product in all_inventory:
-        # Check if the product has a picture
-        if product.Picture:
-            # Get image dimensions
-            img_width, img_height = ImageReader(product.Picture.path).getSize()
-            # Calculate aspect ratio to maintain proportions
-            aspect_ratio = img_width / img_height
-            # Calculate new width and height to fit within 50x50
-            if img_width > img_height:
-                img_width = 50
-                img_height = 50 / aspect_ratio
-            else:
-                img_height = 50
-                img_width = 50 * aspect_ratio
-            # Rotate image by 180 degrees
-            c.saveState()
-            c.rotate(180)
-            # Add image to table data
-            c.drawImage(product.Picture.path, -100-img_width, -100-img_height, width=img_width, height=img_height)
-            c.restoreState()
-            table_data.append([
-                product.Name,
-                str(product.EAS_Product_ID),
-                str(product.Actual_Inventory_Count),
-                ""
-            ])
-        else:
-            table_data.append([
-                product.Name,
-                str(product.EAS_Product_ID),
-                str(product.Actual_Inventory_Count),
-                ""
-            ])
+    # Insert generated date, time, and page information
+    generated_info = f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} by {request.user}"
+    # page_info = f"Page 1 out of {math.ceil(len(all_inventory) / 50) + 1}"  # Assuming 50 products per page
+    c.drawString(100, 730, generated_info)
+    # c.drawString(100, 710, page_info)
 
+    # Draw a line for the separator
+    c.line(0, 700, letter[0], 700)
+
+    # Define table headers
+    table_data = [
+        ["Name", "ID", "Actual Count", "Reserved", "To Be Received", "Categories"]
+    ]
+
+    # Populate table data
+    for product in all_inventory:
+        table_data.append([
+            product.Name,
+            str(product.EAS_Product_ID),
+            str(product.Actual_Inventory_Count),
+            str(product.Reserved_Inventory_Count),
+            str(product.To_Be_Received_Inventory_Count),
+            str(product.Category),
+        ])
+
+    # Create the table
     table = Table(table_data)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('ALIGN', (0, 0), (0, 0), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Center text vertically
     ]))
 
-    table.wrapOn(c, inch, inch)
-    table.drawOn(c, inch, 2 * inch)
+    # Calculate the width and height of the table
+    table_width, table_height = table.wrap(inch, inch)
 
+    # Calculate the position of the table on the page
+    x = (letter[0] - table_width) / 2
+    y = (letter[1] - table_height) / 2
+
+    # Draw the table on the canvas
+    table.drawOn(c, x, y)
+
+    # Add header and footer
+    footer = "Everything About Santa"
+    c.setFont("Helvetica", 10)
+    c.drawString(inch / 2, 0.5 * inch, footer)
+
+    # Save the PDF
     c.showPage()
     c.save()
     buf.seek(0)
 
     # Return the PDF response
     return FileResponse(buf, as_attachment=True, filename="Summary Report.pdf")
+
 
 @login_required 
 def view_category_details(request, category_id):
@@ -1939,12 +1946,10 @@ def edit_count(request):
                     )
             messages.success(request, "Product count succesfully updated")
             return redirect('current_inventory')
+                    
+
+
     else:
-
-        if not request.user.is_superuser:
-            messages.error(request, "You are not authorized to edit inventory counts")
-            return redirect('current_inventory')
-
         return render(request, 'inventoryapp/edit_count.html', {'products': products})
 
 def inventory_update_history(request):
