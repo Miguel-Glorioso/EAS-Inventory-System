@@ -22,7 +22,7 @@
         </div>
 
         <div class="row">
-            <form method="POST" action="{% url 'add_pro' %}">
+            <form id="addPRO" method="POST" action="{% url 'add_pro' %}">
                 {% csrf_token %}
                 <main>
                     <div id="step1">
@@ -57,8 +57,6 @@
                                     <div class="input-group">
                                         <span class="input-group-text">PHP</span>
                                         <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" class="form-control rounded-10" oninput="validateInput(event)" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.key === '.'" size="9">
-                                        <!-- <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" oninput="maxLengthCheck(this)" class="form-control rounded-10"><br><br> -->
-                                        <!-- <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" maxlength="9" class="form-control rounded-10"><br><br> -->
                                     </div>
                                     <script>
                                         function validateInput(event) {
@@ -81,7 +79,7 @@
                             
                             <div class="row mb-3">
                                 <div class="col">
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelWarningModal">Cancel</button>
+                                    <a href="#" class="btn btn-danger" onclick="showCancelWarningModal()">Cancel</a>
                                 </div>
                                 <div class="col text-end">
                                     <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
@@ -166,7 +164,7 @@
                             <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
+                            <button type="button" class="btn btn-success" onclick="validateQuantityAndNext()">Next</button>
                         </div>
                     </div>
                 </div>
@@ -210,7 +208,7 @@
                             <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button type="submit" class="btn btn-success" id="submit_pro">Submit</button>
+                            <button type="submit" class="btn btn-success" id="submit_pro" onclick="showConfirmationModal()">Submit</button>
                         </div>
                     </div>
                 </div>
@@ -219,34 +217,30 @@
     </div>
 
     <script>
-        function validateInputs() {
-    // Validate Estimated Receiving Date
-    var estimatedReceivingDateInput = document.getElementById('estimated_receiving_date');
-    var estimatedReceivingDate = estimatedReceivingDateInput.value;
-    if (!estimatedReceivingDate) {
-        alert("Please select an estimated receiving date.");
-        return false;
-    }
+        $(document).ready(function () {
+            var totalPrice = 0;
 
-    // Validate Manufacturer
-    var manufacturerInput = document.getElementById('manufacturer_name');
-    var manufacturer = manufacturerInput.value.trim();
-    if (!manufacturer) {
-        alert("Please provide a manufacturer name.");
-        return false;
-    }
+            $('#confirmSubmit').click(function () { // Changed the event listener to the "Yes" button in the modal
+                $('#PRO_products tbody tr').each(function (i) {
+                    var productId = $(this).find('.product_pk').val();
+                    var productPriceText = $(this).find("td:eq(2)").text().trim();
+                    var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
 
-    // Validate Total Cost
-    var totalCostInput = document.getElementById('total_cost');
-    var totalCost = parseFloat(totalCostInput.value);
-    if (isNaN(totalCost) || totalCost <= 0) {
-        alert("Please enter a valid total cost greater than zero.");
-        return false;
-    }
+                    var productQuantity = $(this).find(".quantity-input").val();
 
-    // All inputs are valid
-    return true;
-}
+                    var subtotal = productPriceNumeric * productQuantity; // Calculate subtotal for the row
+                    totalPrice += subtotal;
+
+                    var comb = productId + ':' + productQuantity;
+                    $('#all_products').val($('#all_products').val() + comb + '-');
+                });
+
+                $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
+
+                // Now submit the form
+                document.getElementById('addPRO').submit();
+            });
+        });
 
 // Function to be called before proceeding to the next step
 function validateAndNextStep() {
@@ -344,12 +338,18 @@ function validateAndNextStep() {
     
         function nextStep() {
             if (currentStep === 1) {
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
-                currentStep = 2;
+                // Validate form inputs before proceeding
+                if (validateFormInputs()) {
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = '';
+                    currentStep = 2;
+                } else {
+                    // Show error message or handle invalid form
+                    alert('Please fill out all required fields and satisfy the required input.');
+                }
             } else if (currentStep === 2) {
                 document.getElementById('step2').style.display = 'none';
-                document.getElementById('step3').style.display = 'block';
+                document.getElementById('step3').style.display = '';
                 currentStep = 3;
 
                 // Populate customer information fields UPDATE THIS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -376,6 +376,65 @@ function validateAndNextStep() {
                 renderSummary(selectedProducts, proNotes, totalCost);
             }
         }
+        function validateFormInputs() {
+    var inputs = document.querySelectorAll('#step1 input[required], #step1 select[required]');
+    var isValid = true;
+
+    inputs.forEach(function(input) {
+        if (!input.value.trim()) {
+            isValid = false;
+            input.classList.add('is-invalid');
+        } else {
+            input.classList.remove('is-invalid');
+        }
+    });
+
+    // Additional fields to include in validation
+    var manufacturerNameInput = document.getElementById('manufacturer_name');
+    if (!manufacturerNameInput.value.trim()) {
+        isValid = false;
+        manufacturerNameInput.classList.add('is-invalid');
+    } else {
+        manufacturerNameInput.classList.remove('is-invalid');
+    }
+
+    var totalCostInput = document.getElementById('total_cost');
+    if (!totalCostInput.value.trim()) {
+        isValid = false;
+        totalCostInput.classList.add('is-invalid');
+    } else {
+        totalCostInput.classList.remove('is-invalid');
+    }
+
+    return isValid;
+    function validateQuantityAndNext() {
+            var quantityInputs = document.querySelectorAll('.quantity-input');
+            var isValid = true;
+
+            // Check if there's at least one product in the left column
+            var productListRows = document.querySelectorAll("#PRO_products tbody tr");
+            if (productListRows.length === 0) {
+                isValid = false;
+                // Display alert message
+                alert("There should be at least 1 product in the products ordered.");
+            }
+
+            // Check if all quantities are valid
+            quantityInputs.forEach(function(input) {
+                const quantity = parseInt(input.value);
+                console.log(quantity);
+                if (isNaN(quantity) || quantity < 1) {
+                    isValid = false;
+                    // Show error message or handle invalid input as desired
+                    alert("Quantity must be a number greater than or equal to 1.");
+                }
+            });
+
+            if (isValid) {
+                nextStep(); // Proceed to the next step if all quantities are valid and at least one product is selected
+            }
+        }
+}
 
 
         // Render selected products along with additional information
@@ -510,7 +569,7 @@ function validateAndNextStep() {
             var isValid = true;
 
             // Check if there's at least one product in the left column
-            var productListRows = document.querySelectorAll("#PO_products tbody tr");
+            var productListRows = document.querySelectorAll("#PRO_products tbody tr");
             if (productListRows.length === 0) {
                 isValid = false;
                 // Display alert message
@@ -532,6 +591,27 @@ function validateAndNextStep() {
                 nextStep(); // Proceed to the next step if all quantities are valid and at least one product is selected
             }
         }
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#confirmationModal').modal('show');
+        }
+
+        // Event listener for the submit button
+        document.getElementById('submit_pro').addEventListener('click', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+            // Show the confirmation modal
+            showConfirmationModal();
+        });
+
+        // Event listener for DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listener for the confirm button in the modal
+            document.getElementById('confirmSubmit').addEventListener('click', function() {
+                // Submit the form
+                document.getElementById('addPRO').submit();
+            });
+        });
     </script>
 </body>
 
@@ -551,6 +631,24 @@ function validateAndNextStep() {
                 <button type="button" class="btn btn-danger" onclick="cancelForm()">Exit Anyways</button>
             </div>
         </div>
+    </div>
+</div>
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmation </h5>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to add this purchase order in the system?
+        </div>
+        <div class="modal-footer">
+            <div class="col">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+            </div>
+            <button type="submit" class="btn btn-success" id="confirmSubmit">Yes</button>
+        </div>
+      </div>
     </div>
 </div>
 {% endblock %}
