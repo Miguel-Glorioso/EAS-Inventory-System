@@ -145,13 +145,11 @@
                 <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
             </div>
             <div class="modal-body">
-                Are you sure you want to create this new Direct Customer?
+                Are you sure you want to create this new Consignee?
             </div>
             <div class="modal-footer">
-                <div class="col">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
-                </div>
-                <button type="submit" class="btn btn-success" id="submitConfirmationBtn">Yes</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('createConsigneeForm').submit()">Yes</button>
             </div>
         </div>
     </div>
@@ -169,7 +167,7 @@
             </div>
             <div class="modal-footer">
                 <div class="col">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Go Back</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
                 </div>
                 <a href="{% url 'current_customers' %}" class="btn btn-danger">Exit Anyways</a>
             </div>

@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="static/create_consignee.css">
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
@@ -164,125 +166,117 @@
                     <button type="button" class="btn btn-danger" id="cancelButton">Cancel</button>
                 </div>
                 <div class="col-md-6 text-end">
-                    <button type="button" class="btn btn-success" id="createConsigneeBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal" >Create</button>
+                    <button type="submit" class="btn btn-success" id="createBtn">Create</button>
                 </div>
             </div>
         </form>
     </div>
     
-    <!-- Cancel Modal -->
-    <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cancelConfirmationModalLabel">Warning</h5>
-                </div>
-                <div class="modal-body">
-                    Exit form? Any changes you have made may not be saved.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                    <a href="{% url 'current_inventory' %}" class="btn btn-danger">Exit Anyways</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Confirmation Modal -->
-    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to create this new Consignee?
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
                 </div>
-                <div class="modal-body">
-                    Are you sure you want to create this new Consignee?
-                </div>
-                <div class="modal-footer">
-                    <div class="col">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
-                    </div>
-                    <button type="button" class="btn btn-success" id="confirmCreateConsigneeBtn">Yes</button>
-                </div>
+                <button type="submit" class="btn btn-success" id="submitConfirmationBtn">Yes</button>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Cancel Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Warning</h5>
+            </div>
+            <div class="modal-body">
+                Exit form? Any changes you have made may not be saved.
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+                </div>
+                <a href="{% url 'categories_consignee_tags' %}" class="btn btn-danger">Exit Anyways</a>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById("cancelButton").addEventListener("click", function() {
-        var formHasInput = false;
-        var inputs = document.querySelectorAll("#createConsigneeForm input[type='text'], #createConsigneeForm input[type='number'], #createConsigneeForm select, #createConsigneeForm input[type='email'], #createConsigneeForm input[type='date'], #createConsigneeForm input[type='color']");
-        inputs.forEach(function(input) {
-            if (input.value.trim() !== '') {
-                formHasInput = true;
-            }
-        });
-
-        if (formHasInput) {
-            // At least one field has input, so show the cancel modal
-            var myModal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
-            myModal.show();
-        } else {
-            // No fields have input, so redirect to the current inventory page
-            window.location.href = "{% url 'current_inventory' %}";
-        }
+    document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
+        document.getElementById('createConsigneeForm').submit();
     });
 });
-
-// Function to check if all required fields are filled
-function checkRequiredFields() {
-    var requiredInputs = document.querySelectorAll("#createConsigneeForm input[required], #createConsigneeForm select[required]");
-    var allRequiredFilled = true;
-    requiredInputs.forEach(function(input) {
-        if (input.value.trim() === '') {
-            allRequiredFilled = false;
-        }
-    });
-    return allRequiredFilled;
+        function handleSubmit(event) {
+    event.preventDefault(); // Prevent form submission
+    if (checkRequiredFields()) {
+        showConfirmationModal();
+    }
 }
+
         // Function to check if all required fields are filled
         function checkRequiredFields() {
-            var consigneeName = document.getElementById('id_consignee_name').value.trim();
-            var consigneeTagId = document.getElementById('id_consignee_tag_id').value.trim();
-            var addressLine1 = document.getElementById('id_address_line_1').value.trim();
-            var province = document.getElementById('id_province').value.trim();
-            var municipality = document.getElementById('id_municipality').value.trim();
-            var barangay = document.getElementById('id_barangay').value.trim();
-            var zipCode = document.getElementById('id_zip_code').value.trim();
-            var primaryContactNumber = document.getElementById('id_primary_contact_number').value.trim();
-            var emailAddress = document.getElementById('id_email_address').value.trim();
-            var consignmentPeriodStart = document.getElementById('id_consignment_period_start').value.trim();
-            var consignmentPeriodEnd = document.getElementById('id_consignment_period_end').value.trim();
+            let inputs = document.querySelectorAll('input[required]');
+            let isValid = true;
 
-            return consigneeName !== '' && consigneeTagId !== '' && addressLine1 !== '' &&
-                province !== '' && municipality !== '' && barangay !== '' && zipCode !== '' &&
-                primaryContactNumber !== '' && emailAddress !== '' && consignmentPeriodStart !== '' &&
-                consignmentPeriodEnd !== '';
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid'); // Add red border
+                } else {
+                    input.classList.remove('is-invalid'); // Remove red border
+                }
+            });
+
+            if (!isValid) {
+                alert('Please fill out all required fields and satisfy the required input.');
+            }
+
+            return isValid;
         }
 
-        // Function to enable/disable the Create button based on required fields
-        function toggleCreateButton() {
-            var createButton = document.getElementById('createConsigneeBtn');
-            createButton.disabled = !checkRequiredFields();
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#confirmationModal').modal('show');
         }
 
-        // Event listener for input fields to check validation on change
-        var inputFields = document.querySelectorAll('input, textarea, select');
-        inputFields.forEach(function(field) {
-            field.addEventListener('input', function() {
-                toggleCreateButton();
+        // Function to handle form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            if (checkRequiredFields()) {
+                showConfirmationModal();
+            }
+        }
+
+        // Add event listener to the form submit button
+        document.getElementById('createBtn').addEventListener('click', handleSubmit);
+
+        // Add event listener to the Cancel button
+        document.querySelector('button[data-bs-target="#cancelModal"]').addEventListener('click', function () {
+            $('#cancelModal').modal('show');
+        });
+
+        // Function to handle form submission after confirmation
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
+                document.getElementById('createConsigneeForm').submit();
             });
         });
-
-        // Handle click event on "Yes" button in confirmation modal
-        document.getElementById('confirmCreateConsigneeBtn').addEventListener('click', function() {
-            document.getElementById('createConsigneeForm').submit(); // Submit the form
-        });
     </script>
+
 
 </body>
 {% endblock %}
