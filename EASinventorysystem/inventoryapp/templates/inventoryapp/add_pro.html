@@ -129,6 +129,7 @@
                                 </div>
                                 <div class="row mx-4" id="product-list-right" style="overflow-y: auto; height: 520px;"> <!-- Updated ID -->
                                     {% for p in products %}
+                                    {% if p.Visibility %}
                                         <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
                                             <!-- Product information -->
                                             <div class="col">
@@ -153,6 +154,7 @@
                                                 <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
                                             </div>
                                         </div>
+                                    {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -253,7 +255,18 @@
             newRow.innerHTML = `
                 <td>${productName}</td>
                 <td>${productId}</td>
-                <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value="1"></td>
+                <td>
+                    <input type="number" 
+                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                            maxlength="5"
+                            min='1'
+                            id="quantityInput" 
+                            class="form-control text-center quantity-input" 
+                            style="width: 100px;" 
+                            value="1"
+                            oninput="validateQuantityInput(event)"
+                            onkeydown="return restrictNonNumericals(event)">
+                </td>  
                 <td>${productCount}</td>
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
@@ -436,6 +449,38 @@
         });
         return productIds;
     }
+    
+    function restrictNonNumericals(event) {
+            // Allow: backspace, delete, tab, escape, enter, and .
+            if (event.key === 'Backspace' || event.key === 'Delete' || event.key === 'Tab' || event.key === 'Escape' || event.key === 'Enter') {
+                return;
+            }
+            // Allow: Ctrl+A, Command+A
+            if ((event.ctrlKey === true || event.metaKey === true) && (event.key === 'a' || event.key === 'A')) {
+                return;
+            }
+            // Allow: home, end, left, right, down, up
+            if (event.key === 'Home' || event.key === 'End' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if (event.shiftKey || (event.key < '0' || event.key > '9')) {
+                event.preventDefault();
+            }
+        }
+        function validateQuantityInput(event) {
+            var inputElement = event.target; // Get the input element that triggered the event
+            var inputValue = inputElement.value; // Get the current value of the input
+
+            // Remove any non-numeric characters
+            inputElement.value = inputValue.replace(/\D/g, '');
+
+            // Example validation: Ensure that the input value is not negative
+            if (parseInt(inputValue) < 1) {
+                alert("Quantity cannot be negative!");
+                inputElement.value = 1; // Reset the value to 0
+            }
+        }
     </script>
 </body>
 
