@@ -1467,6 +1467,11 @@ def history_PRO(request):
     all_requisition_orders = Product_Requisition_Order.objects.all().order_by('Creation_Date')
     return render(request, 'inventoryapp/history_pro.html', {'requisition_orders':all_requisition_orders})
 
+def view_pro_history(request, pk):
+    requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+    stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+    return render(request, 'inventoryapp/view_po_history.html', {'pro':requisition_order, 'products':stocks_ordered})
+
 @login_required 
 def categories_consignee_tags(request):
     consignees = Consignee.objects.all()
