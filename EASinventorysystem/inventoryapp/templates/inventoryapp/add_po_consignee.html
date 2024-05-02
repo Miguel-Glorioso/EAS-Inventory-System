@@ -27,7 +27,7 @@
         </div>
 
 
-        <form method="POST" action="{% url 'add_po_consignee' %}">
+        <form id="addPO" method="POST" action="{% url 'add_po_consignee' %}">
             <!-- First Tab: Consignee Information -->
             <div id="step1">
 
@@ -313,7 +313,7 @@
                         </div>
                         <div class="col-md-6 text-end">
                             <!-- <button type="submit" class="btn btn-success" id="submit_po">Submit</button> -->
-                            <button type="submit" class="btn btn-success" id="submit_po" onclick="return confirm('Are you sure you want to create this purchase order?')">Submit</button>
+                            <button type="submit" class="btn btn-success" id="submit_po" onclick="showConfirmationModal()">Submit</button>
                         </div>
                     </div>
                 </div>
@@ -673,8 +673,49 @@
                 }
             });
         });
+
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#confirmationModal').modal('show');
+        }
+
+        // Event listener for the submit button
+        document.getElementById('submit_po').addEventListener('click', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+            // Show the confirmation modal
+            showConfirmationModal();
+        });
+
+        // Event listener for DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listener for the confirm button in the modal
+            document.getElementById('confirmSubmit').addEventListener('click', function() {
+                // Submit the form
+                document.getElementById('addPO').submit();
+            });
+        });
     </script>
 </body>
+
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to add this purchase order in the system?
+        </div>
+        <div class="modal-footer">
+            <div class="col">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+            </div>
+            <button type="submit" class="btn btn-success" id="confirmSubmit">Yes</button>
+        </div>
+      </div>
+    </div>
+</div>
 
 <div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel"
     aria-hidden="true">
