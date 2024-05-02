@@ -135,50 +135,14 @@
                     <input type="text" id="consignee-search" class="form-control mb-2" placeholder="Search consignee..." style="margin-bottom: 10px;">
                     <div id="consignee-list" style="height: 100px; overflow-y: auto;"> <!-- Adjust height as needed -->
                         {% for con in consignees %}
-                        <div class="consignee-item">
+                        <div class="consignee-item" data-color="{{ con.Tag_Hex_Color_ID }}">
                             <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="product_consignees">
                             <label class="form-check-label" for="consignee_product_consignees">
-                                <span class="badge" style="display: inline-block;  background-color: {{ con.Tag_Hex_Color_ID }}" id="badge-tag">{{ con.Consignee_Name}}</span>
-                            </label>
-                            <script>
-                                document.addEventListener("DOMContentLoaded", function() {
-                                    // Get all badge elements for categories
-                                    var badges = document.querySelectorAll('.badge');
-                                    
-                                    // Loop through each badge element
-                                    badges.forEach(function(badge) {
-                                        // Get the corresponding hex color
-                                        var hexColor = badge.parentElement.nextElementSibling.textContent;
-                                        console.log(hexColor);
-                                        // Set the background color of the badge
-                                        badge.style.backgroundColor = hexColor;
-                                        
-                                        // Determine if the badge color is light or dark
-                                        var textColor = getContrastColor(hexColor);
-                                        
-                                        // Set the font color based on badge color
-                                        badge.style.color = textColor;
-                                    });
-                            
-                                    // Function to determine contrast color for given background color
-                                    function getContrastColor(hexColor) {
-                                        // Convert hex color to RGB
-                                        var r = parseInt(hexColor.substr(1, 2), 16);
-                                        var g = parseInt(hexColor.substr(3, 2), 16);
-                                        var b = parseInt(hexColor.substr(5, 2), 16);
-                                        
-                                        // Calculate luminance
-                                        var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-                                        
-                                        // Return white for dark backgrounds, black for light backgrounds
-                                        return luminance > 0.5 ? '#000000' : '#ffffff';
-                                    }
-                                });
-                            </script>
-                            
-                              
+                                <span class="badge" style="display: inline-block; background-color: {{ con.Tag_Hex_Color_ID }}" id="badge-tag">{{ con.Consignee_Name }}</span>
+                            </label>                              
                         </div>
                         {% endfor %}
+
                     </div>
                 </div>
             </div>
@@ -378,12 +342,12 @@
     });
 
 
-    // Attach onchange event handlers to each required input field
-    document.getElementById("id_Name").onchange = checkRequiredFields;
-    document.getElementById("id_EAS_Product_ID").onchange = checkRequiredFields;
-    document.getElementById("id_Sku").onchange = checkRequiredFields;
-    document.getElementById("id_Price").onchange = checkRequiredFields;
-    document.getElementById("id_Category").onchange = checkRequiredFields;
+    // // Attach onchange event handlers to each required input field
+    // document.getElementById("id_Name").onchange = checkRequiredFields;
+    // document.getElementById("id_EAS_Product_ID").onchange = checkRequiredFields;
+    // document.getElementById("id_Sku").onchange = checkRequiredFields;
+    // document.getElementById("id_Price").onchange = checkRequiredFields;
+    // document.getElementById("id_Category").onchange = checkRequiredFields;
 
     // JavaScript functions for incrementing/decrementing count and threshold
     function incrementCount() {
@@ -436,6 +400,40 @@
             return false;
         }
     }
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all badge elements for categories
+        var badges = document.querySelectorAll('.badge');
+        
+        // Loop through each badge element
+        badges.forEach(function(badge) {
+            // Get the corresponding hex color from data attribute
+            var hexColor = badge.parentElement.parentElement.dataset.color;
+
+            // Set the background color of the badge
+            badge.style.backgroundColor = hexColor;
+
+            // Check if the background color is light or dark
+            if (isColorLight(hexColor)) {
+                badge.style.color = '#000000'; // Set text color to black for light background
+            } else {
+                badge.style.color = '#ffffff'; // Set text color to white for dark background
+            }
+        });
+
+        // Function to check if a color is light
+        function isColorLight(color) {
+            // Convert hex color to RGB
+            var r = parseInt(color.substr(1, 2), 16);
+            var g = parseInt(color.substr(3, 2), 16);
+            var b = parseInt(color.substr(5, 2), 16);
+            
+            // Calculate luminance
+            var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            
+            // Check if luminance is greater than 0.5 (light color)
+            return luminance > 0.5;
+        }
+    });
 
 </script>
 

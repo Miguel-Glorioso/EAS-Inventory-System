@@ -1190,6 +1190,7 @@ def view_customer(request, customer_type, customer_id):
         }
         if customer_type == 'consignee':
             response_data.update({
+                'tagID': customer.Consignee_Tag_ID,
                 'consignment_period_start': customer.Consignment_Period_Start,
                 'consignment_period_end': customer.Consignment_Period_End,
                 'emergency_contact_number': customer.Emergency_Contact_Number,

@@ -172,6 +172,7 @@
                   <p><strong>Customer Type:</strong> ${response.customer_type}</p>
                   <p><strong>Notes:</strong> ${response.notes}</p>
                   ${isDirectCustomer ? '' : `
+                      <p><strong>Customer TagID:</strong> ${response.tagID}</p>
                       <p><strong>Consignment Period Start:</strong> ${response.consignment_period_start}</p>
                       <p><strong>Consignment Period End:</strong> ${response.consignment_period_end}</p>
                       <p><strong>Emergency Contact Number:</strong> ${response.emergency_contact_number}</p>
