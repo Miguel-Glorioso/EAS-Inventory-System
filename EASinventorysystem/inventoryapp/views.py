@@ -68,7 +68,7 @@ def inventory_list(request):
         consignee_products = all_consignee_products.filter(Consignee_ID=consignee)
         product_ids = consignee_products.values_list('Product_ID', flat=True)
         all_inventory = all_inventory.filter(Product_ID__in=product_ids)
-        
+    
     if stock_status_param:
         if stock_status_param == 'low_stock':
             all_inventory = all_inventory.filter(Product_Stock_Status='Low Stock')
@@ -77,7 +77,6 @@ def inventory_list(request):
         elif stock_status_param == 'regular_stock':
             all_inventory = all_inventory.filter(Product_Stock_Status='Regular Stock')
             
-    total_products_count = all_inventory.count()
 
     # Count products with different stock statuses
     low_stock_count = all_inventory.filter(Product_Stock_Status='Low Stock').count()

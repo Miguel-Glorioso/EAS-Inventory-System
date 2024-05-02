@@ -137,30 +137,32 @@ $('#stockStatusFilter').on('change', function() {
       <div class="row">
         <div class="card-group" style="text-align: center;">
           <div class="card">
-            <div class="card-body" style="background-color: #f0f0f0;">
+            <div id="total_products_filter" class="card-body" style="background-color: #f0f0f0; cursor: pointer;">
               <h5 class="card-text" style="font-size: 13.5px;">Total Products Count <br><span id="total_products_count" style="font-size: 19px;"></span></h5>
             </div>
           </div>
           <div class="card">
-            <div class="card-body" style="background-color: #f0f0f0;">
+            <a href="#" id="noStockFilters" class="card-body" style="background-color: #f0f0f0;">
               <h5 class="card-text" style="font-size: 13.5px;">No Stock Count <br> <br> <span id="no_stock_count" style="font-size: 19px;"></span></h5>
-            </div>
+              <input type="hidden" id="noStock_inp" value="no_stock">
+            </a>
           </div>
           <div class="card">
-            <div class="card-body" style="background-color: #f0f0f0;">
+            <a href="#" id="lowStockFilters"  class="card-body" style="background-color: #f0f0f0;">
               <h5 class="card-text" style="font-size: 13.5px;">Low Stock Count <br> <br> <span id="low_stock_count" style="font-size: 19px;"></span></h5>
-            </div>
+              <input type="hidden" id="lowStock_inp" value="low_stock">
+            </a>
           </div>
           <div class="card">
-            <div class="card-body" style="background-color: #f0f0f0;">
+            <a href="#" id="regStockFilters"  class="card-body" style="background-color: #f0f0f0;">
               <h5 class="card-text" style="font-size: 13.5px;">Regular Stock Count <br> <span id="regular_stock_count" style="font-size: 19px;"></span></h5>
-            </div>
+              <input type="hidden" id="regStock_inp" value="regular_stock">
+            </a>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+    
       
     <!-- Table Inventory row -->
     <div class="row mt-3">
@@ -252,9 +254,34 @@ $('#stockStatusFilter').on('change', function() {
           var params = new URLSearchParams(window.location.search); // Get the existing query parameters
           params.set('category', ""); // Set the 'category' parameter to the selected value
           params.set('consignee', ""); // Set the 'consignee' parameter to the selected value
+          params.set('stock_status', "") // Set the 'stock_status' parameter to the selected value
           window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
         });
 
+        $('#noStockFilters').on('click', function() {
+          var stock_status = $('#noStock_inp').val();
+          var url = window.location.pathname; // Get the current URL
+          var params = new URLSearchParams(window.location.search); // Get the existing query parameters
+          params.set('stock_status', stock_status); // Set the 'stock_status' parameter to the selected value
+          window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
+        });
+        
+        $('#lowStockFilters').on('click', function() {
+          var stock_status = $('#lowStock_inp').val();
+          var url = window.location.pathname; // Get the current URL
+          var params = new URLSearchParams(window.location.search); // Get the existing query parameters
+          params.set('stock_status', stock_status); // Set the 'stock_status' parameter to the selected value
+          window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
+        });
+        
+        $('#regStockFilters').on('click', function() {
+          var stock_status = $('#regStock_inp').val();
+          var url = window.location.pathname; // Get the current URL
+          var params = new URLSearchParams(window.location.search); // Get the existing query parameters
+          params.set('stock_status', stock_status); // Set the 'stock_status' parameter to the selected value
+          window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
+        });
+        
         $('#showHidden').on('change', function() {
           var showHidden = $(this).prop('checked');
           var url = window.location.pathname; // Get the current URL
