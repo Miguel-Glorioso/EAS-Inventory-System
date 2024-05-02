@@ -12,7 +12,8 @@ import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import Table, TableStyle, Image
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.utils import ImageReader
 from django.contrib.auth.decorators import login_required,  user_passes_test
@@ -20,6 +21,8 @@ from django.contrib.auth.hashers import check_password
 from django.shortcuts import render
 from django.contrib import messages
 from django.db.models import Sum
+import math
+from django.templatetags.static import static
 
 # Create your views here.
 
@@ -1503,9 +1506,18 @@ def generate_inventory_summary(request):
     c.setFont("Helvetica-Bold", 14)
     c.drawString(100, 750, "Inventory Summary")
 
+    # Insert generated date, time, and page information
+    generated_info = f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} by {request.user}"
+    # page_info = f"Page 1 out of {math.ceil(len(all_inventory) / 50) + 1}"  # Assuming 50 products per page
+    c.drawString(100, 730, generated_info)
+    # c.drawString(100, 710, page_info)
+
+    # Draw a line for the separator
+    c.line(0, 700, letter[0], 700)
+
     # Define table headers
     table_data = [
-        ["Name", "ID", "Actual Count", "Reserved","To Be Received", "Categories"]
+        ["Name", "ID", "Actual Count", "Reserved", "To Be Received", "Categories"]
     ]
 
     # Populate table data
@@ -1527,7 +1539,7 @@ def generate_inventory_summary(request):
         ('ALIGN', (0, 0), (0, 0), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Center text vertically
     ]))
@@ -1541,6 +1553,11 @@ def generate_inventory_summary(request):
 
     # Draw the table on the canvas
     table.drawOn(c, x, y)
+
+    # Add header and footer
+    footer = "Everything About Santa"
+    c.setFont("Helvetica", 10)
+    c.drawString(inch / 2, 0.5 * inch, footer)
 
     # Save the PDF
     c.showPage()
