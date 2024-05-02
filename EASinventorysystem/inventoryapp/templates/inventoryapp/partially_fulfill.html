@@ -30,7 +30,7 @@
                                         <tr>
                                             <th>Name</th>
                                             <th>ID</th>
-                                            <th>Actual Count</th>
+                                            <th>Quantity</th>
                                             <th>Partially Fulfilled</th>
                                             <th>To be Received</th>
                                             <th>Image Report</th>
@@ -42,17 +42,19 @@
                                         {% for stock in stock_ordered_items %}
                                             <td>{{ stock.Product_ID.Name }}</td>
                                             <td>{{ stock.Product_ID.EAS_Product_ID }}</td>
-                                            <td>{{ stock.Product_ID.Actual_Inventory_Count }}</td>
+                                            <td>{{ stock.Quantity }}</td>
                                             {% if stock.pk in no_parfills %}
+                                                <td>0</td>
                                                 <td>0</td>
                                             {% else %}
                                                 {% for parfill in previous_parfills %}
                                                     {% if parfill.Stock == stock.pk %}
-                                                        <td>{{ parfill.total_quantity }}</td>
+                                                    <td class="fulfilled-quantity">{{ parfill.total_quantity }}</td>
+                                            
+                                                    <td class="remaining-quantity" data-quantity="{{ stock.Quantity }}" data-fulfilled="{{ parfill.total_quantity }}"></td>
                                                     {% endif %}
                                                 {% endfor %}
                                             {% endif %}
-                                            <td>{{ stock.Quantity }}</td>
                                             <td>
                                                 <div class="input-group">
                                                     <input type="file" name="parfill_picture_{{ stock.Product_ID.Product_ID }}" accept="image/*" class="form-control parfill-picture-input">
@@ -65,15 +67,11 @@
                                                 </div>
                                             </td>
                                             {% else %}
-                                            {% for parfill in previous_parfills %}
-                                                    {% if parfill.Stock == stock.pk %}
-                                                        <td>
-                                                            <div class="input-group">
-                                                                <input type="number" min="0" max="{{parfill.total_quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="1">
-                                                            </div>
-                                                        </td>
-                                                    {% endif %}
-                                                {% endfor %}
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="number" min="0" max="{{ remaining_quantity }}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="1">
+                                                </div>
+                                            </td>
                                             {% endif %}
                                             <td>
                                                 <div class="input-group">
@@ -103,4 +101,52 @@
         </div>
     </form>
 </body>
+<script>
+    // Get all elements with class "remaining-quantity"
+    var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
+    
+    remainingQuantityElements.forEach(function(element) {
+        // Get the ordered quantity and fulfilled quantity from data attributes
+        var quantity = parseInt(element.dataset.quantity);
+        var fulfilledQuantity = parseInt(element.dataset.fulfilled);
+        console.log(quantity, fulfilledQuantity);
+        // Calculate remaining quantity
+        var remainingQuantity = quantity - fulfilledQuantity ;
+    
+        // Update the content of the element with the remaining quantity
+        element.textContent = remainingQuantity;
+    });
+</script>
+<script>
+    function validateForm() {
+        // Get all elements with class "quantity-input" and "remaining-quantity"
+        var quantityInputs = document.querySelectorAll('.quantity-input');
+        var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
+        var isValid = true;
+
+        quantityInputs.forEach(function(input, index) {
+            var maxQuantity = parseInt(input.getAttribute('max'));
+            var quantity = parseInt(input.value);
+            var remainingQuantity = parseInt(remainingQuantityElements[index].textContent);
+
+            // Check if quantity exceeds maxQuantity or remainingQuantity is zero
+            if (quantity > maxQuantity || remainingQuantity === 0) {
+                isValid = false;
+                // Optionally, you can display an error message or highlight the input field here
+            }
+        });
+
+        return isValid;
+    }
+
+    // Add an event listener to the form submission
+    document.querySelector('#submit_parfill').addEventListener('click', function(event) {
+        if (!validateForm()) {
+            // Prevent form submission if validation fails
+            event.preventDefault();
+            alert('Quantity to be partially fulfilled exceeds maximum allowed quantity or remaining quantity is zero!');
+        }
+    });
+</script>
+
 {% endblock %}

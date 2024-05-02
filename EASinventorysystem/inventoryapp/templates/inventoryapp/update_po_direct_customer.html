@@ -38,7 +38,7 @@
                     <div class="row">
                         <div class="col">
                             <label class="required" for="requested_date">Requested Date:</label><br>
-                            <input type="date" id="requested_date" name="requested_date" class="form-control" value="{{ PO.Requested_Date|date:'Y-m-d' }}" required><br><br>
+                            <input type="date" id="requested_date" name="requested_date" class="form-control" value="{{ PO.Requested_Date|date:'Y-m-d' }}" onkeydown="return false" required><br><br>
                         </div>                        
                         
                         <div class="col">
@@ -55,7 +55,7 @@
                         </div>
                         <div class="col">
                             <label class="required" for="contact_info">Contact Info: (11 digits)</label><br>
-                            <input type="number" id="contact_info" name="contact_info" class="form-control" maxlength="11" required minlength="11" value="{{ PO.Customer_ID.Primary_Contact_Number }}"><br><br>
+                            <input type="text" name="contact_info" class="form-control" required id="contact_info" placeholder="Primary Contact Number: 09xxxxxxxxx" pattern="09[0-9]{9}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 0;" value="{{ PO.Customer_ID.Primary_Contact_Number }}"><br><br>
                         </div>
                         
                         <div class="col">
@@ -106,7 +106,7 @@
                         </div>
                         <div class="col">
                             <label class="required" for="zip_code">Zip Code: (4 digits)</label><br>
-                            <input type="number" id="zip_code" name="zip_code" class="form-control" required minlength="4" placeholder="1234"  value="{{ PO.Customer_ID.Zip_Code }}"><br><br>
+                            <input type="text" name="zip_code" class="form-control" required id="zip_code" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" maxlength="4" value="{{ PO.Customer_ID.Zip_Code }}"><br><br> 
                         </div>
                     </div>
                     
@@ -166,7 +166,18 @@
                                                     <td>{{ products.Product_ID.Name }}</td>
                                                     <td>{{ products.Product_ID.EAS_Product_ID }}</td>
                                                     <td>{{ products.Product_ID.Price }}</td>
-                                                    <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value= {{products.Quantity}}></td>
+                                                    <td>
+                                                        <input type="number" 
+                                                               oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                               maxlength="5"
+                                                               min='1'
+                                                               id="quantityInput" 
+                                                               class="form-control text-center quantity-input" 
+                                                               style="width: 100px;" 
+                                                               value="{{ stock.Quantity }}" 
+                                                               oninput="validateQuantityInput(event)"
+                                                               onkeydown="return restrictNonNumericals(event)">
+                                                    </td>    
                                                     <td>{{ products.Product_ID.Actual_Inventory_Count }}</td>
                                                     <input type="hidden" class="product_pk" value={{products.Product_ID.Product_ID}}>
                                                     <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
@@ -332,7 +343,18 @@
                 <td>${productName}</td>
                 <td>${productId}</td>
                 <td>${productPrice}</td>
-                <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value="1" max="99999"></td>
+                <td>
+                    <input type="number" 
+                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                            maxlength="5"
+                            min='1'
+                            id="quantityInput" 
+                            class="form-control text-center quantity-input" 
+                            style="width: 100px;" 
+                            value=1
+                            oninput="validateQuantityInput(event)"
+                            onkeydown="return restrictNonNumericals(event)">
+                </td>    
                 <td>${productCount}</td>
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
@@ -676,6 +698,37 @@
                 document.getElementById('updatePO').submit();
             });
         });
+        function restrictNonNumericals(event) {
+            // Allow: backspace, delete, tab, escape, enter, and .
+            if (event.key === 'Backspace' || event.key === 'Delete' || event.key === 'Tab' || event.key === 'Escape' || event.key === 'Enter') {
+                return;
+            }
+            // Allow: Ctrl+A, Command+A
+            if ((event.ctrlKey === true || event.metaKey === true) && (event.key === 'a' || event.key === 'A')) {
+                return;
+            }
+            // Allow: home, end, left, right, down, up
+            if (event.key === 'Home' || event.key === 'End' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if (event.shiftKey || (event.key < '0' || event.key > '9')) {
+                event.preventDefault();
+            }
+        }
+        function validateQuantityInput(event) {
+            var inputElement = event.target; // Get the input element that triggered the event
+            var inputValue = inputElement.value; // Get the current value of the input
+
+            // Remove any non-numeric characters
+            inputElement.value = inputValue.replace(/\D/g, '');
+
+            // Example validation: Ensure that the input value is not negative
+            if (parseInt(inputValue) < 1) {
+                alert("Quantity cannot be negative!");
+                inputElement.value = 1; // Reset the value to 0
+            }
+        }
     </script>
 </body>
 

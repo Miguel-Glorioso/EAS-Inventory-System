@@ -121,12 +121,12 @@
                                 <!-- Display combined partially fulfilled quantity for the stock -->
                                 {% if s.pk in no_parfills %}
                                     <td>0</td>
-                                    <td>0</td> <!-- Add an additional column for subtraction -->
+                                    <td>0</td>
                                 {% else %}
                                     {% for parfill in previous_parfills %}
                                         {% if parfill.Stock == s.pk %}
                                             <td class="fulfilled-quantity">{{ parfill.total_quantity }}</td>
-                                            <!-- Use data attributes to store quantity information -->
+                                            
                                             <td class="remaining-quantity" data-quantity="{{ s.Quantity }}" data-fulfilled="{{ parfill.total_quantity }}"></td>
                                         {% endif %}
                                     {% endfor %}

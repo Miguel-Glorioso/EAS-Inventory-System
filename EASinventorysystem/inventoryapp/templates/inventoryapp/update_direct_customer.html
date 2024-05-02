@@ -58,7 +58,7 @@
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label for="id_zip_code" class="form-label custom-text">Zip Code:</label>
-                        <input type="text" name="zip_code" class="form-control" maxlength="10" required id="id_zip_code" value="{{ customer.Zip_Code }}">
+                        <input type="text" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" maxlength="4" pattern="[0-9]{4}" value="{{ customer.Zip_Code }}" required>
                     </div>
                 </div>
             </div>
