@@ -46,6 +46,10 @@ urlpatterns = [
     
     path('close_po/<int:pk>/<int:account_id>/', views.close_po, name='close_po'),
     path('close_pro/<int:pk>/<int:account_id>/', views.close_pro, name='close_pro'),
+    path('cancel_po/<int:pk>/<int:account_id>/', views.cancel_po, name='cancel_po'),
+    path('cancel_pro/<int:pk>/<int:account_id>/', views.cancel_pro, name='cancel_pro'),
+    path('cancel_po_specific/<int:pk>/<int:account_id>/', views.cancel_po_specific, name='cancel_po_specific'),
+    path('cancel_pro_specific/<int:pk>/<int:account_id>/', views.cancel_pro_specific, name='cancel_pro_specific'),
     path('add_pro', views.add_requisition_order, name='add_pro'),
     path('view_pro/<int:pk>/', views.view_pro, name='view_pro'), 
     path('update_pro/<int:pk>/', views.update_pro, name='update_pro'),
