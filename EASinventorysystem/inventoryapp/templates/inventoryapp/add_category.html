@@ -34,99 +34,153 @@
                 <h4 class="m-0 mr-3">Add Category</h4>
             </div>
         </div>
-        {% if error_msg %}
-        <div class="alert alert-danger" role="alert">
-            {{ error_msg }}
-        </div>
-        {% endif %}
-        <form method="post">
+        <form method="post" id="categoryForm">
             {% csrf_token %}
             <legend>Category Information</legend>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label class="required" for="category_name">Category Name</label>
-                        <input style="margin-top: 10px" type="text" class="form-control" id="category_name" name="category_name" required>
+                        <input type="text" class="form-control" id="category_name" name="category_name" maxlength="32" required>
                     </div>
                 </div>
-                <!-- <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="required" for="category_product_low_stock_threshold">Low Stock Threshold</label>
-                        <input type="number" class="form-control" id="category_product_low_stock_threshold" name="category_product_low_stock_threshold" required>
-                    </div>
-                </div> -->
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="id_Category_Product_Low_Stock_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
+                <div class="col-md-2">
+                    <div class="mb-2">
+                        <label class="required" for="id_Category_Product_Low_Stock_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
                         <div class="input-group">
-                            <button type="button" class="btn btn-secondary" onclick="changeValue(-1)">-</button>
-                            <input type="int" min="0" maxlength="5" name="category_product_low_stock_threshold" class="form-control" required id="id_Category_Product_Low_Stock_Threshold" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" value="0">
-                            <button type="button" class="btn btn-secondary" onclick="changeValue(1)">+</button>
+                            <input type="number" min="0" max="99999" name="category_product_low_stock_threshold" class="form-control" id="id_Category_Product_Low_Stock_Threshold" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 && this.value.length < 5)" placeholder="0" required>
                         </div>
                     </div>
                 </div>
+
             </div>
-            <script>
-                function changeValue(delta) {
-            var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
-            var value = parseInt(input.value, 10) || 0;
-            value += delta;
-            if (value < 0) value = 0; // Ensure the value doesn't go below 0
-            input.value = value;
-            checkFormValidity(); // Check form validity whenever the value changes
-        }
-
-            </script>
-
-            <div class="col-md-4" style="margin-top: 10px;">
+            <div class="col-md-4" >
                 <div class="input-group mb-3">
-                    <label class="required input-group-text" for="id_Category_Hex_Color_ID">Category Color Picker:</label>
-                    <input type="color" name="category_hex_color_id" value="#000000" required id="id_Category_Hex_Color_ID">
-                    <div id="colorDisplay">#000000</div>
+                    <label class="required" for="id_Category_Hex_Color_ID">Category Color Picker: </label>
+                    <input type="color" name="category_hex_color_id" placeholder="#000000" id="id_Category_Hex_Color_ID" style="margin-left: 10px;"required>
+                    <div id="colorDisplay" style="margin-left: 5px;">#000000</div>
                 </div>
             </div>
-            
-            <script>
-                           var colorPicker = document.getElementById('id_Category_Hex_Color_ID');
-            var colorDisplay = document.getElementById('colorDisplay');
-
-            function updateColorDisplay() {
-                colorDisplay.textContent = colorPicker.value;
-            }
-
-            updateColorDisplay();
-
-            colorPicker.addEventListener('input', function () {
-                updateColorDisplay();
-            });
-
-            </script>
             <div class="form-group">
                 <label class="required" for="description">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                <textarea class="form-control" id="description" name="description" rows="3" maxlength="1024" required></textarea>
             </div>
             <div class="form-group">
                 <label for="notes">Notes</label>
-                <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                <textarea class="form-control" id="notes" name="notes" rows="3" maxlength="1024"></textarea>
             </div>
             <div class="d-flex justify-content-between w-100" style="margin-top: 20px;">
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="">Cancel</button>
-                <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="">Create</button>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                <button type="submit" class="btn btn-success" id="createBtn">Create</button>
             </div>
         </form>
     </div>
 
     <!-- Bootstrap JS (optional) -->
-    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
-    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
     <!-- Script to display hex code alongside color picker -->
     <script>
-        document.getElementById('category_hex_color_id').addEventListener('input', function() {
-            var color = this.value;
-            document.getElementById('color-preview').textContent = color;
+         // Function to handle form submission after confirmation
+         document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
+                document.getElementById('categoryForm').submit();
+            });
+        });
+
+        var colorPicker = document.getElementById('id_Category_Hex_Color_ID');
+        var colorDisplay = document.getElementById('colorDisplay');
+
+        function updateColorDisplay() {
+            colorDisplay.textContent = colorPicker.value;
+        }
+
+        updateColorDisplay();
+
+        colorPicker.addEventListener('input', function () {
+            updateColorDisplay();
+        });
+
+        // Function to handle form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            if (checkRequiredFields()) {
+                showConfirmationModal();
+            }
+        }
+
+        // Add event listener to the form submit button
+        document.getElementById('createBtn').addEventListener('click', handleSubmit);
+
+        // Function to check if all required fields are filled
+        function checkRequiredFields() {
+            let inputs = document.querySelectorAll('.form-control[required]');
+            let isValid = true;
+
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid'); // Add red border
+                } else {
+                    input.classList.remove('is-invalid'); // Remove red border
+                }
+            });
+
+            if (!isValid) {
+                alert('Please fill out all required fields and satisfy the required input.');
+            }
+
+            return isValid;
+        }
+
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#confirmationModal').modal('show');
+        }
+
+        // Add event listener to the Cancel button
+        document.querySelector('button[data-bs-target="#cancelModal"]').addEventListener('click', function () {
+            $('#cancelModal').modal('show');
         });
     </script>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to create this new Category?
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </div>
+                <button type="submit" class="btn btn-success" id="submitConfirmationBtn">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cancel Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Warning</h5>
+            </div>
+            <div class="modal-body">
+                Exit form? Any changes you have made may not be saved.
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Go Back</button>
+                </div>
+                <a href="{% url 'categories_consignee_tags' %}" class="btn btn-danger">Exit Anyways</a>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-
 {% endblock %}
