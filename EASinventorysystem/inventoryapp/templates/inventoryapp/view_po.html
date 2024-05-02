@@ -22,16 +22,27 @@
             <div class="col">
                 <h5>Purchase Order No. {{ po.Purchase_Order_ID }}</h5>
             </div>
-            <div class="col-auto">
-                <button class="btn btn-danger me-2">Delete</button>
+            <div class="col-auto d-flex">
+                <form id="cancelPRoForm" action="{% url 'cancel_po_specific' pk=po.pk account_id=request.user.account.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger me-2">Delete</button>
+                </form>  
                 {% if po.Customer_ID %}
                     <a href="{% url 'update_po_direct_customer' po_pk=po.Purchase_Order_ID c_pk=po.Customer_ID.Customer_ID %}" class="btn btn-primary me-2">Edit</a>
                 {% elif po.Consignee_ID %}
                     <a href="{% url 'update_po_consignee'  po_pk=po.Purchase_Order_ID c_pk=po.Consignee_ID.Consignee_ID %}" class="btn btn-primary me-2">Edit</a>
                 {% endif %}
-                <button class="btn btn-success me-2">Close</button>
+                <form id="closePRoForm" action="{% url 'close_po' pk=po.pk account_id=request.user.account.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Close</button>
+                </form> 
             </div>
         </div>
+        {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_msg }}
+            </div>
+        {% endif %}
 
         <div class="row mt-3">
             <div class="col">

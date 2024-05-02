@@ -15,7 +15,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Table, TableStyle, Image
 from reportlab.lib import colors
 from reportlab.lib.utils import ImageReader
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,  user_passes_test
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import render
 from django.contrib import messages
@@ -574,7 +574,7 @@ def close_po(request, pk, account_id):
     purchase_order = get_object_or_404(Purchase_Order, pk=pk)
     account = get_object_or_404(Account,pk=account_id )
     if request.method == 'POST':
-        if purchase_order.PO_Status != 'Closed':
+        if purchase_order.PO_Status == 'Unfulfilled':
             products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
 
             Sufficient_Stock = True
@@ -618,6 +618,69 @@ def close_po(request, pk, account_id):
                 return render(request, 'inventoryapp/current_pos.html', {'error_msg':error_msg, 'purchase_orders':all_purchase_orders})
         
         messages.success(request, "Purchase order closed successfully.")
+        return redirect('current_pos')
+    else:
+        all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+        return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
+    
+@login_required
+def cancel_po(request, pk, account_id):
+
+    if not request.user.is_superuser:
+        error_msg = "You are not authorized to cancel purchase orders."
+        all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+        return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders, 'error_msg':error_msg})
+    
+    purchase_order = get_object_or_404(Purchase_Order, pk=pk)
+    account = get_object_or_404(Account,pk=account_id )
+    if request.method == 'POST':
+        if purchase_order.PO_Status == 'Unfulfilled':
+            products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
+
+            for product in products_ordered:
+                product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID) #this is the actual product not the product ordered
+                product_listing.Reserved_Inventory_Count -= product.Quantity #product reserved invetory count gets deducted
+                product_listing.save()
+
+            purchase_order.Fulfilled_Date = timezone.now()
+            purchase_order.PO_Status = 'Cancelled'
+            purchase_order.Progress = 'Cancelled'
+            purchase_order.Account_ID_Closed_by = account
+            purchase_order.save()
+
+        messages.success(request, "Purchase order cancelled successfully.")
+        return redirect('current_pos')
+    else:
+        all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+        return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
+    
+@login_required
+def cancel_po_specific(request, pk, account_id):
+
+    if not request.user.is_superuser:
+        error_msg = "You are not authorized to cancel purchase orders."
+        purchase_order = get_object_or_404(Purchase_Order, pk=pk)
+        products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
+        return render(request, 'inventoryapp/view_po.html', {'po':purchase_order, 'products':products_ordered, 'error_msg':error_msg})
+    
+    purchase_order = get_object_or_404(Purchase_Order, pk=pk)
+    account = get_object_or_404(Account,pk=account_id )
+    if request.method == 'POST':
+        if purchase_order.PO_Status == 'Unfulfilled':
+            products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
+
+            for product in products_ordered:
+                product_listing = Product.objects.get(Product_ID=product.Product_ID.Product_ID) #this is the actual product not the product ordered
+                product_listing.Reserved_Inventory_Count -= product.Quantity #product reserved invetory count gets deducted
+                product_listing.save()
+
+            purchase_order.Fulfilled_Date = timezone.now()
+            purchase_order.PO_Status = 'Cancelled'
+            purchase_order.Progress = 'Cancelled'
+            purchase_order.Account_ID_Closed_by = account
+            purchase_order.save()
+
+        messages.success(request, "Purchase order cancelled successfully.")
         return redirect('current_pos')
     else:
         all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
@@ -761,6 +824,7 @@ def view_pro(request, pk):
             no_parfills[stock.pk] = stock 
     
     return render(request, 'inventoryapp/view_pro.html', {'pro': product_requisition_order, 'stocks': stocks_ordered, 'previous_parfills': previous_parfills_combined, 'no_parfills': no_parfills})
+
 @login_required 
 def close_pro(request, pk, account_id):
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
@@ -771,8 +835,11 @@ def close_pro(request, pk, account_id):
 
             for stock in stocks_ordered:
                 stock_listing = Product.objects.get(Product_ID=stock.Product_ID.Product_ID) #this is the actual product not the product ordered
-                stock_listing.Actual_Inventory_Count += stock.Quantity #product inventory count gets deducted
-                stock_listing.To_Be_Received_Inventory_Count -= stock.Quantity #product reserved invetory count gets deducted
+                parfills = Partially_Fulfilled_History.objects.filter(Stock=stock)
+                total_parfill_quantity = sum(parfill.Partially_Fulfilled_Quantity for parfill in parfills)
+                total_quantity = stock.Quantity - total_parfill_quantity
+                stock_listing.Actual_Inventory_Count += total_quantity #product inventory count gets deducted
+                stock_listing.To_Be_Received_Inventory_Count -= total_quantity #product reserved invetory count gets deducted
 
                 if stock_listing.Product_Low_Stock_Threshold:
 
@@ -804,7 +871,79 @@ def close_pro(request, pk, account_id):
     else:
         all_requisition_orders = Product_Requisition_Order.objects.all()
         return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
+    
 
+@login_required 
+def cancel_pro(request, pk, account_id):
+    if not request.user.is_superuser:
+        error_msg = "You are not authorized to cancel product requisition orders."
+        all_requisition_orders = Product_Requisition_Order.objects.all()
+        return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders, 'error_msg':error_msg})
+    
+    requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+    account = get_object_or_404(Account,pk=account_id )
+    if request.method == 'POST':
+        if requisition_order.PRO_Status == 'Ongoing':
+            stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+
+            for stock in stocks_ordered:
+                stock_listing = Product.objects.get(Product_ID=stock.Product_ID.Product_ID) #this is the actual product not the product ordered
+                stock_listing.To_Be_Received_Inventory_Count -= stock.Quantity #product reserved invetory count gets deducte
+                stock_listing.save()
+
+            requisition_order.Received_Date = timezone.now()
+            requisition_order.PRO_Status = 'Cancelled'
+            requisition_order.Progress = 'Cancelled'
+            requisition_order.Account_ID_Closed_by = account
+            requisition_order.save()
+        
+        messages.success(request, "Product requisition order cancelled successfully.")
+        return redirect('current_pros')
+    
+    else:
+        all_requisition_orders = Product_Requisition_Order.objects.all()
+        return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
+
+@login_required 
+def cancel_pro_specific(request, pk, account_id):
+    if not request.user.is_superuser:
+        product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+        stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+        
+        previous_parfills_combined = Partially_Fulfilled_History.objects.filter(Stock__in=stocks_ordered).values('Stock').annotate(total_quantity=Sum('Partially_Fulfilled_Quantity'))
+        
+        no_parfills = {}
+        
+        for stock in stocks_ordered:
+            if stock.pk not in [item['Stock'] for item in previous_parfills_combined]:
+                no_parfills[stock.pk] = stock 
+        
+        error_msg = "You are not authorized to cancel product requisition orders."
+        return render(request, 'inventoryapp/view_pro.html', {'pro': product_requisition_order, 'stocks': stocks_ordered, 'previous_parfills': previous_parfills_combined, 'no_parfills': no_parfills, 'error_msg':error_msg})
+    
+    requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+    account = get_object_or_404(Account,pk=account_id )
+    if request.method == 'POST':
+        if requisition_order.PRO_Status == 'Ongoing':
+            stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+
+            for stock in stocks_ordered:
+                stock_listing = Product.objects.get(Product_ID=stock.Product_ID.Product_ID) #this is the actual product not the product ordered
+                stock_listing.To_Be_Received_Inventory_Count -= stock.Quantity #product reserved invetory count gets deducte
+                stock_listing.save()
+
+            requisition_order.Received_Date = timezone.now()
+            requisition_order.PRO_Status = 'Cancelled'
+            requisition_order.Progress = 'Cancelled'
+            requisition_order.Account_ID_Closed_by = account
+            requisition_order.save()
+        
+        messages.success(request, "Product requisition order cancelled successfully.")
+        return redirect('view_pro')
+    
+    else:
+        all_requisition_orders = Product_Requisition_Order.objects.all()
+        return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
 
 @login_required 
 def customer_list(request):
@@ -1669,7 +1808,7 @@ def partially_fulfill(request, pk):
                     product_object = Product.objects.get(Product_ID=product_pk)
 
                     product_object.Actual_Inventory_Count += int(quantity)
-                    
+                    product_object.To_Be_Received_Inventory_Count -= int(quantity)
                     
                     if product_object.Product_Low_Stock_Threshold:
                         if int(product_object.Actual_Inventory_Count) <= int(product_object.Product_Low_Stock_Threshold):

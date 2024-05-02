@@ -15,19 +15,29 @@
                 <h4 class="m-0 mr-3">View Product Requisition Order</h4>
             </div>
         </div>
-
+        
         <div class="row mt-3">
             <div class="col">
                 <h5>Product Requisition Order No. {{ pro.Product_Requisition_ID }}</h5>
             </div>
-            <div class="col-auto">
-                <button class="btn btn-danger me-2">Delete</button>
+            <div class="col-auto d-flex">
+                <form id="cancelPRoForm" action="{% url 'cancel_pro_specific' pk=pro.pk account_id=request.user.account.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger me-2">Delete</button>
+                </form>  
                 <a href="{% url 'partially_fulfill' pro.pk %}" class="btn btn-primary me-2">Partially Fulfill</a>
                 <a href="{% url 'update_pro' pro.pk %}" class="btn btn-primary me-2">Edit</a>
-                <button class="btn btn-success me-2">Close</button>
+                <form id="closePRoForm" action="{% url 'close_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Close</button>
+                </form> 
             </div>
         </div>
-
+        {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_msg }}
+            </div>
+        {% endif %}
         <div class="row mt-3">
             <div class="col">
                 <p>Creation Date: {{ pro.Creation_Date }}</p> 
