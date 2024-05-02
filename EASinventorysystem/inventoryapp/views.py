@@ -1939,10 +1939,12 @@ def edit_count(request):
                     )
             messages.success(request, "Product count succesfully updated")
             return redirect('current_inventory')
-                    
-
-
     else:
+
+        if not request.user.is_superuser:
+            messages.error(request, "You are not authorized to edit inventory counts")
+            return redirect('current_inventory')
+
         return render(request, 'inventoryapp/edit_count.html', {'products': products})
 
 def inventory_update_history(request):
