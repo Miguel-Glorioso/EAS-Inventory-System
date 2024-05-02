@@ -23,7 +23,7 @@
             <div class="col-auto d-flex">
                 <form id="cancelPRoForm" action="{% url 'cancel_pro_specific' pk=pro.pk account_id=request.user.account.pk %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger me-2">Delete</button>
+                    <button type="submit" class="btn btn-danger me-2">Cancel</button>
                 </form>  
                 <a href="{% url 'partially_fulfill' pro.pk %}" class="btn btn-primary me-2">Partially Fulfill</a>
                 <a href="{% url 'update_pro' pro.pk %}" class="btn btn-primary me-2">Edit</a>

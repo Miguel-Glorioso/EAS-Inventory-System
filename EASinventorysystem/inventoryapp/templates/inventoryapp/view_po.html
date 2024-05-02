@@ -25,7 +25,7 @@
             <div class="col-auto d-flex">
                 <form id="cancelPRoForm" action="{% url 'cancel_po_specific' pk=po.pk account_id=request.user.account.pk %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger me-2">Delete</button>
+                    <button type="submit" class="btn btn-danger me-2">Cancel</button>
                 </form>  
                 {% if po.Customer_ID %}
                     <a href="{% url 'update_po_direct_customer' po_pk=po.Purchase_Order_ID c_pk=po.Customer_ID.Customer_ID %}" class="btn btn-primary me-2">Edit</a>
