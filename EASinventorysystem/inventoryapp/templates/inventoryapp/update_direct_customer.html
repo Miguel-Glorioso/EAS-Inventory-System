@@ -6,6 +6,12 @@
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
+    <style>
+        .required:after {
+              content:" *";
+              color: red;
+            }
+    </style>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,33 +32,33 @@
             <legend>Direct Customer Information</legend>
             <div class="mb-3">
                 <label for="id_customer_name" class="form-label custom-text">Customer Name:</label>
-                <input type="text" name="customer_name" class="form-control" maxlength="64" required id="id_customer_name" value="{{ customer.Customer_Name }}">
+                <input type="text" name="customer_name" class="form-control" maxlength="64" required id="id_customer_name" value="{{ customer.Customer_Name }}" required>
             </div>
             <div class="mb-3">
                 <label for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                <input type="text" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" value="{{ customer.Primary_Contact_Number }}">
+                <input type="text" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" value="{{ customer.Primary_Contact_Number }}" required>
             </div>
             <div class="mb-3">
                 <label for="id_address_line1" class="form-label custom-text">Address Line 1:</label>
-                <input type="text" name="address_line1" class="form-control" maxlength="255" required id="id_address_line1" value="{{ customer.Address_Line_1 }}">
+                <input type="text" name="address_line1" class="form-control" maxlength="255" required id="id_address_line1" value="{{ customer.Address_Line_1 }}" required>
             </div>
             <div class="row">
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label for="id_province" class="form-label custom-text">Province:</label>
-                        <input type="text" name="province" class="form-control" maxlength="100" required id="id_province" value="{{ customer.Province }}">
+                        <input type="text" name="province" class="form-control" maxlength="100" required id="id_province" value="{{ customer.Province }}" required>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label for="id_municipality" class="form-label custom-text">Municipality:</label>
-                        <input type="text" name="municipality" class="form-control" maxlength="100" required id="id_municipality" value="{{ customer.Municipality }}">
+                        <input type="text" name="municipality" class="form-control" maxlength="100" required id="id_municipality" value="{{ customer.Municipality }}" required>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label for="id_barangay" class="form-label custom-text">Barangay:</label>
-                        <input type="text" name="barangay" class="form-control" maxlength="100" required id="id_barangay" value="{{ customer.Barangay }}">
+                        <input type="text" name="barangay" class="form-control" maxlength="100" required id="id_barangay" value="{{ customer.Barangay }}" required>
                     </div>
                 </div>
                 <div class="col-md-3">
