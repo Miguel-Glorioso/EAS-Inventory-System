@@ -28,7 +28,7 @@
                     <div id="step1">
                         <fieldset>
                             <legend>PRO Information</legend>
-                            
+                            <!-- 1st-->
                             <!-- Row 1: Estimated Receiving Date, Manufacturer, Total Cost -->
                             <div class="row">
                                 <div class="col">
@@ -75,7 +75,7 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="pro_notes">PRO Notes:</label><br>
-                                    <textarea id="pro_notes" name="pro_notes" rows="4" cols="50" class="form-control rounded-10"></textarea><br><br>
+                                    <textarea id="pro_notes" name="pro_notes" rows="4" cols="50" class="form-control rounded-10" maxlength="1024"></textarea><br><br>
                                 </div>
                             </div>
                             
@@ -217,6 +217,18 @@
     </div>
 
     <script>
+        // checks date
+        document.addEventListener('DOMContentLoaded', function() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+
+        var estimatedReceivingDateInput = document.getElementById('estimated_receiving_date');
+        estimatedReceivingDateInput.min = today; // Directly set the min attribute
+    });
         // "Add to Cart" 
         var addToCartButtons = document.querySelectorAll('.add-to-cart');
         addToCartButtons.forEach(function(button) {

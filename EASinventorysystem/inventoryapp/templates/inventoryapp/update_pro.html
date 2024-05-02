@@ -29,16 +29,38 @@
                                     <label for="estimated_receiving_date">Estimated Receiving Date:</label><br>
                                     <input type="date" id="estimated_receiving_date" name="estimated_receiving_date" class="form-control rounded-10" value="{{ requisition_order.Estimated_Receiving_Date|date:'Y-m-d'}}"><br><br>
                                 </div>
+                                <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                                var today = new Date();
+                                                var dd = String(today.getDate()).padStart(2, '0');
+                                                var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                                                var yyyy = today.getFullYear();
+
+                                                today = yyyy + '-' + mm + '-' + dd;
+
+                                                var estimatedReceivingDateInput = document.getElementById('estimated_receiving_date');
+                                                estimatedReceivingDateInput.min = today; // Directly set the min attribute
+                                            });
+                                </script>
                                 <div class="col">
                                     <label for="manufacturer_name">Manufacturer:</label><br>
-                                    <input type="text" id="manufacturer_name" name="manufacturer_name" class="form-control rounded-10" value="{{ requisition_order.PRO_Manufacturer }}"><br><br>
+                                    <input type="text" id="manufacturer_name" name="manufacturer_name" class="form-control rounded-10" value="{{ requisition_order.PRO_Manufacturer }}"maxlength="32"><br><br>
                                 </div>
                                 <div class="col">
-                                    <label for="total_cost">Total Cost:</label><br>
-                                    <div class="input-group">
-                                        <span class="input-group-text">PHP</span>
-                                        <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="99999.99" maxlength="9" class="form-control rounded-10" value="{{ requisition_order.Total_Cost }}"><br><br>
-                                    </div>
+                                    <div class="col">
+                                        <label class="required" for="total_cost">Total Cost:</label><br>
+                                        <div class="input-group">
+                                            <span class="input-group-text">PHP</span>
+                                            <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" value="{{ requisition_order.Total_Cost }}" class="form-control rounded-10" oninput="validateInput(event)" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.key === '.'" size="9" max="9999999.99">
+                                        </div>
+                                        <script>
+                                            function validateInput(event) {
+                                                var input = event.target;
+                                                if (input.value.length > 10) {
+                                                    input.value = input.value.slice(0, 10);
+                                                }
+                                            }
+                                        </script>
                                 </div>
                             </div>
 
@@ -46,7 +68,7 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="pro_notes">PRO Notes:</label><br>
-                                    <textarea id="pro_notes" name="pro_notes" rows="4" cols="50" class="form-control rounded-10">{{ requisition_order.Notes }}</textarea><br><br>
+                                    <textarea type="text" id="pro_notes" name="pro_notes" class="form-control rounded-10" maxlength="1024">{{ requisition_order.Notes }}</textarea><br><br>
                                 </div>
                             </div>
                             
@@ -91,10 +113,22 @@
                                                 <tr>
                                                     <td>{{ stock.Product_ID.Name }}</td>
                                                     <td>{{ stock.Product_ID.EAS_Product_ID }}</td>
-                                                    <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value= {{stock.Quantity}}></td>
+                                                    <td><input type="int" id="quantityInput" class="form-control text-center" style="width: 100px;" value="{{ stock.Quantity }}" oninput="validateQuantityInput(event)"></td>
                                                     <td>{{ stock.Product_ID.Actual_Inventory_Count }}</td>
                                                     <input type="hidden" class="product_pk" value={{stock.Product_ID.Product_ID}} >
                                                     <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
+                                                    <script>
+                                                            document.getElementById('quantityInput').addEventListener('input', function() {
+                                                                if (this.value.length > 5) {
+                                                                    this.value = this.value.slice(0, 5);
+                                                                }
+                                                            });
+                                                            function validateQuantityInput(event) {
+                                                                var input = event.target;
+                                                                // Remove non-numeric characters from the input value
+                                                                input.value = input.value.replace(/[^\d]/g, '');
+                                                            }
+                                                    </script>
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
@@ -231,7 +265,7 @@
             newRow.innerHTML = `
                 <td>${productName}</td>
                 <td>${productId}</td>
-                <td><input type="number" class="form-control text-center quantity-input" style="width: 100px;" value="0"></td>
+                <td><input type="int" class="form-control text-center quantity-input" style="width: 100px;" value="0"></td>
                 <td>${productCount}</td>
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
@@ -271,6 +305,7 @@
         }
     
         var currentStep = 1;
+        
     
         function nextStep() {
             if (currentStep === 1) {
