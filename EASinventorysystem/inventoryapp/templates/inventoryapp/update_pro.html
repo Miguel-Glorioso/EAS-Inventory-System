@@ -100,6 +100,9 @@
                                             </tbody>
                                         </table>
                                         <input type="hidden" name="all_products" id="all_products" value="">  
+                                        {% for s_o in stock_ordered_items %}
+                                        <input type="hidden" name="ordered_prods" id="ordered_prods" value="{{ s_o.Product_ID.EAS_Product_ID}}">
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
@@ -393,6 +396,17 @@
 
             });
         });
+        document.addEventListener('DOMContentLoaded', function() {
+                hideOrderedProducts();
+            });
+
+        function hideOrderedProducts() {
+            var allProductsInputs = document.querySelectorAll('input[name="ordered_prods"]')
+            allProductsInputs.forEach(function(input) {
+                var productId = input.value;
+                hideProduct(productId);
+            });
+        }
     </script>
 </body>
 

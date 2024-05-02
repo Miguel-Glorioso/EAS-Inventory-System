@@ -833,12 +833,14 @@ def view_pro(request, pk):
     previous_parfills_combined = Partially_Fulfilled_History.objects.filter(Stock__in=stocks_ordered).values('Stock').annotate(total_quantity=Sum('Partially_Fulfilled_Quantity'))
     
     no_parfills = {}
+
+    has_parfills = bool(previous_parfills_combined)
     
     for stock in stocks_ordered:
         if stock.pk not in [item['Stock'] for item in previous_parfills_combined]:
             no_parfills[stock.pk] = stock 
-    
-    return render(request, 'inventoryapp/view_pro.html', {'pro': product_requisition_order, 'stocks': stocks_ordered, 'previous_parfills': previous_parfills_combined, 'no_parfills': no_parfills})
+    print(previous_parfills_combined, 'ched', has_parfills)
+    return render(request, 'inventoryapp/view_pro.html', {'pro': product_requisition_order, 'stocks': stocks_ordered, 'previous_parfills': previous_parfills_combined, 'no_parfills': no_parfills, 'has_parfills':has_parfills})
 
 @login_required 
 def close_pro(request, pk, account_id):
@@ -899,12 +901,19 @@ def cancel_pro(request, pk, account_id):
         error_msg = "You are not authorized to cancel product requisition orders."
         all_requisition_orders = Product_Requisition_Order.objects.all()
         return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders, 'error_msg':error_msg})
-    
+
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
     account = get_object_or_404(Account,pk=account_id )
     if request.method == 'POST':
         if requisition_order.PRO_Status == 'Ongoing':
             stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+
+            for stock in stocks_ordered:
+                parfill = Partially_Fulfilled_History.objects.filter(Stock=stock)
+                if parfill:
+                    error_msg = "Cannot cancel product requisition order that is partially fulfilled"
+                    all_requisition_orders = Product_Requisition_Order.objects.all()
+                    return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders, 'error_msg':error_msg})
 
             for stock in stocks_ordered:
                 stock_listing = Product.objects.get(Product_ID=stock.Product_ID.Product_ID) #this is the actual product not the product ordered
@@ -917,7 +926,7 @@ def cancel_pro(request, pk, account_id):
             requisition_order.Account_ID_Closed_by = account
             requisition_order.save()
         
-            messages.error(request, "This purchase order cannot be cancelled.")
+            messages.success(request, "Product requisition order cancelled successfully.")
             return redirect('current_pros')
         else:
             error_msg = "This purchase order cannot be cancelled."
@@ -937,13 +946,13 @@ def cancel_pro_specific(request, pk, account_id):
         previous_parfills_combined = Partially_Fulfilled_History.objects.filter(Stock__in=stocks_ordered).values('Stock').annotate(total_quantity=Sum('Partially_Fulfilled_Quantity'))
         
         no_parfills = {}
-        
+        has_parfills = bool(previous_parfills_combined)
         for stock in stocks_ordered:
             if stock.pk not in [item['Stock'] for item in previous_parfills_combined]:
                 no_parfills[stock.pk] = stock 
         
         error_msg = "You are not authorized to cancel product requisition orders."
-        return render(request, 'inventoryapp/view_pro.html', {'pro': product_requisition_order, 'stocks': stocks_ordered, 'previous_parfills': previous_parfills_combined, 'no_parfills': no_parfills, 'error_msg':error_msg})
+        return render(request, 'inventoryapp/view_pro.html', {'pro': product_requisition_order, 'stocks': stocks_ordered, 'previous_parfills': previous_parfills_combined, 'no_parfills': no_parfills, 'has_parfills':has_parfills, 'error_msg':error_msg})
     
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
     account = get_object_or_404(Account,pk=account_id )
@@ -963,7 +972,7 @@ def cancel_pro_specific(request, pk, account_id):
             requisition_order.save()
             
             messages.success(request, "Product requisition order cancelled successfully.")
-            return redirect('view_pro')
+            return redirect('current_pros')
         else:
             product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
             stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
@@ -979,9 +988,6 @@ def cancel_pro_specific(request, pk, account_id):
             error_msg = "This purchase order cannot be cancelled."
             return render(request, 'inventoryapp/view_pro.html', {'pro': product_requisition_order, 'stocks': stocks_ordered, 'previous_parfills': previous_parfills_combined, 'no_parfills': no_parfills, 'error_msg':error_msg})
         
-            
-        
-    
     else:
         all_requisition_orders = Product_Requisition_Order.objects.all()
         return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})

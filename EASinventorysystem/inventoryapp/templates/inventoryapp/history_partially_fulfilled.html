@@ -35,20 +35,31 @@
                 <tr>
                     <th scope="col" style="background-color: #C2C1C1; text-align: center;">Edit ID</th>
                     <th scope="col" style="background-color: #C2C1C1; text-align: center;">Date Updated</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">PRO No.</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Product</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Initial PRO Quantity</th>
                     <th scope="col" style="background-color: #C2C1C1; text-align: center;">Partially Fulfilled Quantity</th>
-                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Stock Ordered</th>
-                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Closed by</th>
-                    <th scope="col" style="background-color: #C2C1C1;">Actions</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Image Report</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">text Report</th>
+                    <th scope="col" style="background-color: #C2C1C1; text-align: center;">Submitted by</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for item in partially_fulfilled_history %}
                 <tr>
-                    <td style="text-align: center;">{{ item.Partially_Fulfill_Edit_ID }}</td>
-                    <td style="text-align: center;">{{ item.Date_Updated }}</td>
-                    <td style="text-align: center;">{{ item.Partially_Fulfilled_Quantity }}</td>
-                    <td style="text-align: center;">{{ item.Stock }}</td>
-                    <td style="text-align: center;">{{ item.Account_ID }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ item.Partially_Fulfill_Edit_ID }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ item.Date_Updated }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ item.Stock.Product_Requisition_ID.Product_Requisition_ID }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ item.Stock.Product_ID.Product_ID }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ item.Stock.Quantity }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ item.Partially_Fulfilled_Quantity }}</td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        {% if item.Image_Report %}
+                            <img src="{{ item.Image_Report.url }}"  alt="Image Report" style="max-width: 50px; max-height: 50px;">
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center; vertical-align: middle;">{{ item.Text_Report }}</td>
+                    <td style="text-align: center; vertical-align: middle;">{{ item.Account_ID }}</td>
                     <td>
                         <!-- Add actions here if needed -->
                     </td>

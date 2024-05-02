@@ -17,16 +17,6 @@
                 </div>
             </div>
 
-            <!-- Notes Section -->
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <div class="mb-3">
-                        <h5>Notes:</h5>
-                        <textarea class="form-control" rows="3" name="notes" id="notes"></textarea>
-                    </div>
-                </div>
-            </div>
-
             <!-- Products Ordered -->
             <div class="row mt-4">
                 <div class="d-flex justify-content-center">
@@ -68,11 +58,23 @@
                                                     <input type="file" name="parfill_picture_{{ stock.Product_ID.Product_ID }}" accept="image/*" class="form-control parfill-picture-input">
                                                 </div>
                                             </td>
+                                            {% if stock.pk in no_parfills %}
                                             <td>
                                                 <div class="input-group">
                                                     <input type="number" min="0" max="{{stock.Quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="0">
                                                 </div>
                                             </td>
+                                            {% else %}
+                                            {% for parfill in previous_parfills %}
+                                                    {% if parfill.Stock == stock.pk %}
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input type="number" min="0" max="{{parfill.total_quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="0">
+                                                            </div>
+                                                        </td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
                                             <td>
                                                 <div class="input-group">
                                                     <textarea class="form-control text-report-input" rows="3" name="text_report_{{ stock.Product_ID.Product_ID }}"></textarea>

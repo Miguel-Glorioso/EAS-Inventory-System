@@ -21,12 +21,14 @@
                 <h5>Product Requisition Order No. {{ pro.Product_Requisition_ID }}</h5>
             </div>
             <div class="col-auto d-flex">
+                <a href="{% url 'partially_fulfill' pro.pk %}" class="btn btn-primary me-2">Partially Fulfill</a>
+                {% if not has_parfills %}
+                <a href="{% url 'update_pro' pro.pk %}" class="btn btn-primary me-2">Edit</a>
                 <form id="cancelPRoForm" action="{% url 'cancel_pro_specific' pk=pro.pk account_id=request.user.account.pk %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger me-2">Delete</button>
-                </form>  
-                <a href="{% url 'partially_fulfill' pro.pk %}" class="btn btn-primary me-2">Partially Fulfill</a>
-                <a href="{% url 'update_pro' pro.pk %}" class="btn btn-primary me-2">Edit</a>
+                </form>
+                {% endif %}
                 <form id="closePRoForm" action="{% url 'close_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-success">Close</button>

@@ -52,7 +52,7 @@
                 <td style="text-align: center;"><span class="badge" id="badge-category-{{ forloop.counter }}">{{ c.Category_Name }}</span></td>
                 <td style="text-align: center;">{{ c.Category_Hex_Color_ID  }}</td>
                 <td>
-                  <button type="button" class="btn btn-info btn-view" data-category-id="{{ c.Category_ID }}">View</button>
+                  <button type="button" class="btn btn-primary  btn-view" data-category-id="{{ c.Category_ID }}">View</button>
                 </td>
               </tr>
             {% endfor %}
@@ -78,7 +78,7 @@
                   <td style="text-align: center;"><span class="badge" id="badge-tag-{{ forloop.counter }}">{{ consignee.Consignee_Name }}</span></td>
                   <td style="text-align: center;">{{ consignee.Tag_Hex_Color_ID }}</td>
                   <td>
-                    <button type="button" class="btn btn-info btn-view-consignee-tag" data-consignee-id="{{ consignee.Consignee_ID }}">View</button>
+                    <button type="button" class="btn btn-primary btn-view-consignee-tag" data-consignee-id="{{ consignee.Consignee_ID }}">View</button>
                   </td>
                 </tr>
             {% endfor %}
