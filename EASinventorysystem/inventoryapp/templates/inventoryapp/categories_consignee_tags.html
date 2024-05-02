@@ -46,8 +46,8 @@
           <thead>
             <tr>
               <th scope="col" style="background-color: #C2C1C1; text-align: center;">Category Name</th>
-              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Description</th>
-              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false">Actions</th> <!-- Add Actions column header -->
+              <th scope="col" style="background-color: #C2C1C1; text-align: center;">Color</th>
+              <th scope="col" style="background-color: #C2C1C1;" data-orderable="false"></th> <!-- Add Actions column header -->
             </tr>
           </thead>
           <tbody>
@@ -80,7 +80,7 @@
             <!-- Iterate over consignees and display their associated tags -->
             {% for consignee in consignees %}
                 <tr>
-                  <td style="text-align: center;"><span class="badge" id="badge-tag-{{ forloop.counter }}">{{ consignee.Consignee_Name }}</span></td>
+                  <td style="text-align: center;"><span class="badge" id="badge-tag-{{ forloop.counter }}">{{ consignee.Consignee_Tag_ID }}</span></td>
                   <td style="text-align: center;">{{ consignee.Tag_Hex_Color_ID }}</td>
                   <td>
                     <button type="button" class="btn btn-primary btn-view-consignee-tag" data-consignee-id="{{ consignee.Consignee_ID }}">View</button>
@@ -147,7 +147,6 @@
           $('#categoryModal').find('.modal-body').html(`
             <ul>
               <li><strong>Category Name:</strong> ${response.Category_Name}</li>
-              <li><strong>Category ID:</strong> ${response.Category_ID}</li>
               <li><strong>Hex Color ID:</strong> ${response.Category_Hex_Color_ID}</li>
               <li><strong>Description:</strong> ${response.Description}</li>
               <li><strong>Low Stock Threshold:</strong> ${response.Category_Product_Low_Stock_Threshold}</li>
@@ -175,20 +174,21 @@
       success: function(response) {
         $('#consigneeTagModal').find('.modal-body').html(`
           <ul>
+            <li><strong>Consignee Name:</strong> ${response.Consignee_ID}</li>
             <li><strong>Consignee Name:</strong> ${response.Consignee_Name}</li>
+            <li><strong>Customer Type:</strong> ${response.Customer_Type}</li>
             <li><strong>Address Line 1:</strong> ${response.Address_Line_1}</li>
             <li><strong>Barangay:</strong> ${response.Barangay}</li>
             <li><strong>Municipality:</strong> ${response.Municipality}</li>
             <li><strong>Province:</strong> ${response.Province}</li>
             <li><strong>Zip Code:</strong> ${response.Zip_Code}</li>
             <li><strong>Primary Contact Number:</strong> ${response.Primary_Contact_Number}</li>
-            <li><strong>Customer Type:</strong> ${response.Customer_Type}</li>
-            <li><strong>Notes:</strong> ${response.Notes}</li>
             <li><strong>Consignment Period Start:</strong> ${response.Consignment_Period_Start}</li>
             <li><strong>Consignment Period End:</strong> ${response.Consignment_Period_End}</li>
             <li><strong>Emergency Contact Number:</strong> ${response.Emergency_Contact_Number}</li>
             <li><strong>Email Address:</strong> ${response.Email_Address}</li>
             <li><strong>Tag Hex Color ID:</strong> ${response.Tag_Hex_Color_ID}</li>
+            <li><strong>Notes:</strong> ${response.Notes}</li>
           </ul>
         `);
         $('#consigneeTagModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_tags/' + response.Consignee_ID + '/');
