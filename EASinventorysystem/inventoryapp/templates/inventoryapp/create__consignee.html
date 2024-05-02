@@ -155,7 +155,7 @@
             </div>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-6">
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
                 </div>
                 <div class="col-md-6 text-end">
                     <button type="button" class="btn btn-success" id="createConsigneeBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal" disabled>Create</button>
@@ -196,7 +196,9 @@
                     Are you sure you want to create this new Consignee?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <div class="col">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                    </div>
                     <button type="button" class="btn btn-primary" id="confirmCreateConsigneeBtn">Yes</button>
                 </div>
             </div>

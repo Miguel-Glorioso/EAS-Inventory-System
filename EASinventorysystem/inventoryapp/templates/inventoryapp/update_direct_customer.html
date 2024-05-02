@@ -21,7 +21,7 @@
         {% if error_msg %}
             <div class="alert alert-danger">{{ error_msg }}</div>
         {% endif %}
-        <form method="POST" action="{% url 'update_direct_customer' customer.pk %}">
+        <form id="updateForm" method="POST" action="{% url 'update_direct_customer' customer.pk %}">
             {% csrf_token %}
             <legend>Direct Customer Information</legend>
             <div class="mb-3">
@@ -67,8 +67,8 @@
                 <textarea name="notes" class="form-control" id="id_notes" rows="3">{{ customer.Notes }}</textarea>
             </div>
             <div class="d-flex justify-content-between w-100">
-                <button type="button" class="btn btn-secondary"data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
-                <button type="submit" class="btn btn-success"data-bs-toggle="modal" data-bs-target="#confirmationModal">Update</button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                <button type="button" class="btn btn-success" id="submitBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal">Update</button>
             </div>
         </form>
     </div>
@@ -105,56 +105,28 @@
                 Are you sure you want to submit the form?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" id="submitConfirmationBtn">Yes</button>
+                <div class="col">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                </div>
+                <button type="button" class="btn btn-success" id="confirmSubmit">Yes</button>
             </div>
         </div>
     </div>
 </div>
 <script>
     $(document).ready(function () {
-        console.log("Document is ready");
-
-        // When the "Create" button is clicked
-        $("#createBtn").click(function () {
-            console.log("Create button clicked");
-            // Check if any field in the form has been filled out
-            var formIsEmpty = true;
-            $('form input, form textarea').each(function () {
-                if ($(this).val() !== '') {
-                    formIsEmpty = false;
-                    return false; // Exit the loop early
-                }
-            });
-
-            // Show the cancel confirmation modal only if the form is not empty
-            if (!formIsEmpty) {
-                console.log("Form is not empty, showing cancel modal");
-                $("#cancelModal").modal('show');
-            } else {
-                // If the form is empty, submit the form directly
-                console.log("Form is empty, submitting form directly");
-                $("form").submit();
-            }
+        // When the "Update" button is clicked
+        $("#submitBtn").click(function () {
+            // Show the confirmation modal
+            $("#confirmationModal").modal('show');
         });
 
-        // When the "Yes, Cancel" button in the cancel confirmation modal is clicked
-        $("#cancelConfirmationBtn").click(function () {
-            console.log("Cancel confirmation button clicked");
-            // Hide the cancel confirmation modal
-            $("#cancelModal").modal('hide');
-            // Redirect the user to "current_customers.html"
-            console.log("Redirecting to current_customers.html");
-            window.location.href = "current_customers.html";
-        });
-
-        // When the "Yes, Submit" button in the form submission confirmation modal is clicked
-        $("#submitConfirmationBtn").click(function () {
-            console.log("Submit confirmation button clicked");
-            // Hide the form submission confirmation modal
+        // When the "Yes" button in the confirmation modal is clicked
+        $("#confirmSubmit").click(function () {
+            // Hide the confirmation modal
             $("#confirmationModal").modal('hide');
             // Submit the form
-            $("form").submit();
+            $("#updateForm").submit();
         });
     });
 </script>

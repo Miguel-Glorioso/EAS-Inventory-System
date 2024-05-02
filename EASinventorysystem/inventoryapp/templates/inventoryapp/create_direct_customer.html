@@ -68,7 +68,7 @@
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label class="required" for="zip_code" class="form-label">Zip Code:</label> 
-                        <input type="text" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" maxlength="4" pattern="[0-9]{4}" required>
+                        <input type="text" name="zip_code" class="form-control" required id="zip_code" placeholder="Zip Code" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" maxlength="4">
                     </div>
                 </div>
             </div>
@@ -78,7 +78,7 @@
             </div>
             
             <div class="d-flex justify-content-between w-100">
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
                 <button type="submit" class="btn btn-success" id="createBtn" onclick="handleSubmit()">Create</button>
             </div>
         </form>
