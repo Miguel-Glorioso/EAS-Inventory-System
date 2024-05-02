@@ -40,12 +40,18 @@
       </div>
     
       {% if messages %}
-            {% for message in messages %}
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% else %}
                 <div class="alert alert-success" role="alert">
                     {{ message }}
                 </div>
-            {% endfor %}
-        {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
 <!-- Buttons row -->
 <div class="row mt-3">

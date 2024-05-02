@@ -75,10 +75,17 @@
                       </select>
                     </td>
                     <td> 
+                      {% if not has_parfills %}
                       <form id="closePRoForm" action="{% url 'cancel_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
                         {% csrf_token %}
                         <button type="button" class="btn btn-danger" onclick="submitCancelPRoForm(this)">Cancel</button>
+                      </form>
+                      {% else %}
+                      <form id="closePRoForm" action="{% url 'cancel_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-danger" onclick="submitCancelPRoForm(this)" disabled>Cancel</button>
                       </form>  
+                      {% endif %}
                     </td> 
                     <td> 
                       <form id="closePRoForm" action="{% url 'close_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">

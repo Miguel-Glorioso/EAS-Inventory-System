@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
@@ -29,6 +30,12 @@
                         <label class="required" for="id_customer_name" class="form-label custom-text">Customer Name:</label>
                         <input type="text" name="customer_name" class="form-control" maxlength="32" required id="id_customer_name" placeholder="Customer Name">
                     </div>
+                    <style>
+                        .required:after {
+                          content:" *";
+                          color: red;
+                        }
+                    </style>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
@@ -41,25 +48,25 @@
 
             
             <div class="mb-3">
-                <label for="address_line1" class="form-label">Address Line 1:</label>
+                <label class="required" for="address_line1" class="form-label">Address Line 1:</label>
                 <input type="text" class="form-control" id="address_line1" name="address_line1" maxlength="128" required placeholder="Address Line 1">
             </div>
             <div class="row">
                 <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="province" class="form-label">Province:</label>
+                        <label class="required" for="province" class="form-label">Province:</label>
                         <input type="text" class="form-control" id="province" name="province" maxlength="64" required placeholder="Province">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="municipality" class="form-label">Municipality:</label>
+                        <label class="required" for="municipality" class="form-label">Municipality:</label>
                         <input type="text" class="form-control" id="municipality" name="municipality" maxlength="64" required placeholder="Municipality">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="barangay" class="form-label">Barangay:</label>
+                        <label class="required" for="barangay" class="form-label">Barangay:</label>
                         <input type="text" class="form-control" id="barangay" name="barangay" maxlength="64" required placeholder="Barangay">
                     </div>
                 </div>
@@ -77,7 +84,7 @@
             
             <div class="d-flex justify-content-between w-100">
                 <button type="button" class="btn btn-secondary"data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
-                <button type="submit" class="btn btn-primary"data-bs-toggle="modal" data-bs-target="#confirmationModal">Create</button>
+                <button type="submit" class="btn btn-success"data-bs-toggle="modal" data-bs-target="#confirmationModal">Create</button>
             </div>
         </form>
     </div>
@@ -114,7 +121,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="submitConfirmationBtn">Yes, Submit</button>
+                <button type="button" class="btn btn-success" id="submitConfirmationBtn">Yes</button>
             </div>
         </div>
     </div>
