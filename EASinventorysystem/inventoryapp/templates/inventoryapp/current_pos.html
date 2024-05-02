@@ -110,6 +110,7 @@
                       </div>
                     </div>
                   </div>
+                </div>
                   <td> 
                       <form id="closePoForm{{ po.Purchase_Order_ID }}" action="{% url 'close_po' pk=po.pk account_id=request.user.account.pk %}" method="post">
                         {% csrf_token %}
@@ -131,6 +132,7 @@
                               <button type="button" class="btn btn-danger left-align" data-bs-dismiss="modal">No</button>
                           </div>
                           <button type="submit" class="btn btn-success confirmClose" data-po-form="{{ po.Purchase_Order_ID }}">Yes</button>
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -122,38 +122,29 @@
 <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
 <script>
-    var openButtons = document.querySelectorAll('.openModal');
-        openButtons.forEach(function(button) {
-            button.addEventListener('click', function () {
-                var poId = this.getAttribute('data-po-pk');
-                $('#confirmModal' + poId).modal('show');
-            });
+    $(document).ready(function() {
+        $('.openModal').click(function() {
+            var poId = $(this).data('po-pk');
+            $('#confirmModal' + poId).modal('show');
         });
 
-        var confirmButtons = document.querySelectorAll('.confirmClose');
-        confirmButtons.forEach(function(button) {
-            button.addEventListener('click', function () {
-                var poFormId = this.getAttribute('data-po-form');
-                $('#closePoForm' + poFormId).submit();
-            });
-        });
-        
-        var cancelButtons = document.querySelectorAll('.openCancelModal');
-        cancelButtons.forEach(function(button) {
-            button.addEventListener('click', function () {
-                var poId = this.getAttribute('data-po-pk');
-                $('#confirmCancelModal' + poId).modal('show');
-            });
+        $('.confirmClose').click(function() {
+            var poFormId = $(this).data('po-form');
+            $('#closePoForm' + poFormId).submit();
         });
 
-        var confirmCancelButtons = document.querySelectorAll('.confirmCancel');
-        confirmCancelButtons.forEach(function(button) {
-            button.addEventListener('click', function () {
-                var poFormId = this.getAttribute('data-po-form');
-                $('#cancelPoForm' + poFormId).submit();
-            });
+        $('.openCancelModal').click(function() {
+            var poId = $(this).data('po-pk');
+            $('#confirmCancelModal' + poId).modal('show');
         });
+
+        $('.confirmCancel').click(function() {
+            var poFormId = $(this).data('po-form');
+            $('#cancelPoForm' + poFormId).submit();
+        });
+    });
 </script>
+
 <div class="modal fade" id="confirmModal{{ po.Purchase_Order_ID }}" tabindex="-1" aria-labelledby="confirmModalLabel{{ po.Purchase_Order_ID }}" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -169,28 +160,27 @@
               <button type="button" class="btn btn-danger left-align" data-bs-dismiss="modal">No</button>
           </div>
           <button type="submit" class="btn btn-success confirmClose" data-po-form="{{ po.Purchase_Order_ID }}">Yes</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-<div class="modal fade" id="confirmCancelModal{{ po.Purchase_Order_ID }}" tabindex="-1" aria-labelledby="confirmCancelModalLabel{{ po.Purchase_Order_ID }}" aria-hidden="true">
+  <div class="modal fade" id="confirmCancelModal{{ po.Purchase_Order_ID }}" tabindex="-1" aria-labelledby="confirmCancelModalLabel{{ po.Purchase_Order_ID }}" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+      <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="confirmCancelModalLabel{{ po.Purchase_Order_ID }}">Confirm Cancel</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title" id="confirmCancelModalLabel{{ po.Purchase_Order_ID }}">Confirm Cancel</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            Are you sure you want to cancel this purchase order?
+          Are you sure you want to cancel this purchase order?
         </div>
         <div class="modal-footer">
-            <div class="col">
+          <div class="col">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
-            </div>
-            <button type="submit" class="btn btn-success confirmCancel" data-po-form="{{ po.Purchase_Order_ID }}">Yes</button>
+          </div>
+          <button type="submit" class="btn btn-success confirmCancel" data-po-form="{{ po.Purchase_Order_ID }}">Yes</button>
         </div>
-        </div>
+      </div>
     </div>
-</div>
+  </div>
 {% endblock %}
