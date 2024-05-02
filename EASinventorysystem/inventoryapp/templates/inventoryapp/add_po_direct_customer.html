@@ -68,7 +68,7 @@
                         </div>
                         <div class="col">
                             <label class="required" for="contact_info">Primary Contact Number:</label><br>
-                            <input type="tel" id="phone" name="contact_info" class="form-control" required id="contact_info" placeholder="Primary Contact Number: 09xxxxxxxxx" pattern="09[0-9]{9}"><br>
+                            <input type="text" name="contact_info" class="form-control" required id="contact_info" placeholder="Primary Contact Number: 09xxxxxxxxx" pattern="09[0-9]{9}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 0;"><br>
 
                             <!-- <input type="number" id="contact_info" name="contact_info" class="form-control" maxlength="11" required minlength="11" placeholder="09123456789"><br><br> -->
                         </div>
@@ -553,7 +553,7 @@
         $(document).ready(function() {
             var totalPrice = 0;
 
-            $('#submit_po').click(function() {
+            $('#confirmSubmit').click(function() {
                 $('#PO_products tbody tr').each(function(i) {
                     var productId = $(this).find('.product_pk').val();
                     var productPriceText = $(this).find("td:eq(2)").text().trim();

@@ -1,0 +1,166 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+
+{% extends 'inventoryapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+
+    <title>Current Purchase Orders</title>
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">View Purchase Order</h4>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <h5>Purchase Order No. {{ po.Purchase_Order_ID }}</h5>
+            </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <p>Creation Date: {{ po.Creation_Date }}</p> 
+                <p>Requested Date: {{ po.Requested_Date }}</p>
+                {% if po.Customer_ID %}
+                    <p>Type of Purchaser: {{ po.Customer_ID.Customer_Type }}</p>
+                    <p>Purchaser Name: {{ po.Customer_ID.Customer_Name }}</p>
+                    <p>Delivery Address: {{ po.Customer_ID.Address_Line_1 }}, {{ po.Customer_ID.Barangay }}, {{ po.Customer_ID.Municipality }}, {{ po.Customer_ID.Province }}, {{ po.Customer_ID.Zip_Code }}</p>
+                {% elif po.Consignee_ID %}
+                    <p>Type of Purchaser: {{ po.Consignee_ID.Customer_Type }}</p>
+                    <p>Purchaser Name: {{ po.Consignee_ID.Consignee_Name }}</p>   
+                    <p>Delivery Address: {{ po.Consignee_ID.Address_Line_1 }}, {{ po.Consignee_ID.Barangay }}, {{ po.Consignee_ID.Municipality }}, {{ po.Consignee_ID.Province }}, {{ po.Consignee_ID.Zip_Code }}</p>
+                {% endif %}
+                <p>Shipping Method: {{ po.Shipping_Method }}</p>
+                <p>Total Due: Php {{ po.Total_Due }}</p>
+                <p>Progress: {{ po.Progress }}</p>
+            </div>
+            <div class="col">
+                {% if po.Customer_ID %}
+                    <p>Primary Contact Number: {{ po.Customer_ID.Primary_Contact_Number }}</p>
+                {% elif po.Consignee_ID %}
+                    <p>Primary Contact Number: {{ po.Consignee_ID.Primary_Contact_Number }}</p>
+                    <p>Email Address: {{ po.Consignee_ID.Email_Address }}</p>
+                    <p>Emergency Contact No. (Mobile/Landline): {{ po.Consignee_ID.Emergency_Contact_Number }}</p>
+                {% endif %}
+                <p>Created by: {{po.Account_ID_Created_by}}</p>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <div class="overflow-auto p-3" style="background-color: #ddd; border-radius: 10px;">
+                    <h6>Notes:</h6>
+                    <p>{{ po.Notes }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <h6>Products Ordered:</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Product ID</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in products %}
+                            <tr>
+                                <td>{{ p.Product_ID.Name }}</td>
+                                <td>{{ p.Product_ID.EAS_Product_ID }}</td>
+                                <td>PHP {{ p.Product_ID.Price}}</td>
+                                <td>{{ p.Quantity }}</td>
+                                {% load mathfilters %}
+                                <td>PHP {{ p.Quantity|mul:p.Product_ID.Price }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <a href="{% url 'history_po' %}" class="btn btn-primary">Go Back</a>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.openModal').click(function() {
+            var poId = $(this).data('po-pk');
+            $('#confirmModal' + poId).modal('show');
+        });
+
+        $('.confirmClose').click(function() {
+            var poFormId = $(this).data('po-form');
+            $('#closePoForm' + poFormId).submit();
+        });
+
+        $('.openCancelModal').click(function() {
+            var poId = $(this).data('po-pk');
+            $('#confirmCancelModal' + poId).modal('show');
+        });
+
+        $('.confirmCancel').click(function() {
+            var poFormId = $(this).data('po-form');
+            $('#cancelPoForm' + poFormId).submit();
+        });
+    });
+</script>
+
+<div class="modal fade" id="confirmModal{{ po.Purchase_Order_ID }}" tabindex="-1" aria-labelledby="confirmModalLabel{{ po.Purchase_Order_ID }}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel{{ po.Purchase_Order_ID }}">Confirm Close</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to close this purchase order?
+        </div>
+        <div class="modal-footer">
+          <div class="col">
+              <button type="button" class="btn btn-danger left-align" data-bs-dismiss="modal">No</button>
+          </div>
+          <button type="submit" class="btn btn-success confirmClose" data-po-form="{{ po.Purchase_Order_ID }}">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirmCancelModal{{ po.Purchase_Order_ID }}" tabindex="-1" aria-labelledby="confirmCancelModalLabel{{ po.Purchase_Order_ID }}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmCancelModalLabel{{ po.Purchase_Order_ID }}">Confirm Cancel</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to cancel this purchase order?
+        </div>
+        <div class="modal-footer">
+          <div class="col">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+          </div>
+          <button type="submit" class="btn btn-success confirmCancel" data-po-form="{{ po.Purchase_Order_ID }}">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
