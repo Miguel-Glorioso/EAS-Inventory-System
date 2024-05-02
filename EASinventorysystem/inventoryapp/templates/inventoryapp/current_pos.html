@@ -214,6 +214,18 @@
                 $('#cancelPoForm' + poFormId).submit();
             });
         });
+        $(document).ready(function() {
+          var table = $('#currentpo').DataTable();
+
+          // Add event listener for customer type filter
+          $('#customerFilter').on('change', function() {
+              var customer_type = $(this).val();
+              var url = window.location.pathname; // Get the current URL
+              var params = new URLSearchParams(window.location.search); // Get the existing query parameters
+              params.set('customer_type', customer_type); // Set the 'customer_type' parameter to the selected value
+              window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
+          });
+        });
   </script>
 
 {% endblock %}

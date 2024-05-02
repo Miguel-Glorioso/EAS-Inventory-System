@@ -291,6 +291,15 @@ def update_product(request, pk):
 @login_required 
 def purchase_order_list(request):
     all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+
+    customer_type_param = request.GET.get('customer_type')
+
+    if customer_type_param:
+        if customer_type_param == 'Direct':
+            all_purchase_orders = all_purchase_orders.exclude(Consignee_ID__isnull=True)
+        elif customer_type_param == 'Consignee':
+            all_purchase_orders = all_purchase_orders.exclude(Customer_ID__isnull=True)
+
     return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
 
 @login_required 
@@ -706,6 +715,15 @@ def cancel_po_specific(request, pk, account_id):
 @login_required 
 def requisition_order_list(request):
     all_requisition_orders = Product_Requisition_Order.objects.all()
+
+    progress_type_param = request.GET.get('progress_type')
+    print(progress_type_param)
+    if progress_type_param:
+            if progress_type_param == 'Pending':
+                all_requisition_orders = all_requisition_orders.filter(Progress='Pending')
+            elif progress_type_param == 'To be Picked Up':
+                all_requisition_orders = all_requisition_orders.filter(Progress='To be Picked Up')
+
     return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
 
 @login_required 
@@ -736,7 +754,6 @@ def add_requisition_order(request):
         pro_notes = request.POST.get('pro_notes')
         Products = request.POST.get('all_products')
         PRO_account = request.POST.get('account')
-        
         
         PRO_account = get_object_or_404(Account, pk=PRO_account)
 
@@ -1008,7 +1025,7 @@ def customer_list(request):
         elif customer_type_param == "Consignee":
             all_customers = Consignee.objects.all()
             
-    return render(request, 'inventoryapp/current_customers.html', {'customers':all_customers    })
+    return render(request, 'inventoryapp/current_customers.html', {'customers':all_customers })
 
 @login_required 
 def create_direct_customer(request):
@@ -1600,6 +1617,7 @@ def view_consignee_tag_details(request, consignee_id):
         consignee = get_object_or_404(Consignee, pk=consignee_id)
         consignee_details = {
             'Consignee_ID': consignee.Consignee_ID,
+            'Consignee_Tag': consignee.Consignee_Tag_ID,
             'Consignee_Name': consignee.Consignee_Name,
             'Address_Line_1': consignee.Address_Line_1,
             'Barangay': consignee.Barangay,

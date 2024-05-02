@@ -44,6 +44,15 @@
           {{ error_msg }}
       </div>
     {% endif %}
+    <div class="row mt-3">
+      <div class="col-md-auto">
+        <select id="customerFilter" class="form-select" aria-label="Filter by Progress">
+            <option value="">All Progress Types</option>
+            <option value="Pending" {% if request.GET.proggress_type|stringformat:"s" == "Pending" %} selected {% endif %}>Pending</option>
+            <option value="To be Picked Up" {% if request.GET.proggress_type|stringformat:"s" == "To be Picked Up" %} selected {% endif %}>To be Picked Up</option>
+        </select>
+      </div>
+    </div>
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">
@@ -198,6 +207,18 @@
             $('#cancelPRoForm' + proFormId).submit();
         });
     });
+    $(document).ready(function() {
+          var table = $('#currentpro').DataTable();
+
+          // Add event listener for customer type filter
+          $('#customerFilter').on('change', function() {
+              var progress_type = $(this).val();
+              var url = window.location.pathname; // Get the current URL
+              var params = new URLSearchParams(window.location.search); // Get the existing query parameters
+              params.set('progress_type', progress_type); // Set the 'customer_type' parameter to the selected value
+              window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
+          });
+        });
   </script>  
 </body>
 {% endblock %}
