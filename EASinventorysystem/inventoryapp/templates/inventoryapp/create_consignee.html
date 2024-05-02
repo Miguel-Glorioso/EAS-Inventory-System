@@ -135,7 +135,7 @@
             </div>
             <div class="input-group mb-3">
                 <label class="required" for="colorpicker">Tag Color Picker:</label>
-                <input type="color" id="tag_hex_color_id" name="tag_hex_color_id" value="#000000">
+                <input type="color" id="tag_hex_color_id" name="tag_hex_color_id" placeholder="#000000">
                 <div id="colorDisplay">#000000</div>
             </div>
             
@@ -156,35 +156,33 @@
             
             <div class="mb-3">
                 <label for="id_notes" class="form-label custom-text">Notes:</label>
-                <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes" oninput="if(this.value.length > 1024) this.value = this.value.substring(0, 1024);" maxlength="1024"></textarea>
+                <textarea type="text" name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes" oninput="if(this.value.length > 1024) this.value = this.value.substring(0, 1024);" maxlength="1024"></textarea>
                 <!-- <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea> -->
             </div>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-6">
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
                 </div>
                 <div class="col-md-6 text-end">
-                    <button type="button" class="btn btn-success" id="createConsigneeBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal" disabled>Create</button>
+                    <button type="button" class="btn btn-success" id="createConsigneeBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal" >Create</button>
                 </div>
             </div>
         </form>
     </div>
     
     <!-- Cancel Modal -->
-    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="cancelModalLabel">Warning</h5>
+                    <h5 class="modal-title" id="cancelConfirmationModalLabel">Warning</h5>
                 </div>
                 <div class="modal-body">
                     Exit form? Any changes you have made may not be saved.
                 </div>
                 <div class="modal-footer">
-                    <div class="col">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                    </div>
-                    <a href="{% url 'current_customers' %}" class="btn btn-danger">Exit Anyways</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                    <a href="{% url 'current_inventory' %}" class="btn btn-danger">Exit Anyways</a>
                 </div>
             </div>
         </div>
@@ -212,6 +210,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById("cancelButton").addEventListener("click", function() {
+        var formHasInput = false;
+        var inputs = document.querySelectorAll("#createConsigneeForm input[type='text'], #createConsigneeForm input[type='number'], #createConsigneeForm select, #createConsigneeForm input[type='email'], #createConsigneeForm input[type='date'], #createConsigneeForm input[type='color']");
+        inputs.forEach(function(input) {
+            if (input.value.trim() !== '') {
+                formHasInput = true;
+            }
+        });
+
+        if (formHasInput) {
+            // At least one field has input, so show the cancel modal
+            var myModal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
+            myModal.show();
+        } else {
+            // No fields have input, so redirect to the current inventory page
+            window.location.href = "{% url 'current_inventory' %}";
+        }
+    });
+});
+
+// Function to check if all required fields are filled
+function checkRequiredFields() {
+    var requiredInputs = document.querySelectorAll("#createConsigneeForm input[required], #createConsigneeForm select[required]");
+    var allRequiredFilled = true;
+    requiredInputs.forEach(function(input) {
+        if (input.value.trim() === '') {
+            allRequiredFilled = false;
+        }
+    });
+    return allRequiredFilled;
+}
         // Function to check if all required fields are filled
         function checkRequiredFields() {
             var consigneeName = document.getElementById('id_consignee_name').value.trim();
