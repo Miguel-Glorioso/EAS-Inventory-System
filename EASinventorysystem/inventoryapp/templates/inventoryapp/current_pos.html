@@ -48,6 +48,23 @@
           {{ error_msg }}
       </div>
     {% endif %}
+    <div class="row mt-3">
+      <div class="col-md-auto">
+        <select id="customerFilter" class="form-select" aria-label="Filter by Customer">
+            <option value="">All Customers Types</option>
+            <option value="Direct" {% if request.GET.customer_type|stringformat:"s" == "Direct" %} selected {% endif %}>Direct</option>
+            <option value="Consignee" {% if request.GET.customer_type|stringformat:"s" == "Consignee" %} selected {% endif %}>Consignee</option>
+        </select>
+      </div>
+      <div class="col-md-auto">
+        <select id="progressFilter" class="form-select" aria-label="Filter by Progress">
+            <option value="">All Progress Types</option>
+            <option value="Pending" {% if request.GET.progress_type|stringformat:"s" == "Pending" %} selected {% endif %}>Pending</option>
+            <option value="Ongoing" {% if request.GET.progress_type|stringformat:"s" == "Ongoing" %} selected {% endif %}>Ongoing</option>
+            <option value="Shipped" {% if request.GET.progress_type|stringformat:"s" == "Shipped" %} selected {% endif %}>Shipped</option>
+        </select>
+      </div>
+    </div>
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">
@@ -223,6 +240,14 @@
               var url = window.location.pathname; // Get the current URL
               var params = new URLSearchParams(window.location.search); // Get the existing query parameters
               params.set('customer_type', customer_type); // Set the 'customer_type' parameter to the selected value
+              window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
+          });
+          // Add event listener for customer type filter
+          $('#progressFilter').on('change', function() {
+              var progress_type = $(this).val();
+              var url = window.location.pathname; // Get the current URL
+              var params = new URLSearchParams(window.location.search); // Get the existing query parameters
+              params.set('progress_type', progress_type); // Set the 'customer_type' parameter to the selected value
               window.location.href = url + '?' + params.toString(); // Update the URL with the new parameters
           });
         });
