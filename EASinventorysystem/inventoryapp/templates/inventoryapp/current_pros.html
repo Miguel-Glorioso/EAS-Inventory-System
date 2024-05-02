@@ -62,7 +62,7 @@
           </thead>
           <tbody>
             {% for pro in requisition_orders %}
-              {% if pro.PRO_Status != "Closed" %}
+              {% if pro.PRO_Status == "Ongoing" %}
                 <tr>  
                     <td class = "iname" style="text-align: center;">{{pro.Product_Requisition_ID}}</td>
                     <td class = "iid" style="text-align: center;">{{pro.Creation_Date}}</td>

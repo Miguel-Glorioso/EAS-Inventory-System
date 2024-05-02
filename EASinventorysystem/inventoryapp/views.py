@@ -617,8 +617,12 @@ def close_po(request, pk, account_id):
                 all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
                 return render(request, 'inventoryapp/current_pos.html', {'error_msg':error_msg, 'purchase_orders':all_purchase_orders})
         
-        messages.success(request, "Purchase order closed successfully.")
-        return redirect('current_pos')
+            messages.success(request, "Purchase order closed successfully.")
+            return redirect('current_pos')
+        else:
+            error_msg = "This purchase order cannot be closed."
+            all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+            return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders, 'error_msg':error_msg})
     else:
         all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
         return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
@@ -648,8 +652,13 @@ def cancel_po(request, pk, account_id):
             purchase_order.Account_ID_Closed_by = account
             purchase_order.save()
 
-        messages.success(request, "Purchase order cancelled successfully.")
-        return redirect('current_pos')
+            messages.success(request, "Purchase order cancelled successfully.")
+            return redirect('current_pos')
+        else:
+            error_msg = "This purchase order cannot be closed."
+            all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+            return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders, 'error_msg':error_msg})
+        
     else:
         all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
         return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
@@ -680,8 +689,14 @@ def cancel_po_specific(request, pk, account_id):
             purchase_order.Account_ID_Closed_by = account
             purchase_order.save()
 
-        messages.success(request, "Purchase order cancelled successfully.")
-        return redirect('current_pos')
+            messages.success(request, "Purchase order cancelled successfully.")
+            return redirect('current_pos')
+        else:
+            error_msg = "You are not authorized to cancel purchase orders."
+            purchase_order = get_object_or_404(Purchase_Order, pk=pk)
+            products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
+            return render(request, 'inventoryapp/view_po.html', {'po':purchase_order, 'products':products_ordered, 'error_msg':error_msg})
+        
     else:
         all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
         return render(request, 'inventoryapp/current_pos.html', {'purchase_orders':all_purchase_orders})
@@ -865,9 +880,14 @@ def close_pro(request, pk, account_id):
             requisition_order.Account_ID_Closed_by = account
             requisition_order.save()
         
-        messages.success(request, "Product requisition order closed successfully.")
-        return redirect('current_pros')
-    
+            messages.success(request, "Product requisition order closed successfully.")
+            return redirect('current_pros')
+        else:
+            error_msg = "This purchase order cannot be closed."
+            all_requisition_orders = Product_Requisition_Order.objects.all()
+            return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders, 'error_msg':error_msg})
+        
+            
     else:
         all_requisition_orders = Product_Requisition_Order.objects.all()
         return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
@@ -897,9 +917,13 @@ def cancel_pro(request, pk, account_id):
             requisition_order.Account_ID_Closed_by = account
             requisition_order.save()
         
-        messages.success(request, "Product requisition order cancelled successfully.")
-        return redirect('current_pros')
-    
+            messages.error(request, "This purchase order cannot be cancelled.")
+            return redirect('current_pros')
+        else:
+            error_msg = "This purchase order cannot be cancelled."
+            all_requisition_orders = Product_Requisition_Order.objects.all()
+            return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders, 'error_msg':error_msg})
+        
     else:
         all_requisition_orders = Product_Requisition_Order.objects.all()
         return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders})
@@ -937,9 +961,26 @@ def cancel_pro_specific(request, pk, account_id):
             requisition_order.Progress = 'Cancelled'
             requisition_order.Account_ID_Closed_by = account
             requisition_order.save()
+            
+            messages.success(request, "Product requisition order cancelled successfully.")
+            return redirect('view_pro')
+        else:
+            product_requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
+            stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
+            
+            previous_parfills_combined = Partially_Fulfilled_History.objects.filter(Stock__in=stocks_ordered).values('Stock').annotate(total_quantity=Sum('Partially_Fulfilled_Quantity'))
+            
+            no_parfills = {}
+            
+            for stock in stocks_ordered:
+                if stock.pk not in [item['Stock'] for item in previous_parfills_combined]:
+                    no_parfills[stock.pk] = stock 
+            
+            error_msg = "This purchase order cannot be cancelled."
+            return render(request, 'inventoryapp/view_pro.html', {'pro': product_requisition_order, 'stocks': stocks_ordered, 'previous_parfills': previous_parfills_combined, 'no_parfills': no_parfills, 'error_msg':error_msg})
         
-        messages.success(request, "Product requisition order cancelled successfully.")
-        return redirect('view_pro')
+            
+        
     
     else:
         all_requisition_orders = Product_Requisition_Order.objects.all()
