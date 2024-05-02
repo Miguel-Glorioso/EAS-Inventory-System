@@ -117,8 +117,9 @@
                                                         <input type="number" 
                                                                oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                                                                maxlength="5"
+                                                               min='1'
                                                                id="quantityInput" 
-                                                               class="form-control text-center" 
+                                                               class="form-control text-center quantity-input" 
                                                                style="width: 100px;" 
                                                                value="{{ stock.Quantity }}" 
                                                                oninput="validateQuantityInput(event)"
@@ -148,6 +149,7 @@
                                 </div>
                                 <div class="row mx-4" id="product-list-right" style="overflow-y: auto; height: 520px;">
                                     {% for p in products %}
+                                    {% if p.Visibility %}
                                         <div class="row mb-5 product-item" data-id="{{ p.EAS_Product_ID }}"> 
                                             <!-- Product information -->
                                             <div class="col">
@@ -171,6 +173,7 @@
                                                 <button type="button" class="btn btn-primary add-to-cart" data-name="{{ p.Name }}">Add to Cart</button>
                                             </div>
                                         </div>
+                                    {% endif %}
                                     {% endfor %}
                                     
                                 </div>
@@ -263,7 +266,18 @@
             newRow.innerHTML = `
                 <td>${productName}</td>
                 <td>${productId}</td>
-                <td><input type="int" class="form-control text-center quantity-input" style="width: 100px;" value="0"></td>
+                <td>
+                    <input type="number" 
+                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                            maxlength="5"
+                            min='1'
+                            id="quantityInput" 
+                            class="form-control text-center quantity-input" 
+                            style="width: 100px;" 
+                            value="1"
+                            oninput="validateQuantityInput(event)"
+                            onkeydown="return restrictNonNumericals(event)">
+                </td>  
                 <td>${productCount}</td>
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
@@ -466,9 +480,9 @@
             inputElement.value = inputValue.replace(/\D/g, '');
 
             // Example validation: Ensure that the input value is not negative
-            if (parseInt(inputValue) < 0) {
+            if (parseInt(inputValue) < 1) {
                 alert("Quantity cannot be negative!");
-                inputElement.value = 0; // Reset the value to 0
+                inputElement.value = 1; // Reset the value to 0
             }
         }
     </script>

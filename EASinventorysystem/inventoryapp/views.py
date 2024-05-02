@@ -788,7 +788,7 @@ def update_pro(request, pk):
         Products = Products[:-1]
         Ordered_Products= Products.split("-")
         new_stocks_ordered = []
-
+        print(Ordered_Products, 'dshjd')
         for op in Ordered_Products:
             values = op.split(":")
             product_object = Product.objects.get(Product_ID=values[0])
