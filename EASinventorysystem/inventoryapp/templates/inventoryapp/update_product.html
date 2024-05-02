@@ -95,20 +95,20 @@
                 <label for="id_Consignees" class="form-label custom-text">Consignee:</label>
                 <div class="border p-3" style="max-height: 200px; overflow-y: auto;">
                     {% for cp in con_p %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ cp.Consignee_ID.Consignee_ID }}" id="product_consignees" checked>
+                    <div class="consignee-item" data-color="{{ cp.Consignee_ID.Tag_Hex_Color_ID }}">
+                        <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ cp.Consignee_ID.Consignee_ID }}" id="product_consignees">
                         <label class="form-check-label" for="consignee_product_consignees">
-                            <span class="rounded-circle" style="display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.5rem; background-color: {{ cp.Consignee_ID.Tag_Hex_Color_ID }}"></span>{{ cp.Consignee_ID }}
-                        </label>
+                            <span class="badge" style="display: inline-block; background-color: {{ cp.Consignee_ID.Tag_Hex_Color_ID }}" id="badge-tag">{{ cp.Consignee_ID.Consignee_Name }}</span>
+                        </label>                              
                     </div>
                     {% endfor %}
                     {% for con in consignees %}
                         {% if con.Consignee_ID not in con_p_ids %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="consignee_{{ con.Consignee_ID }}">
-                            <label class="form-check-label" for="consignee_{{ con.Consignee_ID }}">
-                                <span class="rounded-circle" style="display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.5rem; background-color: {{ con.Tag_Hex_Color_ID }}"></span>{{ con.Consignee_Name }}
-                            </label>
+                        <div class="consignee-item" data-color="{{ con.Tag_Hex_Color_ID }}">
+                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="product_consignees">
+                            <label class="form-check-label" for="consignee_product_consignees">
+                                <span class="badge" style="display: inline-block; background-color: {{ con.Tag_Hex_Color_ID }}" id="badge-tag">{{ con.Consignee_Name }}</span>
+                            </label>                              
                         </div>
                         {% endif %}
                     {% endfor %}
@@ -235,7 +235,40 @@
                 updatePreview(); // Update the preview to remove the image
             });
         });
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get all badge elements for categories
+            var badges = document.querySelectorAll('.badge');
+            
+            // Loop through each badge element
+            badges.forEach(function(badge) {
+                // Get the corresponding hex color from data attribute
+                var hexColor = badge.parentElement.parentElement.dataset.color;
 
+                // Set the background color of the badge
+                badge.style.backgroundColor = hexColor;
+
+                // Check if the background color is light or dark
+                if (isColorLight(hexColor)) {
+                    badge.style.color = '#000000'; // Set text color to black for light background
+                } else {
+                    badge.style.color = '#ffffff'; // Set text color to white for dark background
+                }
+            });
+
+            // Function to check if a color is light
+            function isColorLight(color) {
+                // Convert hex color to RGB
+                var r = parseInt(color.substr(1, 2), 16);
+                var g = parseInt(color.substr(3, 2), 16);
+                var b = parseInt(color.substr(5, 2), 16);
+                
+                // Calculate luminance
+                var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                
+                // Check if luminance is greater than 0.5 (light color)
+                return luminance > 0.5;
+            }
+        });
         </script>
         
         <div class="row">
