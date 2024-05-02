@@ -127,6 +127,13 @@
         document.querySelector('button[data-bs-target="#cancelModal"]').addEventListener('click', function () {
             $('#cancelModal').modal('show');
         });
+
+        // Function to handle form submission after confirmation
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
+                document.getElementById('customerForm').submit();
+            });
+        });
     </script>
 </body>
 
