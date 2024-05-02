@@ -549,11 +549,11 @@
         }
 
         
-        $(document).ready(function() {
+        $(document).ready(function () {
             var totalPrice = 0;
 
-            $('#submit_po').click(function() {
-                $('#PO_products tbody tr').each(function(i) {
+            $('#confirmSubmit').click(function () { // Changed the event listener to the "Yes" button in the modal
+                $('#PO_products tbody tr').each(function (i) {
                     var productId = $(this).find('.product_pk').val();
                     var productPriceText = $(this).find("td:eq(2)").text().trim();
                     var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
@@ -568,9 +568,11 @@
                 });
 
                 $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
+
+                // Now submit the form
+                document.getElementById('updatePO').submit();
             });
         });
-
 
         // Function to filter products as user types in the search bar
         document.getElementById("search-input").addEventListener("input", function() {
@@ -612,11 +614,13 @@
             }
 
             // Check if all quantities are valid
-            quantityInputs.forEach(function (input) {
-                if (parseInt(input.value) < 1) {
+            quantityInputs.forEach(function(input) {
+                const quantity = parseInt(input.value);
+                console.log(quantity);
+                if (isNaN(quantity) || quantity < 1) {
                     isValid = false;
                     // Show error message or handle invalid input as desired
-                    alert("Quantity must be 1 or greater.");
+                    alert("Quantity must be a number greater than or equal to 1.");
                 }
             });
 

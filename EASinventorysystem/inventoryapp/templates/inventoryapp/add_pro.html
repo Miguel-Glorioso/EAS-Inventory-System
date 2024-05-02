@@ -417,6 +417,7 @@
 
             });
         });
+        
         $(document).ready(function() {
             $(window).keydown(function(event){
                 if(event.keyCode == 13) {
@@ -468,17 +469,32 @@
                 event.preventDefault();
             }
         }
-        function validateQuantityInput(event) {
-            var inputElement = event.target; // Get the input element that triggered the event
-            var inputValue = inputElement.value; // Get the current value of the input
 
-            // Remove any non-numeric characters
-            inputElement.value = inputValue.replace(/\D/g, '');
+        function validateQuantityAndNext() {
+            var quantityInputs = document.querySelectorAll('.quantity-input');
+            var isValid = true;
 
-            // Example validation: Ensure that the input value is not negative
-            if (parseInt(inputValue) < 1) {
-                alert("Quantity cannot be negative!");
-                inputElement.value = 1; // Reset the value to 0
+            // Check if there's at least one product in the left column
+            var productListRows = document.querySelectorAll("#PO_products tbody tr");
+            if (productListRows.length === 0) {
+                isValid = false;
+                // Display alert message
+                alert("There should be at least 1 product in the products ordered.");
+            }
+
+            // Check if all quantities are valid
+            quantityInputs.forEach(function(input) {
+                const quantity = parseInt(input.value);
+                console.log(quantity);
+                if (isNaN(quantity) || quantity < 1) {
+                    isValid = false;
+                    // Show error message or handle invalid input as desired
+                    alert("Quantity must be a number greater than or equal to 1.");
+                }
+            });
+
+            if (isValid) {
+                nextStep(); // Proceed to the next step if all quantities are valid and at least one product is selected
             }
         }
     </script>

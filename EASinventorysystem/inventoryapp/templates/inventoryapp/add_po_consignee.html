@@ -395,16 +395,18 @@
                 <td>${productName}</td>
                 <td>${productId}</td>
                 <td>${productPrice}</td> 
-                <input type="number" 
+                <td>
+                    <input type="number" 
                             oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                             maxlength="5"
                             min='1'
                             id="quantityInput" 
                             class="form-control text-center quantity-input" 
                             style="width: 100px;" 
-                            value="1"
+                            value=1
                             oninput="validateQuantityInput(event)"
                             onkeydown="return restrictNonNumericals(event)">
+                </td>    
                 <td>${productCount}</td> 
                 <input type="hidden" class="product_pk" value=${productPK}>
                 <td><button type="button" class="btn btn-danger" onclick="removeFromCart(this)">Remove</button></td>
@@ -527,7 +529,7 @@
         function renderSummary(selectedProducts) {
             var selectedProductsTable = document.getElementById("selected-products-table");
             selectedProductsTable.innerHTML = "";
-            selectedProducts.forEach(function (product) {
+            selectedProducts.forEach(function(product) {
                 var row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${product.name}</td>
@@ -567,7 +569,7 @@
         $(document).ready(function () {
             var totalPrice = 0;
 
-            $('#submit_po').click(function () {
+            $('#confirmSubmit').click(function () { // Changed the event listener to the "Yes" button in the modal
                 $('#PO_products tbody tr').each(function (i) {
                     var productId = $(this).find('.product_pk').val();
                     var productPriceText = $(this).find("td:eq(2)").text().trim();
@@ -583,6 +585,9 @@
                 });
 
                 $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
+
+                // Now submit the form
+                document.getElementById('addPO').submit();
             });
         });
 
@@ -627,11 +632,13 @@
             }
 
             // Check if all quantities are valid
-            quantityInputs.forEach(function (input) {
-                if (parseInt(input.value) < 1) {
+            quantityInputs.forEach(function(input) {
+                const quantity = parseInt(input.value);
+                console.log(quantity);
+                if (isNaN(quantity) || quantity < 1) {
                     isValid = false;
                     // Show error message or handle invalid input as desired
-                    alert("Quantity must be 1 or greater.");
+                    alert("Quantity must be a number greater than or equal to 1.");
                 }
             });
 
