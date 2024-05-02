@@ -213,76 +213,62 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById("cancelButton").addEventListener("click", function() {
-        var formHasInput = false;
-        var inputs = document.querySelectorAll("#createConsigneeForm input[type='text'], #createConsigneeForm input[type='number'], #createConsigneeForm select, #createConsigneeForm input[type='email'], #createConsigneeForm input[type='date'], #createConsigneeForm input[type='color']");
-        inputs.forEach(function(input) {
-            if (input.value.trim() !== '') {
-                formHasInput = true;
+            // Function to validate form inputs
+            function validateFormInputs() {
+                var inputs = document.querySelectorAll('input[required], select[required]');
+                var isValid = true;
+
+                inputs.forEach(function(input) {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        input.classList.add('is-invalid');
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                alert('Please fill out all required fields and satisfy the required input.');
             }
-        });
 
-        if (formHasInput) {
-            // At least one field has input, so show the cancel modal
-            var myModal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
-            myModal.show();
-        } else {
-            // No fields have input, so redirect to the current inventory page
-            window.location.href = "{% url 'current_inventory' %}";
-        }
-    });
-});
-
-// Function to check if all required fields are filled
-function checkRequiredFields() {
-    var requiredInputs = document.querySelectorAll("#createConsigneeForm input[required], #createConsigneeForm select[required]");
-    var allRequiredFilled = true;
-    requiredInputs.forEach(function(input) {
-        if (input.value.trim() === '') {
-            allRequiredFilled = false;
-        }
-    });
-    return allRequiredFilled;
-}
-        // Function to check if all required fields are filled
-        function checkRequiredFields() {
-            var consigneeName = document.getElementById('id_consignee_name').value.trim();
-            var consigneeTagId = document.getElementById('id_consignee_tag_id').value.trim();
-            var addressLine1 = document.getElementById('id_address_line_1').value.trim();
-            var province = document.getElementById('id_province').value.trim();
-            var municipality = document.getElementById('id_municipality').value.trim();
-            var barangay = document.getElementById('id_barangay').value.trim();
-            var zipCode = document.getElementById('id_zip_code').value.trim();
-            var primaryContactNumber = document.getElementById('id_primary_contact_number').value.trim();
-            var emailAddress = document.getElementById('id_email_address').value.trim();
-            var consignmentPeriodStart = document.getElementById('id_consignment_period_start').value.trim();
-            var consignmentPeriodEnd = document.getElementById('id_consignment_period_end').value.trim();
-
-            return consigneeName !== '' && consigneeTagId !== '' && addressLine1 !== '' &&
-                province !== '' && municipality !== '' && barangay !== '' && zipCode !== '' &&
-                primaryContactNumber !== '' && emailAddress !== '' && consignmentPeriodStart !== '' &&
-                consignmentPeriodEnd !== '';
+            return isValid;
         }
 
-        // Function to enable/disable the Create button based on required fields
-        function toggleCreateButton() {
-            var createButton = document.getElementById('createConsigneeBtn');
-            createButton.disabled = !checkRequiredFields();
-        }
+                // Additional fields to include in validation
+                var consigneeNameInput = document.getElementById('id_consignee_name');
+                if (!consigneeNameInput.value.trim()) {
+                    isValid = false;
+                    consigneeNameInput.classList.add('is-invalid');
+                } else {
+                    consigneeNameInput.classList.remove('is-invalid');
+                }
 
-        // Event listener for input fields to check validation on change
-        var inputFields = document.querySelectorAll('input, textarea, select');
-        inputFields.forEach(function(field) {
-            field.addEventListener('input', function() {
-                toggleCreateButton();
+                var consigneeTagIdInput = document.getElementById('id_consignee_tag_id');
+                if (!consigneeTagIdInput.value.trim()) {
+                    isValid = false;
+                    consigneeTagIdInput.classList.add('is-invalid');
+                } else {
+                    consigneeTagIdInput.classList.remove('is-invalid');
+                }
+
+                // Repeat the above process for other fields
+
+                return isValid;
+            }
+
+            // Attach form submission event listener
+            var createConsigneeForm = document.getElementById('createConsigneeForm');
+            createConsigneeForm.addEventListener('submit', function(event) {
+                if (!validateFormInputs()) {
+                    // Prevent form submission if validation fails
+                    event.preventDefault();
+                    return false;
+                }
+                return true;
             });
         });
-
-        // Handle click event on "Yes" button in confirmation modal
-        document.getElementById('confirmCreateConsigneeBtn').addEventListener('click', function() {
-            document.getElementById('createConsigneeForm').submit(); // Submit the form
-        });
     </script>
+
 
 </body>
 {% endblock %}

@@ -22,7 +22,7 @@
         </div>
 
         <div class="row">
-            <form id="addPRO" method="POST" action="{% url 'add_pro' %}">
+            <form id="updatePRO" method="POST" action="{% url 'update_pro' pk=requisition_order.pk %}">
                 {% csrf_token %}
                 <main>
                     <div id="step1">
@@ -266,7 +266,7 @@
                 $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
 
                 // Now submit the form
-                document.getElementById('addPRO').submit();
+                document.getElementById('updatePRO').submit();
             });
         });
 
@@ -637,7 +637,7 @@ function validateAndNextStep() {
             // Event listener for the confirm button in the modal
             document.getElementById('confirmSubmit').addEventListener('click', function() {
                 // Submit the form
-                document.getElementById('addPRO').submit();
+                document.getElementById('updatePRO').submit();
             });
         });
     </script>
