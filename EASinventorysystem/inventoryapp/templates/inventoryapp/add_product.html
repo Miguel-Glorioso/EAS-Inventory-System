@@ -63,15 +63,27 @@
                     </div>
                     <script>
                         function validatePriceInput(event) {
-                            var input = event.target;
-                            if (input.id === "id_Price" && input.value.length > 8) {
-                                input.value = input.value.slice(0, 8);
+                            const inputElement = event.target;
+                            const inputValue = inputElement.value;
+                    
+                            // Remove any non-numeric characters except for the decimal point
+                            inputElement.value = inputValue.replace(/[^\d.]/g, '');
+                    
+                            // Ensure that the input value does not contain more than one decimal point
+                            if (inputValue.includes('.') && inputValue.split('.')[1].length > 2) {
+                                inputElement.value = inputValue.slice(0, -1);
+                            }
+                    
+                            // Prevent the 'e' and '-' characters from being entered
+                            if (inputValue.includes('e') || inputValue.includes('-')) {
+                                inputElement.value = inputValue.replace(/[e-]/g, '');
+                            }
+                    
+                            // Limit the input value to a maximum of 99999.99
+                            if (parseFloat(inputValue) > 99999.99) {
+                                inputElement.value = 99999.99;
                             }
                         }
-                        function validatePriceInput(event) { const inputElement = event.target; const inputValue = inputElement.value; // Remove any non-numeric characters except for the decimal point 
-                            inputElement.value = inputValue.replace(/[^\d.]/g, ''); // Ensure that the input value does not contain more than one decimal point 
-                            if (inputValue.includes('.') && inputValue.split('.')[1].length > 2) { inputElement.value = inputValue.slice(0, -1); } // Prevent the 'e' and '-' characters from being entered 
-                            if (inputValue.includes('e') || inputValue.includes('-')) { inputElement.value = inputValue.replace(/[e-]/g, ''); } } 
                     </script>
                 </div>
             </div>
@@ -126,8 +138,45 @@
                         <div class="consignee-item">
                             <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="product_consignees">
                             <label class="form-check-label" for="consignee_product_consignees">
-                                <span class="rounded-circle" style="display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.5rem; background-color: {{ con.Tag_Hex_Color_ID }}"></span>{{ con.Consignee_Name}}
+                                <span class="badge" style="display: inline-block;  background-color: {{ con.Tag_Hex_Color_ID }}" id="badge-tag">{{ con.Consignee_Name}}</span>
                             </label>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    // Get all badge elements for categories
+                                    var badges = document.querySelectorAll('.badge');
+                                    
+                                    // Loop through each badge element
+                                    badges.forEach(function(badge) {
+                                        // Get the corresponding hex color
+                                        var hexColor = badge.parentElement.nextElementSibling.textContent;
+                                        
+                                        // Set the background color of the badge
+                                        badge.style.backgroundColor = hexColor;
+                                        
+                                        // Determine if the badge color is light or dark
+                                        var textColor = getContrastColor(hexColor);
+                                        
+                                        // Set the font color based on badge color
+                                        badge.style.color = textColor;
+                                    });
+                            
+                                    // Function to determine contrast color for given background color
+                                    function getContrastColor(hexColor) {
+                                        // Convert hex color to RGB
+                                        var r = parseInt(hexColor.substr(1, 2), 16);
+                                        var g = parseInt(hexColor.substr(3, 2), 16);
+                                        var b = parseInt(hexColor.substr(5, 2), 16);
+                                        
+                                        // Calculate luminance
+                                        var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                                        
+                                        // Return white for dark backgrounds, black for light backgrounds
+                                        return luminance > 0.5 ? '#000000' : '#ffffff';
+                                    }
+                                });
+                            </script>
+                            
+                              
                         </div>
                         {% endfor %}
                     </div>
