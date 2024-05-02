@@ -61,7 +61,7 @@
                                             {% if stock.pk in no_parfills %}
                                             <td>
                                                 <div class="input-group">
-                                                    <input type="number" min="0" max="{{stock.Quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="0">
+                                                    <input type="number" min="0" max="{{stock.Quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="1">
                                                 </div>
                                             </td>
                                             {% else %}
@@ -69,7 +69,7 @@
                                                     {% if parfill.Stock == stock.pk %}
                                                         <td>
                                                             <div class="input-group">
-                                                                <input type="number" min="0" max="{{parfill.total_quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="0">
+                                                                <input type="number" min="0" max="{{parfill.total_quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="1">
                                                             </div>
                                                         </td>
                                                     {% endif %}

@@ -32,6 +32,11 @@
         </div>
     {% endfor %}
   {% endif %}
+  {% if error_msg %}
+    <div class="col-12 alert alert-danger" role="alert" style="margin-top: 20px;">
+      {{ error_msg }} 
+    </div>
+  {% endif %}
   <!-- Table Categories and Tags row -->
   <div class="row mt-3">
     <!-- Categories Column -->

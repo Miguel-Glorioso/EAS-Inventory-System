@@ -76,22 +76,54 @@
                     </td>
                     <td> 
                       {% if not has_parfills %}
-                      <form id="closePRoForm" action="{% url 'cancel_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
-                        {% csrf_token %}
-                        <button type="button" class="btn btn-danger" onclick="submitCancelPRoForm(this)">Cancel</button>
+                      <form id="cancelPRoForm{{ pro.Product_Requisition_ID }}" action="{% url 'cancel_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
+                          {% csrf_token %}
+                          <button type="button" class="btn btn-danger openCancelModal" data-pro-pk="{{ pro.Product_Requisition_ID }}">Cancel</button>
                       </form>
+                      <div class="modal fade" id="confirmCancelModal{{ pro.Product_Requisition_ID }}" tabindex="-1" aria-labelledby="confirmCancelModalLabel{{ pro.Product_Requisition_ID }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="confirmCancelModalLabel{{ pro.Product_Requisition_ID }}">Confirm Cancel</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              Are you sure you want to cancel this product requisition?
+                            </div>
+                            <div class="modal-footer">
+                              <div class="col"><button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button></div>
+                              <div class="col"><button type="submit" class="btn btn-success confirmCancel" data-pro-form="{{ pro.Product_Requisition_ID }}">Yes</button></div>
+                            
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       {% else %}
-                      <form id="closePRoForm" action="{% url 'cancel_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
-                        {% csrf_token %}
-                        <button type="button" class="btn btn-danger" onclick="submitCancelPRoForm(this)" disabled>Cancel</button>
-                      </form>  
+                        <button type="button" class="btn btn-danger" disabled>Cancel</button>
                       {% endif %}
                     </td> 
                     <td> 
-                      <form id="closePRoForm" action="{% url 'close_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
+                      <form id="closePRoForm{{ pro.Product_Requisition_ID }}" action="{% url 'close_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
                         {% csrf_token %}
-                        <button type="button" class="btn btn-success" onclick="submitClosePRoForm(this)">Close</button>
-                      </form>  
+                        <button type="button" class="btn btn-success openModal" data-pro-pk="{{ pro.Product_Requisition_ID }}">Close</button>
+                    </form>
+                    <div class="modal fade" id="confirmCloseModal{{ pro.Product_Requisition_ID }}" tabindex="-1" aria-labelledby="confirmCloseModalLabel{{ pro.Product_Requisition_ID }}" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="confirmCloseModalLabel{{ pro.Product_Requisition_ID }}">Confirm Close</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to close this product requisition?
+                          </div>
+                          <div class="modal-footer">
+                            <div class="col"><button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button></div>
+                            <div class="col"><button type="submit" class="btn btn-success confirmCancel" data-pro-form="{{ pro.Product_Requisition_ID }}">Yes</button></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     </td> 
                     <td> 
                       <a href="{% url 'view_pro' pk=pro.pk %}" type="button" class="btn btn-primary">View</a>
@@ -134,17 +166,38 @@
         }
       });
     }
-    function submitClosePRoForm(button) {
-        var form = button.closest('form'); // Find the parent form element
-        var formId = form.id; // Get the ID of the form
-        form.submit(); // Submit the form
-    }
-    function submitCancelPRoForm(button) {
-        var form = button.closest('form'); // Find the parent form element
-        var formId = form.id; // Get the ID of the form
-        form.submit(); // Submit the form
-    }
-    
+    var closeButtons = document.querySelectorAll('.openModal');
+    closeButtons.forEach(function(button) {
+        button.addEventListener('click', function () {
+            var proId = this.getAttribute('data-pro-pk');
+            $('#confirmCloseModal' + proId).modal('show');
+        });
+    });
+
+    var confirmCloseButtons = document.querySelectorAll('.confirmClose');
+    confirmCloseButtons.forEach(function(button) {
+        button.addEventListener('click', function () {
+            var proFormId = this.getAttribute('data-pro-form');
+            $('#closePRoForm' + proFormId).submit();
+        });
+    });
+    // Open modal when the "Cancel" button is clicked
+    var cancelButtons = document.querySelectorAll('.openCancelModal');
+    cancelButtons.forEach(function(button) {
+        button.addEventListener('click', function () {
+            var proId = this.getAttribute('data-pro-pk');
+            $('#confirmCancelModal' + proId).modal('show');
+        });
+    });
+
+    // Handle submission of the cancellation form when confirmed
+    var confirmCancelButtons = document.querySelectorAll('.confirmCancel');
+    confirmCancelButtons.forEach(function(button) {
+        button.addEventListener('click', function () {
+            var proFormId = this.getAttribute('data-pro-form');
+            $('#cancelPRoForm' + proFormId).submit();
+        });
+    });
   </script>  
 </body>
 {% endblock %}

@@ -615,7 +615,7 @@ def close_po(request, pk, account_id):
                 purchase_order.save()
             
             else:
-                error_msg = 'Sufficient Stock for Purchase Order'
+                error_msg = 'Insufficient Stock for Purchase Order'
                 all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
                 return render(request, 'inventoryapp/current_pos.html', {'error_msg':error_msg, 'purchase_orders':all_purchase_orders})
         
@@ -1454,7 +1454,9 @@ def add_category(request):
         existing_category = Category.objects.filter(Category_Name=Category_Name)
         if existing_category.exists():
             error_msg = 'Category Already Exists'
-            return render(request, 'inventoryapp/categories_consignee_tags.html', {'error_msg': error_msg})
+            consignees = Consignee.objects.all()
+            categories = Category.objects.all()
+            return render(request, 'inventoryapp/categories_consignee_tags.html', {'consignees': consignees, 'categories': categories, 'error_msg': error_msg})
         else:
             Category.objects.create(
                 Category_Name=Category_Name,
@@ -1625,7 +1627,9 @@ def update_category(request, pk):
         existing_category = Category.objects.filter(Category_Name=Category_Name).exclude(pk=pk)
         if existing_category.exists():
             error_msg = 'Category Already Exists'
-            return render(request, 'inventoryapp/update_category.html', {'error_msg': error_msg, 'category': category})
+            consignees = Consignee.objects.all()
+            categories = Category.objects.all()
+            return render(request, 'inventoryapp/categories_consignee_tags.html', {'consignees': consignees, 'categories': categories, 'error_msg': error_msg})
         else:
             # Update the category fields
             category.Category_Name = Category_Name
@@ -1854,6 +1858,7 @@ def partially_fulfill(request, pk):
             if key.startswith('quantity_'):
                 product_pk = key.split('_')[-1]
                 quantity = request.POST[key]
+
                 if int(quantity) > 0:
                     image = request.FILES.get(f'parfill_picture_{product_pk}')
                     text_report = request.POST.get(f'text_report_{product_pk}')

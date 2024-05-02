@@ -24,15 +24,56 @@
                 <a href="{% url 'partially_fulfill' pro.pk %}" class="btn btn-primary me-2">Partially Fulfill</a>
                 {% if not has_parfills %}
                 <a href="{% url 'update_pro' pro.pk %}" class="btn btn-primary me-2">Edit</a>
-                <form id="cancelPRoForm" action="{% url 'cancel_pro_specific' pk=pro.pk account_id=request.user.account.pk %}" method="post">
+                <form id="cancelPRoForm{{ pro.pk }}" action="{% url 'cancel_pro_specific' pk=pro.pk account_id=request.user.account.pk %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger me-2">Cancel</button>
+                    <button type="button" class="btn btn-danger me-2 openCancelModal" data-pro-pk="{{ pro.pk }}">Cancel</button>
                 </form>
+                
+                <div class="modal fade" id="confirmCancelModal{{ pro.pk }}" tabindex="-1" aria-labelledby="confirmCancelModalLabel{{ pro.pk }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmCancelModalLabel{{ pro.pk }}">Confirm Cancel</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to cancel this product requisition?
+                            </div>
+                            <div class="modal-footer">
+                                <div class="col">
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                                </div>
+                                <button type="submit" class="btn btn-success confirmCancel" data-pro-form="{{ pro.pk }}">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% endif %}
-                <form id="closePRoForm" action="{% url 'close_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
+                <form id="closePRoForm{{ pro.pk }}" action="{% url 'close_pro' pk=pro.pk account_id=request.user.account.pk %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-success">Close</button>
-                </form> 
+                    <button type="button" class="btn btn-success openCloseModal" data-pro-pk="{{ pro.pk }}">Close</button>
+                </form>
+                
+                <div class="modal fade" id="confirmCloseModal{{ pro.pk }}" tabindex="-1" aria-labelledby="confirmCloseModalLabel{{ pro.pk }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmCloseModalLabel{{ pro.pk }}">Confirm Close</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to close this product requisition?
+                            </div>
+                            <div class="modal-footer">
+                                <div class="col">
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                                </div>
+                                <button type="submit" class="btn btn-success confirmClose" data-pro-form="{{ pro.pk }}">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         {% if error_msg %}
@@ -104,6 +145,10 @@
         </div>
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
 <script>
     // Get all elements with class "remaining-quantity"
     var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
@@ -119,5 +164,40 @@
         // Update the content of the element with the remaining quantity
         element.textContent = remainingQuantity;
     });
+    var cancelButtons = document.querySelectorAll('.openCancelModal');
+    cancelButtons.forEach(function(button) {
+        button.addEventListener('click', function () {
+            var proId = this.getAttribute('data-pro-pk');
+            $('#confirmCancelModal' + proId).modal('show');
+        });
+    });
+
+    // Handle submission of the cancellation form when confirmed
+    var confirmCancelButtons = document.querySelectorAll('.confirmCancel');
+    confirmCancelButtons.forEach(function(button) {
+        button.addEventListener('click', function () {
+            var proFormId = this.getAttribute('data-pro-form');
+            $('#cancelPRoForm' + proFormId).submit();
+        });
+    });
+    // Open modal when the "Close" button is clicked
+    var closeButtons = document.querySelectorAll('.openCloseModal');
+    closeButtons.forEach(function(button) {
+        button.addEventListener('click', function () {
+            var proId = this.getAttribute('data-pro-pk');
+            console.log(proId);
+            $('#confirmCloseModal' + proId).modal('show');
+        });
+    });
+
+    // Handle submission of the close form when confirmed
+    var confirmCloseButtons = document.querySelectorAll('.confirmClose');
+    confirmCloseButtons.forEach(function(button) {
+        button.addEventListener('click', function () {
+            var proFormId = this.getAttribute('data-pro-form');
+            $('#closePRoForm' + proFormId).submit();
+        });
+    });
+
 </script>
 {% endblock %}
