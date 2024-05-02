@@ -25,7 +25,7 @@
         </div>
 
         
-        <form method="POST" action="{% url 'update_po_direct_customer' po_pk=PO.Purchase_Order_ID c_pk=C.Customer_ID %}">
+        <form id="updatePO" method="POST" action="{% url 'update_po_direct_customer' po_pk=PO.Purchase_Order_ID c_pk=C.Customer_ID %}">
             <!-- First Tab: Customer Information -->
             <div id="step1">
             
@@ -655,8 +655,48 @@
             });
         }
 
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#confirmationModal').modal('show');
+        }
+
+        // Event listener for the submit button
+        document.getElementById('submit_po').addEventListener('click', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+            // Show the confirmation modal
+            showConfirmationModal();
+        });
+
+        // Event listener for DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listener for the confirm button in the modal
+            document.getElementById('confirmSubmit').addEventListener('click', function() {
+                // Submit the form
+                document.getElementById('updatePO').submit();
+            });
+        });
     </script>
 </body>
+
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to save the changes made to this purchase order in the system?
+        </div>
+        <div class="modal-footer">
+            <div class="col">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+            </div>
+            <button type="submit" class="btn btn-success" id="confirmSubmit">Yes</button>
+        </div>
+      </div>
+    </div>
+</div>
 
 <div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel" aria-hidden="true">
     <div class="modal-dialog">
