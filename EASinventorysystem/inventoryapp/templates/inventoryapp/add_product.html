@@ -222,25 +222,25 @@
             document.getElementById('confirmCreateProductBtn').addEventListener('click', function() {
             document.getElementById('createProductForm').submit(); // Submit the form
         });
-document.getElementById("cancelButton").addEventListener("click", function() {
-        // Check if any input field has a value
-        var formIsEmpty = true;
-        var inputs = document.querySelectorAll("#createProductForm input[type='text'], #createProductForm input[type='number'], #createProductForm select, #createProductForm input[type='int']");
-        inputs.forEach(function(input) {
-            if (input.value.trim() !== '') {
-                formIsEmpty = false;
+    document.getElementById("cancelButton").addEventListener("click", function() {
+            // Check if any input field has a value
+            var formIsEmpty = true;
+            var inputs = document.querySelectorAll("#createProductForm input[type='text'], #createProductForm input[type='number'], #createProductForm select, #createProductForm input[type='int']");
+            inputs.forEach(function(input) {
+                if (input.value.trim() !== '') {
+                    formIsEmpty = false;
+                }
+            });
+
+            // If the form is not empty, open the cancel confirmation modal
+            if (!formIsEmpty) {
+                var myModal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
+                myModal.show();
+            } else {
+                // If the form is empty, redirect to the current inventory page
+                window.location.href = "{% url 'current_inventory' %}";
             }
         });
-
-        // If the form is not empty, open the cancel confirmation modal
-        if (!formIsEmpty) {
-            var myModal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
-            myModal.show();
-        } else {
-            // If the form is empty, redirect to the current inventory page
-            window.location.href = "{% url 'current_inventory' %}";
-        }
-    });
 
     document.getElementById("createButton").addEventListener("click", function() {
         // Open the confirmation modal
