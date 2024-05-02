@@ -22,8 +22,12 @@
     }
     </style>
     
-    <div class="container">
-        <h1 class="mt-4 mb-4">Update Consignee</h1>
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">Update Consignee</h4>
+            </div>
+        </div>
         {% if error_msg %}
             <div class="alert alert-danger" role="alert">
                 {{ error_msg }}
@@ -31,6 +35,7 @@
         {% endif %}
         <form id="createTagForm" method="POST" action="{% url 'update_tags' consignee.pk %}">
             {% csrf_token %}
+            <legend>Consignee Information</legend>
             <div class="mb-3">
                 <label for="id_consignee_name" class="form-label custom-text">Consignee Name:</label>
                 <input type="text" name="consignee_name" class="form-control" maxlength="32" required id="id_consignee_name" placeholder="Consignee Name" value="{{ consignee.Consignee_Name }}">
@@ -162,7 +167,7 @@
             </div>
             <div class="modal-footer">
                 <div class="col">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
                 </div>
                 <a href="{% url 'categories_consignee_tags' %}" class="btn btn-danger">Exit Anyways</a>
             </div>
@@ -181,7 +186,9 @@
                 Are you sure you want to update this consignee?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <div class="col">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            </div>
                 <button type="button" class="btn btn-primary" id="confirmEditConsigneeBtn">Yes</button>
             </div>
         </div>

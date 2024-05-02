@@ -1644,7 +1644,7 @@ def update_category(request, pk):
             category.Category_Product_Low_Stock_Threshold = Category_Product_Low_Stock_Threshold
             category.Notes = Notes
             category.save()
-            messages.success(request, "Category added successfully.")
+            messages.success(request, "Category updated successfully.")
             return redirect('categories_consignee_tags')
     else:
         return render(request, 'inventoryapp/update_category.html', {'category': category, 'category_id': pk})
