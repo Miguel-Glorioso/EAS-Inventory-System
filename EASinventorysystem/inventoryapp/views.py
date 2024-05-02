@@ -1692,7 +1692,7 @@ def update_tags(request, pk):
 
         consignee.save()
 
-        messages.success(request, "Tag-Consignee added successfully.")
+        messages.success(request, "Consignee updated successfully.")
         return redirect('categories_consignee_tags')
 
     else:
