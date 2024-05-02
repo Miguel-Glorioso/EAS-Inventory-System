@@ -779,7 +779,7 @@ def add_requisition_order(request):
 
         Products = Products[:-1]
         Ordered_Products= Products.split("-")
-
+        
         for op in Ordered_Products:
             values = op.split(":")
             product_object = Product.objects.get(Product_ID=values[0])

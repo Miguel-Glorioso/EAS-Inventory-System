@@ -56,7 +56,7 @@
                                     <label class="required" for="total_cost">Total Cost:</label><br>
                                     <div class="input-group">
                                         <span class="input-group-text">PHP</span>
-                                        <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" class="form-control rounded-10" oninput="validateInput(event)" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.key === '.'" size="9">
+                                        <input type="number" id="total_cost" name="total_cost" step=".01" min="0" value="{{ requisition_order.Total_Cost }}" max="9999999.99" class="form-control rounded-10" oninput="validateInput(event)" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.key === '.'" size="9">
                                     </div>
                                     <script>
                                         function validateInput(event) {
@@ -217,60 +217,53 @@
     </div>
 
     <script>
-        $(document).ready(function () {
-            var totalPrice = 0;
 
-            $('#confirmSubmit').click(function () { // Changed the event listener to the "Yes" button in the modal
-                $('#PRO_products tbody tr').each(function (i) {
+        $(document).ready(function() {
+
+            $('#confirmSubmit').click(function() {
+                $('#PRO_products tbody tr').each(function(i) {
                     var productId = $(this).find('.product_pk').val();
-                    var productPriceText = $(this).find("td:eq(2)").text().trim();
-                    var productPriceNumeric = parseFloat(productPriceText.replace('Php ', '').replace(',', ''));
 
                     var productQuantity = $(this).find(".quantity-input").val();
-
-                    var subtotal = productPriceNumeric * productQuantity; // Calculate subtotal for the row
-                    totalPrice += subtotal;
 
                     var comb = productId + ':' + productQuantity;
                     $('#all_products').val($('#all_products').val() + comb + '-');
                 });
-
-                $('#total_price').val(totalPrice.toFixed(2)); // Set total price with 2 decimal places
-
-                // Now submit the form
                 document.getElementById('addPRO').submit();
+
             });
         });
 
-// Function to be called before proceeding to the next step
-function validateAndNextStep() {
-    if (validateInputs()) {
-        nextStep();
-    }
-}
-        // checks date
-        document.addEventListener('DOMContentLoaded', function() {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-        var yyyy = today.getFullYear();
 
-        today = yyyy + '-' + mm + '-' + dd;
+        // Function to be called before proceeding to the next step
+        function validateAndNextStep() {
+            if (validateInputs()) {
+                nextStep();
+            }
+        }
+                // checks date
+                document.addEventListener('DOMContentLoaded', function() {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                var yyyy = today.getFullYear();
 
-        var estimatedReceivingDateInput = document.getElementById('estimated_receiving_date');
-        estimatedReceivingDateInput.min = today; // Directly set the min attribute
-    });
-        // "Add to Cart" 
-        var addToCartButtons = document.querySelectorAll('.add-to-cart');
-        addToCartButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
-                var productName = button.getAttribute('data-name');
-                var productId = button.parentNode.parentNode.dataset.id;
-                var productPK = button.closest('.product-item').querySelector('.product_pk').value;
-                var productCount = button.closest('.product-item').querySelector('.product_count').value; 
-                addToCart(productName, productId, productPK,productCount);
+                today = yyyy + '-' + mm + '-' + dd;
+
+                var estimatedReceivingDateInput = document.getElementById('estimated_receiving_date');
+                estimatedReceivingDateInput.min = today; // Directly set the min attribute
             });
-        });
+                // "Add to Cart" 
+                var addToCartButtons = document.querySelectorAll('.add-to-cart');
+                addToCartButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        var productName = button.getAttribute('data-name');
+                        var productId = button.parentNode.parentNode.dataset.id;
+                        var productPK = button.closest('.product-item').querySelector('.product_pk').value;
+                        var productCount = button.closest('.product-item').querySelector('.product_count').value; 
+                        addToCart(productName, productId, productPK,productCount);
+                    });
+                });
         
         // add a product to the cart
         function addToCart(productName, productId, productPK,productCount) {
@@ -377,64 +370,64 @@ function validateAndNextStep() {
             }
         }
         function validateFormInputs() {
-    var inputs = document.querySelectorAll('#step1 input[required], #step1 select[required]');
-    var isValid = true;
-
-    inputs.forEach(function(input) {
-        if (!input.value.trim()) {
-            isValid = false;
-            input.classList.add('is-invalid');
-        } else {
-            input.classList.remove('is-invalid');
-        }
-    });
-
-    // Additional fields to include in validation
-    var manufacturerNameInput = document.getElementById('manufacturer_name');
-    if (!manufacturerNameInput.value.trim()) {
-        isValid = false;
-        manufacturerNameInput.classList.add('is-invalid');
-    } else {
-        manufacturerNameInput.classList.remove('is-invalid');
-    }
-
-    var totalCostInput = document.getElementById('total_cost');
-    if (!totalCostInput.value.trim()) {
-        isValid = false;
-        totalCostInput.classList.add('is-invalid');
-    } else {
-        totalCostInput.classList.remove('is-invalid');
-    }
-
-    return isValid;
-    function validateQuantityAndNext() {
-            var quantityInputs = document.querySelectorAll('.quantity-input');
+            var inputs = document.querySelectorAll('#step1 input[required], #step1 select[required]');
             var isValid = true;
 
-            // Check if there's at least one product in the left column
-            var productListRows = document.querySelectorAll("#PRO_products tbody tr");
-            if (productListRows.length === 0) {
-                isValid = false;
-                // Display alert message
-                alert("There should be at least 1 product in the products ordered.");
-            }
-
-            // Check if all quantities are valid
-            quantityInputs.forEach(function(input) {
-                const quantity = parseInt(input.value);
-                console.log(quantity);
-                if (isNaN(quantity) || quantity < 1) {
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
                     isValid = false;
-                    // Show error message or handle invalid input as desired
-                    alert("Quantity must be a number greater than or equal to 1.");
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
                 }
             });
 
-            if (isValid) {
-                nextStep(); // Proceed to the next step if all quantities are valid and at least one product is selected
+            // Additional fields to include in validation
+            var manufacturerNameInput = document.getElementById('manufacturer_name');
+            if (!manufacturerNameInput.value.trim()) {
+                isValid = false;
+                manufacturerNameInput.classList.add('is-invalid');
+            } else {
+                manufacturerNameInput.classList.remove('is-invalid');
             }
+
+            var totalCostInput = document.getElementById('total_cost');
+            if (!totalCostInput.value.trim()) {
+                isValid = false;
+                totalCostInput.classList.add('is-invalid');
+            } else {
+                totalCostInput.classList.remove('is-invalid');
+            }
+
+            return isValid;
+            function validateQuantityAndNext() {
+                    var quantityInputs = document.querySelectorAll('.quantity-input');
+                    var isValid = true;
+
+                    // Check if there's at least one product in the left column
+                    var productListRows = document.querySelectorAll("#PRO_products tbody tr");
+                    if (productListRows.length === 0) {
+                        isValid = false;
+                        // Display alert message
+                        alert("There should be at least 1 product in the products ordered.");
+                    }
+
+                    // Check if all quantities are valid
+                    quantityInputs.forEach(function(input) {
+                        const quantity = parseInt(input.value);
+                        console.log(quantity);
+                        if (isNaN(quantity) || quantity < 1) {
+                            isValid = false;
+                            // Show error message or handle invalid input as desired
+                            alert("Quantity must be a number greater than or equal to 1.");
+                        }
+                    });
+
+                    if (isValid) {
+                        nextStep(); // Proceed to the next step if all quantities are valid and at least one product is selected
+                    }
+                }
         }
-}
 
 
         // Render selected products along with additional information
@@ -496,22 +489,6 @@ function validateAndNextStep() {
             }
         }
 
-        
-        $(document).ready(function() {
-
-            $('#submit_pro').click(function() {
-                $('#PRO_products tbody tr').each(function(i) {
-                    var productId = $(this).find('.product_pk').val();
-
-                    var productQuantity = $(this).find(".quantity-input").val();
-
-                    var comb = productId + ':' + productQuantity;
-                    $('#all_products').val($('#all_products').val() + comb + '-');
-                });
-
-            });
-        });
-        
         $(document).ready(function() {
             $(window).keydown(function(event){
                 if(event.keyCode == 13) {

@@ -527,7 +527,7 @@ function validateAndNextStep() {
         
         $(document).ready(function() {
 
-            $('#submit_pro').click(function() {
+            $('#confirmSubmit').click(function() {
                 $('#PRO_products tbody tr').each(function(i) {
                     var productId = $(this).find('.product_pk').val();
 
@@ -536,6 +536,7 @@ function validateAndNextStep() {
                     var comb = productId + ':' + productQuantity;
                     $('#all_products').val($('#all_products').val() + comb + '-');
                 });
+                document.getElementById('addPRO').submit();
 
             });
         });
@@ -572,7 +573,17 @@ function validateAndNextStep() {
         });
         return productIds;
     }
-    
+    document.addEventListener('DOMContentLoaded', function() {
+                hideOrderedProducts();
+            });
+
+        function hideOrderedProducts() {
+            var allProductsInputs = document.querySelectorAll('input[name="ordered_prods"]')
+            allProductsInputs.forEach(function(input) {
+                var productId = input.value;
+                hideProduct(productId);
+            });
+        }
     function restrictNonNumericals(event) {
             // Allow: backspace, delete, tab, escape, enter, and .
             if (event.key === 'Backspace' || event.key === 'Delete' || event.key === 'Tab' || event.key === 'Escape' || event.key === 'Enter') {
