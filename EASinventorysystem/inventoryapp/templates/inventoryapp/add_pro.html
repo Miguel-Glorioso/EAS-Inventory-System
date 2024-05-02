@@ -219,6 +219,41 @@
     </div>
 
     <script>
+        function validateInputs() {
+    // Validate Estimated Receiving Date
+    var estimatedReceivingDateInput = document.getElementById('estimated_receiving_date');
+    var estimatedReceivingDate = estimatedReceivingDateInput.value;
+    if (!estimatedReceivingDate) {
+        alert("Please select an estimated receiving date.");
+        return false;
+    }
+
+    // Validate Manufacturer
+    var manufacturerInput = document.getElementById('manufacturer_name');
+    var manufacturer = manufacturerInput.value.trim();
+    if (!manufacturer) {
+        alert("Please provide a manufacturer name.");
+        return false;
+    }
+
+    // Validate Total Cost
+    var totalCostInput = document.getElementById('total_cost');
+    var totalCost = parseFloat(totalCostInput.value);
+    if (isNaN(totalCost) || totalCost <= 0) {
+        alert("Please enter a valid total cost greater than zero.");
+        return false;
+    }
+
+    // All inputs are valid
+    return true;
+}
+
+// Function to be called before proceeding to the next step
+function validateAndNextStep() {
+    if (validateInputs()) {
+        nextStep();
+    }
+}
         // checks date
         document.addEventListener('DOMContentLoaded', function() {
         var today = new Date();
