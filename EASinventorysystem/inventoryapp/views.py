@@ -80,7 +80,6 @@ def inventory_list(request):
         elif stock_status_param == 'regular_stock':
             all_inventory = all_inventory.filter(Product_Stock_Status='Regular Stock')
             
-    total_products_count = all_inventory.count()
 
     # Count products with different stock statuses
     low_stock_count = all_inventory.filter(Product_Stock_Status='Low Stock').count()
