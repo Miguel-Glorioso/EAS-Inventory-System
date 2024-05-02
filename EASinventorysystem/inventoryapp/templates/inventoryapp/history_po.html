@@ -52,7 +52,7 @@
               {% if po.PO_Status == "Closed" or po.PO_Status == "Cancelled" %}
                 <tr>  
                   <td class="iname" style="text-align: center;">{{po.Purchase_Order_ID}}</td>
-                  <td class="iid" style="text-align: center;">{{po.Requested_Date}}</td>
+                  <td class="iid" style="text-align: center;">{{po.Creation_Date}}</td>
                   <td class="iid" style="text-align: center;">{{po.Fulfilled_Date}}</td>
 
                   {% if po.Customer_ID %}
@@ -74,7 +74,7 @@
                       <a href="#" type="button" class="btn btn-danger">Delete</a>
                     </td>      -->
                   <td> 
-                    <a href="{% url 'view_po' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
+                    <a href="{% url 'view_po_history' pk=po.pk %}" type="button" class="btn btn-primary">View</a>
                   </td>             
                 </tr>
               {% endif %}

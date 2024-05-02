@@ -1426,8 +1426,14 @@ def update_PO_consignee(request, po_pk, c_pk):
 
 @login_required     
 def history_PO(request):
-    all_purchase_orders = Purchase_Order.objects.all().order_by('Requested_Date')
+    all_purchase_orders = Purchase_Order.objects.all().order_by('Fulfilled_Date')
     return render(request, 'inventoryapp/history_po.html', {'purchase_orders':all_purchase_orders})
+
+def view_po_history(request, pk):
+    purchase_order = get_object_or_404(Purchase_Order, pk=pk)
+    products_ordered = Product_Ordered.objects.filter(Purchase_Order_ID=pk)
+    return render(request, 'inventoryapp/view_po_history.html', {'po':purchase_order, 'products':products_ordered})
+
 
 @login_required 
 def history_PRO(request):

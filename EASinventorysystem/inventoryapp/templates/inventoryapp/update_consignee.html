@@ -65,7 +65,7 @@
             </div>
             <div class="mb-3">
                 <label for="id_zip_code" class="form-label custom-text">Zip Code:</label>
-                <input type="text" name="zip_code" class="form-control" maxlength="4" required id="id_zip_code" placeholder="Zip Code" value="{{ consignee.Zip_Code }}">
+                <input type="text" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" maxlength="4" pattern="[0-9]{4}" value="{{ consignee.Zip_Code }}" required>
             </div>
             <div class="row">
                 <div class="col-md-4">
@@ -91,13 +91,13 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="id_consignment_period_start" class="form-label custom-text">Consignment Period Start:</label>
-                        <input type="date" name="consignment_period_start" class="form-control" required id="id_consignment_period_start" value="{{ Start_date_string }}">
+                        <input type="date" name="consignment_period_start" class="form-control" required id="id_consignment_period_start" value="{{ Start_date_string }}" onkeydown="return false" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="id_consignment_period_end" class="form-label custom-text">Consignment Period End:</label>
-                        <input type="date" name="consignment_period_end" class="form-control" required id="id_consignment_period_end" value="{{ End_date_string }}">
+                        <input type="date" name="consignment_period_end" class="form-control" required id="id_consignment_period_end" value="{{ End_date_string }}"onkeydown="return false" required>
                     </div>
                 </div>
                 <script>
