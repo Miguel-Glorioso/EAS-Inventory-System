@@ -89,7 +89,7 @@
                   <td> 
                     <form id="closePoForm" action="{% url 'cancel_po' pk=po.pk account_id=request.user.account.pk %}" method="post">
                         {% csrf_token %}
-                        <button type="button" class="btn btn-danger" onclick="submitCancelPoForm(this)">Delete</button>
+                        <button type="button" class="btn btn-danger" onclick="submitCancelPoForm(this)">Cancel</button>
                     </form>
                 </td>   
                   <td> 

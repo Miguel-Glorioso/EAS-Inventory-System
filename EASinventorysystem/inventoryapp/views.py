@@ -929,7 +929,7 @@ def cancel_pro(request, pk, account_id):
             messages.success(request, "Product requisition order cancelled successfully.")
             return redirect('current_pros')
         else:
-            error_msg = "This purchase order cannot be cancelled."
+            error_msg = "This product requisition order cannot be cancelled."
             all_requisition_orders = Product_Requisition_Order.objects.all()
             return render(request, 'inventoryapp/current_pros.html', {'requisition_orders':all_requisition_orders, 'error_msg':error_msg})
         
