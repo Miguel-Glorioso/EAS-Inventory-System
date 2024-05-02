@@ -46,28 +46,39 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label class="required" for="category_name">Category Name</label>
-                        <input type="text" class="form-control" id="category_name" name="category_name" required>
+                        <input style="margin-top: 10px" type="text" class="form-control" id="category_name" name="category_name" required>
                     </div>
                 </div>
                 <!-- <div class="col-md-4">
                     <div class="form-group">
-                        <label for="category_hex_color_id">Category Hex Color</label>
-                        <div class="input-group">
-                            <input type="color" class="form-control" id="category_hex_color_id" name="category_hex_color_id" required>
-                            <div class="color-picker">
-                                <span class="color-preview" id="color-preview">#000000</span>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <div class="col-md-4">
-                    <div class="form-group">
                         <label class="required" for="category_product_low_stock_threshold">Low Stock Threshold</label>
                         <input type="number" class="form-control" id="category_product_low_stock_threshold" name="category_product_low_stock_threshold" required>
                     </div>
+                </div> -->
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="id_Category_Product_Low_Stock_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
+                        <div class="input-group">
+                            <button type="button" class="btn btn-secondary" onclick="changeValue(-1)">-</button>
+                            <input type="int" min="0" maxlength="5" name="category_product_low_stock_threshold" class="form-control" required id="id_Category_Product_Low_Stock_Threshold" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" value="0">
+                            <button type="button" class="btn btn-secondary" onclick="changeValue(1)">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4" style="margin-top: 20px;">
+            <script>
+                function changeValue(delta) {
+            var input = document.getElementById('id_Category_Product_Low_Stock_Threshold');
+            var value = parseInt(input.value, 10) || 0;
+            value += delta;
+            if (value < 0) value = 0; // Ensure the value doesn't go below 0
+            input.value = value;
+            checkFormValidity(); // Check form validity whenever the value changes
+        }
+
+            </script>
+
+            <div class="col-md-4" style="margin-top: 10px;">
                 <div class="input-group mb-3">
                     <label class="required input-group-text" for="id_Category_Hex_Color_ID">Category Color Picker:</label>
                     <input type="color" name="category_hex_color_id" value="#000000" required id="id_Category_Hex_Color_ID">
@@ -106,7 +117,8 @@
     </div>
 
     <!-- Bootstrap JS (optional) -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
     <!-- Script to display hex code alongside color picker -->
     <script>
         document.getElementById('category_hex_color_id').addEventListener('input', function() {
