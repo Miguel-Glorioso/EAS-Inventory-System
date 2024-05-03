@@ -12,7 +12,7 @@
 <body class="bg-light">
     <!-- Modal -->
     <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
 
           <div class="modal-header">
@@ -291,6 +291,7 @@ $('#stockStatusFilter').on('change', function() {
       });
     });
   </script>
+  <div class="col"></div>
 
   <!-- Modal JavaScript -->
   <script>
@@ -303,17 +304,101 @@ $('#stockStatusFilter').on('change', function() {
         success: function(response) {
           $('#productModal').find('.modal-title').text('Product Information');
           $('#productModal').find('.modal-body').html(`
-            ${response.picture ? `<div class="product-image" style="text-align: center;"><img src="${response.picture}" width="200"></div>` : ''}
-            <p><strong>Product Name:</strong> ${response.name}</p>
-            <p><strong>Product ID:</strong> ${response.id}</p>
-            <p><strong>SKU:</strong> ${response.sku}</p>  
-            <p><strong>Price:</strong> ${response.price}</p>
-            <p><strong>Actual Count:</strong> ${response.count}</p>
-            <p><strong>Reserved:</strong> ${response.reserved_count}</p>
-            <p><strong>To Be Received:</strong> ${response.to_be_received_count}</p>
-            <p><strong>Category:</strong> ${response.category}</p>
-            <p><strong>Stock Level Threshold:</strong> ${response.threshold}</p>
-            ${response.tags ? `<p><strong>Tags:</strong> ${response.tags.join(', ')}</p>` : ''}
+            <div class="row">
+
+              <!-- Image -->
+              <div class="col m-0">
+                ${response.picture ? `<div class="product-image" style="text-align: center;"><img src="${response.picture}" width="200"></div>` : ''}
+              </div>
+
+              <!-- 1st row -->
+              <div class="col mx-2">
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Product Name:</strong></h6>
+                      <p class="card-text">${response.name}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Product ID:</strong></h6>
+                      <p class="card-text">${response.id}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Reserved:</strong></h6>
+                      <p class="card-text">${response.reserved_count}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Actual Count:</strong></h6>
+                      <p class="card-text">${response.count}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Category:</strong></h6>
+                      <p class="card-text">${response.category}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2nd row -->
+              <div class="col mx-2">
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Price:</strong></h6>
+                      <p class="card-text">${response.price}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>SKU:</strong></h6>
+                      <p class="card-text">${response.sku}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>To Be Received:</strong></h6>
+                      <p class="card-text">${response.to_be_received_count}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Stock Level Threshold:</strong></h6>
+                      <p class="card-text">${response.threshold}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Tags:</strong></h6>                      
+                      ${response.tags ? `<p class="card-text">${response.tags.join(', ')}</p>` : ''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           `);
           $('#productModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_product/' + response.product_id + '/');
 
