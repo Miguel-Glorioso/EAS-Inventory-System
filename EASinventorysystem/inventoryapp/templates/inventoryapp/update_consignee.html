@@ -1,31 +1,18 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="static/create_consignee.css">
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
 {% block content %}
 <body>
     <style>
-    .required:after {
+        .required:after {
           content:" *";
           color: red;
         }
-    .input-group {
-        /* display: flex;
-        flex-direction: column;
-        align-items: center; */
-        gap: 10px;
-    }
-    input[type="color"] {
-        width: 30px;
-        height: 30px;
-        border: none;
-        border-radius: 50%;
-        outline: none;
-        cursor: pointer;
-    }
-    </style>
-    
+      </style>
     <div class="container-fluid">
         <div class="row p-1" style="background-color: #eee;">
             <div class="col-md-auto d-flex align-items-center">
@@ -40,73 +27,97 @@
         <form id="updateForm" method="POST"  action="{% url 'update_consignee' consignee.pk %}">
             {% csrf_token %}
             <legend>Consignee Information</legend>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_consignee_name" class="form-label custom-text">Consignee Name:</label>
+                        <input type="text" name="consignee_name" class="form-control" maxlength="32" required id="id_consignee_name" placeholder="Consignee Name" value="{{ consignee.Consignee_Name }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_consignee_name" class="form-label custom-text">Consignee Tag ID:</label>
+                        <input type="text" name="consignee_tag_id" class="form-control" maxlength="16" required id="id_consignee_tag_id" placeholder="Consignee Tag ID" value="{{ consignee.Consignee_Tag_ID }}">
+                    </div>
+                </div>
+                </div>
             <div class="mb-3">
-                <label for="id_consignee_name" class="form-label custom-text">Consignee Name:</label>
-                <input type="text" name="consignee_name" class="form-control" maxlength="32" required id="id_consignee_name"  value="{{ consignee.Consignee_Name }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="id_consignee_name" class="form-label custom-text">Consignee Tag ID:</label>
-                <input type="text" name="consignee_tag_id" class="form-control" maxlength="16" required id="id_consignee_tag_id" value="{{ consignee.Consignee_Tag_ID }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="id_address_line_1" class="form-label custom-text">Address Line 1:</label>
-                <input type="text" name="address_line_1" class="form-control" maxlength="128" required id="id_address_line_1"  value="{{ consignee.Address_Line_1 }}" required>
+                <label class="required" for="id_address_line_1" class="form-label custom-text">Address Line 1:</label>
+                <input type="text" name="address_line_1" class="form-control" maxlength="128" required id="id_address_line_1" placeholder="Address Line 1" value="{{ consignee.Address_Line_1 }}">
             </div>
             <div class="row">
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_province" class="form-label custom-text">Province:</label>
-                        <input type="text" name="province" class="form-control" maxlength="64" required id="id_province" value="{{ consignee.Province }}" required>
+                        <label class="required" for="id_province" class="form-label custom-text">Province:</label>
+                        <input type="text" name="province" class="form-control" maxlength="64" required id="id_province" placeholder="Province" value="{{ consignee.Province }}">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_municipality" class="form-label custom-text">Municipality:</label>
-                        <input type="text" name="municipality" class="form-control" maxlength="64" required id="id_municipality" value="{{ consignee.Municipality }}" required>
+                        <label class="required" for="id_municipality" class="form-label custom-text">Municipality:</label>
+                        <input type="text" name="municipality" class="form-control" maxlength="64" required id="id_municipality" placeholder="Municipality" value="{{ consignee.Municipality }}">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_barangay" class="form-label custom-text">Barangay:</label>
-                        <input type="text" name="barangay" class="form-control" maxlength="64" required id="id_barangay" value="{{ consignee.Barangay }}" required>
+                        <label class="required" for="id_barangay" class="form-label custom-text">Barangay:</label>
+                        <input type="text" name="barangay" class="form-control" maxlength="64" required id="id_barangay" placeholder="Barangay" value="{{ consignee.Barangay }}">
                     </div>
                 </div>
             </div>
             <div class="mb-3">
-                <label for="id_zip_code" class="form-label custom-text">Zip Code:</label>
-                <input type="text" name="zip_code" class="form-control" id="zip_code" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" maxlength="4" pattern="[0-9]{4}" value="{{ consignee.Zip_Code }}" required>
-            </div>
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-md-4">
+                        <label class="required" for="id_zip_code" class="form-label custom-text">Zip Code:</label>
+                        <input type="text" name="zip_code" class="form-control" required id="zip_code" placeholder="Zip Code" value="{{ consignee.Zip_Code }}" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" maxlength="4">
+                        <!-- <input type="number" name="zip_code" class="form-control" required id="id_zip_code" placeholder="Zip Code" oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);" pattern="[0-9]{4}" > -->
+                </select>
+                        <div class="col-md-3"></div> <!-- Invisible column -->
+                        <div class="col-md-3"></div> <!-- Invisible column -->
+                    </div>
+                </div>
+            <!-- <div class="mb-3">
+                <label class="required" for="id_zip_code" class="form-label custom-text">Zip Code:</label>
+                <input type="text" name="zip_code" class="form-control" maxlength="4" required id="id_zip_code" placeholder="Zip Code">
+            </div> -->
             <div class="row">
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                        <input type="tel" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" value="{{ consignee.Primary_Contact_Number }}" required>
+                        <label class="required" for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
+                        <input type="text" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" value="{{ consignee.Primary_Contact_Number }}" placeholder="Primary Contact Number: 09xxxxxxxxx" pattern="09[0-9]{9}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 0;">
+                        <!-- <input type="tel" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number" pattern="[0-9]{11}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11"> -->
+                        <!-- <input type="tel" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" inputmode="numeric" placeholder="Primary Contact Number"> -->
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_email_address" class="form-label custom-text">Email Address:</label>
+                        <input type="email" name="email_address" class="form-control" maxlength="128" required id="id_email_address" value="{{ consignee.Email_Address }}" placeholder="Email Address" pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="id_email_address" class="form-label custom-text">Email Address:</label>
-                        <input type="email" name="email_address" class="form-control" maxlength="128" required id="id_email_address"  value="{{ consignee.Email_Address }}" required>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label for="id_emergency_contact_number" class="form-label custom-text">Emergency Contact Number:</label>
-                        <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" required id="id_emergency_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" value="{{ consignee.Emergency_Contact_Number }}" required>
+                        <label class="nonrequired" for="id_emergency_contact_number" class="form-label custom-text">Emergency Contact Number:</label>
+                        <!-- can't make it to not accept less than 7 -->
+                        <input type="text" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" value="{{ consignee.Emergency_Contact_Number }}" pattern="(?:[0-9]{7}|[0-9]{11})" title="Please enter a valid 7 or 11-digit phone number" oninput="if (this.value.length < 7) { this.setCustomValidity('Please enter at least 7 digits.'); } else { this.setCustomValidity(''); }" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="Emergency Contact Number">
+                        <!-- <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" pattern="(?:[0-9]{7}|[0-9]{11})" title="Please enter a valid 7-11 digit number" oninput="javascript: if (this.value.length < 7 || this.value.length > 11) { this.setCustomValidity('Please enter a valid 7-11 digit number'); } else { this.setCustomValidity(''); }" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="Emergency Contact Number"> -->
+                        <!-- <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" pattern="(?:[0-9]{7}|[0-9]{11})" title="Please enter a valid 7 or 11-digit phone number" oninput="javascript: if (this.value.length > 11 || (this.value.length > 0 && this.value.length < 7)) { this.setCustomValidity('Please enter a valid 7 or 11-digit phone number'); } else { this.setCustomValidity(''); }" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="Emergency Contact Number"> -->
+                        <!-- <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" placeholder="Emergency Contact Number"> -->
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="id_consignment_period_start" class="form-label custom-text">Consignment Period Start:</label>
-                        <input type="date" name="consignment_period_start" class="form-control" required id="id_consignment_period_start" value="{{ Start_date_string }}" onkeydown="return false" required>
+                        <label class="required" for="id_consignment_period_start" class="form-label custom-text">Consignment Period Start:</label>
+                        <input type="date" name="consignment_period_start" class="form-control" required id="id_consignment_period_start" value="{{ Start_date_string }}" onkeydown="return false"required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="id_consignment_period_end" class="form-label custom-text">Consignment Period End:</label>
-                        <input type="date" name="consignment_period_end" class="form-control" required id="id_consignment_period_end" value="{{ End_date_string }}"onkeydown="return false" required>
+                        <label class="required" for="id_consignment_period_end" class="form-label custom-text">Consignment Period End:</label>
+                        <input type="date" name="consignment_period_end" class="form-control" required id="id_consignment_period_end" value="{{ End_date_string }}" onkeydown="return false" required>
                     </div>
                 </div>
                 <script>
@@ -125,9 +136,9 @@
                 </script>
             </div>
             <div class="input-group mb-3">
-                <label for="colorpicker">Tag Color Picker:</label>
-                <input type="color" id="tag_hex_color_id" name="tag_hex_color_id"  value="{{ consignee.Tag_Hex_Color_ID }}" required>
-                <div id="colorDisplay">{{ consignee.Tag_Hex_Color_ID }}</div>
+                <label class="required" for="colorpicker">Tag Color Picker:</label>
+                <input type="color" id="tag_hex_color_id" name="tag_hex_color_id" placeholder="#000000">
+                <div id="colorDisplay">#000000</div>
             </div>
             
             <script>
@@ -147,94 +158,114 @@
             
             <div class="mb-3">
                 <label for="id_notes" class="form-label custom-text">Notes:</label>
-                <textarea name="notes" class="form-control" id="id_notes" rows="3">{{ consignee.Notes }}</textarea>
+                <textarea type="text" name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes" oninput="if(this.value.length > 1024) this.value = this.value.substring(0, 1024);" maxlength="1024"></textarea>
+                <!-- <textarea name="notes" class="form-control" id="id_notes" rows="3" placeholder="Notes"></textarea> -->
             </div>
-            <div class="row">
-                <div class="col">
-                    <a href="{% url 'current_customers' %}" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</a>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-danger" id="cancelButton" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
                 </div>
-                <div class="col text-end">
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmationModal">Update</button>
+                <div class="col-md-6 text-end">
+                    <button type="submit" class="btn btn-success" id="createBtn">Create</button>
                 </div>
             </div>
         </form>
     </div>
-    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cancelModalLabel">Warning</h5>
-                </div>
-                <div class="modal-body">
-                    Exit form? Any changes you have made may not be saved.
-                </div>
-                <div class="modal-footer">
-                    <div class="col">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                    </div>
-                    <a href="{% url 'current_customers' %}" class="btn btn-danger">Exit Anyways</a>
-                </div>
-            </div>
-        </div>
-    </div>
     
     <!-- Confirmation Modal -->
-    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to update this Consignee?
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
                 </div>
-                <div class="modal-body">
-                    Are you sure you want to update this consignee?
-                </div>
-                <div class="modal-footer">
-                    <div class="col">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                    <button type="button" class="btn btn-success" id="confirmSubmit">Yes</button>
-                </div>
+                <button type="submit" class="btn btn-success" id="submitConfirmationBtn">Yes</button>
             </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            // Function to check if any required fields are empty
-            function checkRequiredFields() {
-                var isValid = true;
-                // Iterate through each input and textarea
-                $("#updateForm input, #updateForm textarea").each(function () {
-                    // Check if the field is required and empty
-                    if ($(this).prop('required') && $(this).val().trim() === '') {
-                        isValid = false;
-                        return false; // Exit the loop early
-                    }
-                });
-                return isValid;
-            }
+</div>
 
-            // When the "Update" button is clicked
-            $("#submitBtn").click(function () {
-                // Check if any required fields are empty
-                if (checkRequiredFields()) {
-                    // Show the confirmation modal
-                    $("#confirmationModal").modal('show');
+<!-- Cancel Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Warning</h5>
+            </div>
+            <div class="modal-body">
+                Exit form? Any changes you have made may not be saved.
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+                </div>
+                <a href="{% url 'current_customers' %}" class="btn btn-danger">Exit Anyways</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Function to handle form submission after confirmation
+        function handleSubmit(event) {
+            event.preventDefault();
+            if (checkRequiredFields()) {
+                showConfirmationModal();
+            }
+        }
+    
+        // Function to check if all required fields are filled
+        function checkRequiredFields() {
+            let inputs = document.querySelectorAll('input[required]');
+            let isValid = true;
+    
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid'); // Add red border
                 } else {
-                    // Display an alert or handle the case when required fields are empty
-                    alert('Please fill out all required fields.');
+                    input.classList.remove('is-invalid'); // Remove red border
                 }
             });
-
-            // When the "Yes" button in the confirmation modal is clicked
-            $("#confirmSubmit").click(function () {
-                // Hide the confirmation modal
-                $("#confirmationModal").modal('hide');
-                // Submit the form
-                $("#updateForm").submit();
-            });
+    
+            if (!isValid) {
+                alert('Please fill out all required fields and satisfy the required input.');
+            }
+    
+            return isValid;
+        }
+    
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#confirmationModal').modal('show');
+        }
+    
+        // Add event listener to the form submit button
+        document.getElementById('createBtn').addEventListener('click', handleSubmit);
+    
+        // Add event listener to the Cancel button
+        document.getElementById('cancelButton').addEventListener('click', function () {
+            $('#cancelModal').modal('show');
+        });
+    
+        // Function to handle form submission after confirmation
+        document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
+            document.getElementById('updateForm').submit();
         });
     </script>
 
+
 </body>
 {% endblock %}
+</html>
+
+
