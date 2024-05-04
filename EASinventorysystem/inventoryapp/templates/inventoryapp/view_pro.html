@@ -121,7 +121,7 @@
                                 <!-- Display combined partially fulfilled quantity for the stock -->
                                 {% if s.pk in no_parfills %}
                                     <td>0</td>
-                                    <td>0</td>
+                                    <td>{{ s.Quantity }}</td>
                                 {% else %}
                                     {% for parfill in previous_parfills %}
                                         {% if parfill.Stock == s.pk %}

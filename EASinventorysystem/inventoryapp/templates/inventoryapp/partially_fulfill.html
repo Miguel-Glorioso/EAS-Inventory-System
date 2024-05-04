@@ -45,7 +45,7 @@
                                             <td>{{ stock.Quantity }}</td>
                                             {% if stock.pk in no_parfills %}
                                                 <td>0</td>
-                                                <td>0</td>
+                                                <td>{{ stock.Quantity }}</td>
                                             {% else %}
                                                 {% for parfill in previous_parfills %}
                                                     {% if parfill.Stock == stock.pk %}
