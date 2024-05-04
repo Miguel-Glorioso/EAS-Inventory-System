@@ -154,6 +154,28 @@
                     });
                 });
             </script>
+
+            <script>
+                document.getElementById("cancelButton").addEventListener("click", function() {
+                    // Check if any input field has a value
+                    var formIsEmpty = true;
+                    var inputs = document.querySelectorAll("#createProductForm input[type='text'], #createProductForm input[type='number'], #createProductForm select, #createProductForm input[type='int']");
+                    inputs.forEach(function(input) {
+                        if (input.value.trim() !== '') {
+                            formIsEmpty = false;
+                        }
+                    });
+
+                    // If the form is not empty, open the cancel confirmation modal
+                    if (!formIsEmpty) {
+                        var myModal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
+                        myModal.show();
+                    } else {
+                        // If the form is empty, redirect to the current inventory page
+                        window.location.href = "{% url 'current_inventory' %}";
+                    }
+                });
+            </script>
             
             
             <div class="mb-3">
@@ -204,7 +226,7 @@
             </div>
             <div class="modal-footer">
                 <div class="col">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
                 </div>
                 <a href="{% url 'categories_consignee_tags' %}" class="btn btn-danger">Exit Anyways</a>
             </div>
@@ -216,16 +238,16 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
-        document.getElementById('createConsigneeForm').submit();
-    });
-});
-        function handleSubmit(event) {
-    event.preventDefault(); // Prevent form submission
-    if (checkRequiredFields()) {
-        showConfirmationModal();
-    }
-}
+            document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
+                document.getElementById('createConsigneeForm').submit();
+            });
+        });
+                function handleSubmit(event) {
+            event.preventDefault(); // Prevent form submission
+            if (checkRequiredFields()) {
+                showConfirmationModal();
+            }
+        }
 
         // Function to check if all required fields are filled
         function checkRequiredFields() {
@@ -264,9 +286,18 @@
         // Add event listener to the form submit button
         document.getElementById('createBtn').addEventListener('click', handleSubmit);
 
-        // Add event listener to the Cancel button
-        document.querySelector('button[data-bs-target="#cancelModal"]').addEventListener('click', function () {
-            $('#cancelModal').modal('show');
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
+                document.getElementById('createConsigneeForm').submit();
+            });
+
+            // Function to show the cancel modal
+            function showCancelModal() {
+                $('#cancelModal').modal('show');
+            }
+
+            // Add event listener to the Cancel button
+            document.getElementById("cancelButton").addEventListener("click", showCancelModal);
         });
 
         // Function to handle form submission after confirmation
@@ -280,6 +311,5 @@
 
 </body>
 {% endblock %}
-</html>
 
 
