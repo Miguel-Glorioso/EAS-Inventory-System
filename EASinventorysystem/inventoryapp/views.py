@@ -303,7 +303,6 @@ def purchase_order_list(request):
             all_purchase_orders = all_purchase_orders.exclude(Consignee_ID__isnull=True)
         elif customer_type_param == 'Consignee':
             all_purchase_orders = all_purchase_orders.exclude(Customer_ID__isnull=True)
-    print(progress_type_param)
     if progress_type_param:
             if progress_type_param == 'Pending':
                 all_purchase_orders = all_purchase_orders.filter(Progress='Pending')
@@ -878,7 +877,7 @@ def close_pro(request, pk, account_id):
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
     account = get_object_or_404(Account,pk=account_id )
     if request.method == 'POST':
-        if requisition_order.PRO_Status != 'Closed':
+        if requisition_order.PRO_Status == 'Ongoing':
             stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
 
             for stock in stocks_ordered:
@@ -1473,7 +1472,7 @@ def history_PRO(request):
 def view_pro_history(request, pk):
     requisition_order = get_object_or_404(Product_Requisition_Order, pk=pk)
     stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=pk)
-    return render(request, 'inventoryapp/view_po_history.html', {'pro':requisition_order, 'products':stocks_ordered})
+    return render(request, 'inventoryapp/view_pro_history.html', {'pro':requisition_order, 'stocks':stocks_ordered})
 
 @login_required 
 def categories_consignee_tags(request):

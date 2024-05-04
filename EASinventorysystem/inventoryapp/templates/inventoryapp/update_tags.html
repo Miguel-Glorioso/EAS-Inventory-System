@@ -137,7 +137,7 @@
             </div>
             <div class="input-group mb-3">
                 <label class="required" for="colorpicker">Tag Color Picker:</label>
-                <input type="color" id="tag_hex_color_id" name="tag_hex_color_id" placeholder="#000000">
+                <input type="color" id="tag_hex_color_id" name="tag_hex_color_id" placeholder="#000000" value="{{ consignee.Tag_Hex_Color_ID }}">
                 <div id="colorDisplay">#000000</div>
             </div>
             
@@ -204,7 +204,7 @@
             </div>
             <div class="modal-footer">
                 <div class="col">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
                 </div>
                 <a href="{% url 'current_customers' %}" class="btn btn-danger">Exit Anyways</a>
             </div>

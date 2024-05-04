@@ -52,8 +52,8 @@
       <div class="col-md-auto">
         <select id="customerFilter" class="form-select" aria-label="Filter by Customer">
             <option value="">All Customers Types</option>
-            <option value="Direct" {% if request.GET.customer_type|stringformat:"s" == "Direct" %} selected {% endif %}>Direct</option>
-            <option value="Consignee" {% if request.GET.customer_type|stringformat:"s" == "Consignee" %} selected {% endif %}>Consignee</option>
+            <option value="Direct" {% if request.GET.customer_type|stringformat:"s" == "Direct" %} selected {% endif %}>Consignee</option>
+            <option value="Consignee" {% if request.GET.customer_type|stringformat:"s" == "Consignee" %} selected {% endif %}>Direct</option>
         </select>
       </div>
       <div class="col-md-auto">

@@ -49,7 +49,7 @@
           </thead>
           <tbody>
             {% for po in purchase_orders %}
-              {% if po.PO_Status == "Closed" or po.PO_Status == "Cancelled" %}
+              {% if po.PO_Status == "Closed"%}
                 <tr>  
                   <td class="iname" style="text-align: center;">{{po.Purchase_Order_ID}}</td>
                   <td class="iid" style="text-align: center;">{{po.Creation_Date}}</td>
