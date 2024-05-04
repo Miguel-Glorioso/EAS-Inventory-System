@@ -117,6 +117,9 @@ def add_product(request):
 
         product_category = get_object_or_404(Category, pk=Product_Category)
 
+        if Product_Initial_Count == None:
+            Product_Initial_Count = 0
+            
         if int(Product_Stock_threshold) == 0:
             print('no prod stock')
             Product_Stock_threshold = None
