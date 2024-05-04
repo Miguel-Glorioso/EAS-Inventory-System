@@ -119,7 +119,7 @@ def add_product(request):
 
         if Product_Initial_Count == None:
             Product_Initial_Count = 0
-            
+
         if int(Product_Stock_threshold) == 0:
             print('no prod stock')
             Product_Stock_threshold = None
@@ -1187,7 +1187,7 @@ def create__consignee(request):
             )
 
             # Redirect to some page after successful creation
-            messages.success(request, "Tag-Consignee added successfully.")
+            messages.success(request, "Consignee added successfully.")
             return redirect('categories_consignee_tags')
 
     else:

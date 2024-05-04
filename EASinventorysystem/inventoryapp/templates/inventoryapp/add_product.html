@@ -91,7 +91,7 @@
                 <div class="mb-2">
                     <label for="id_Actual_Inventory_Count" class="form-label custom-text">Initial Inventory Count:</label>
                     <div class="input-group">
-                        <input type="number" min="0" maxlength="5" name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 && this.value.length < 5)" placeholder="0">
+                        <input type="number" min="0" maxlength="5" name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 && this.value.length < 5)" value="0">
                         <!-- <input type="number" min='0' name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" value="0"> -->
                         <!-- <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="button" onclick="decrementCount()">-</button>
@@ -104,7 +104,7 @@
                 <div class="mb-2">
                     <label for="id_Stock_Level_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
                     <div class="input-group">
-                        <input type="number" min="0" maxlength="5" name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 && this.value.length < 5)" placeholder="0">
+                        <input type="number" min="0" maxlength="5" name="product_stock_level_threshold" class="form-control" id="id_Stock_Level_Threshold" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 && this.value.length < 5)" value="0">
                         <!-- <input type="number" min='0' name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" value="0"> -->
                         <!-- <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>

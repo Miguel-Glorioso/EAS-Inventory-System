@@ -24,7 +24,7 @@
                 {{ error_msg }}
             </div>
         {% endif %}
-        <form id="createConsigneeForm" method="POST" action="{% url 'create_consignee' %}">
+        <form id="createConsigneeForm" method="POST" action="{% url 'create__consignee' %}">
             {% csrf_token %}
             <legend>Consignee Information</legend>
             <div class="row">

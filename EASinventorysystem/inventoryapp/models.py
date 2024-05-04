@@ -154,8 +154,8 @@ class Count_Edit_History(models.Model):
     Date_Updated = models.DateTimeField()
     Initial_Inventory_Count = models.PositiveIntegerField(validators=[MaxValueValidator(99999)])
     Updated_Inventory_Count = models.PositiveIntegerField(validators=[MaxValueValidator(99999)])
-    Image_Report = models.ImageField(upload_to='count_edit_images/', null=True, blank=True, )
-    Text_Report = models.TextField(null=True, blank=True, validators=[MaxLengthValidator(1024)])
+    Image_Report = models.ImageField(upload_to='count_edit_images/', null=True, blank=True)
+    Text_Report = models.TextField(validators=[MaxLengthValidator(1024)])
     Product_ID = models.ForeignKey(Product, on_delete=models.PROTECT)
     Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT)
     
@@ -167,7 +167,7 @@ class Partially_Fulfilled_History(models.Model):
     Date_Updated = models.DateTimeField()
     Partially_Fulfilled_Quantity = models.PositiveIntegerField(validators=[MaxValueValidator(99999)])
     Image_Report = models.ImageField(upload_to='partially_fulfilled_images/', null=True, blank=True)
-    Text_Report = models.TextField(validators =[MaxLengthValidator(1024)], null=True, blank=True)
+    Text_Report = models.TextField(validators =[MaxLengthValidator(1024)])
     Stock = models.ForeignKey(Stock_Ordered, on_delete=models.PROTECT)
     Account_ID = models.ForeignKey(Account, on_delete=models.PROTECT)
     
