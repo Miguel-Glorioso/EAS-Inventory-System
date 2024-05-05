@@ -216,23 +216,9 @@
         });
 
         document.getElementById("cancelButton").addEventListener("click", function() {
-            // Check if any input field has a value
-            var formIsEmpty = true;
-            var inputs = document.querySelectorAll("#createConsigneeForm input[type='text'], #createConsigneeForm input[type='number'], #createConsigneeForm select, #createConsigneeForm input[type='int']");
-            inputs.forEach(function(input) {
-                if (input.value.trim() !== '') {
-                    formIsEmpty = false;
-                }
-            });
-
             // If the form is not empty, open the cancel confirmation modal
-            if (!formIsEmpty) {
-                var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
-                myModal.show();
-            } else {
-                // If the form is empty, redirect to the current inventory page
-                window.location.href = "{% url 'current_customers' %}";
-            }
+            var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+            myModal.show();
         });
 
         // Function to check if all required fields are filled

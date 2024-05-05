@@ -127,23 +127,8 @@
     <script>
 
         document.getElementById("cancelButton").addEventListener("click", function() {
-            // Check if any input field has a value
-            var formIsEmpty = true;
-            var inputs = document.querySelectorAll("#createCustomerForm input[type='text']");
-            inputs.forEach(function(input) {
-                if (input.value.trim() !== '') {
-                    formIsEmpty = false;
-                }
-            });
-
-            // If the form is not empty, open the cancel confirmation modal
-            if (!formIsEmpty) {
                 var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
                 myModal.show();
-            } else {
-                // If the form is empty, redirect to the current inventory page
-                window.location.href = "{% url 'current_customers' %}";
-            }
         });
 
 

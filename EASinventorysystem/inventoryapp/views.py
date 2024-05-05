@@ -1105,10 +1105,15 @@ def create_consignee(request):
             Consignee_Tag_ID=Consignee_Tag_ID,
             Consignee_Name=Consignee_Name,
         )
-        if existing_consignee:
+        if existing_consignee.exists():
             error_msg = 'Consignee Already Exists'
             return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
+        
+        existing_color = Consignee.objects.filter(Tag_Hex_Color_ID=Tag_Hex_Color_ID)
 
+        if existing_color.exists():
+            error_msg = 'Consignee Color Already Exists'
+            return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
 
         else:   
             # Create a new consignee object
@@ -1154,16 +1159,21 @@ def create__consignee(request):
         Emergency_Contact_Number = request.POST.get('emergency_contact_number')
         Email_Address = request.POST.get('email_address')
         Tag_Hex_Color_ID = request.POST.get('tag_hex_color_id')
-
+        print(Tag_Hex_Color_ID)
         # Check if the consignee already exists
         existing_consignee = Consignee.objects.filter(
             Consignee_Tag_ID=Consignee_Tag_ID,
             Consignee_Name=Consignee_Name,
         )
-        if existing_consignee:
+        if existing_consignee.exists():
             error_msg = 'Consignee Already Exists'
             return render(request, 'inventoryapp/create__consignee.html',  {'error_msg': error_msg})
+        
+        existing_color = Consignee.objects.filter(Tag_Hex_Color_ID=Tag_Hex_Color_ID)
 
+        if existing_color.exists():
+            error_msg = 'Consignee Color Already Exists'
+            return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
 
         else:   
             # Create a new consignee object
@@ -1284,6 +1294,22 @@ def update_consignee(request, pk):
         Email_Address = request.POST.get('email_address')
         Tag_Hex_Color_ID = request.POST.get('tag_hex_color_id')
 
+        # Check if the consignee already exists
+        existing_consignee = Consignee.objects.filter(
+            Consignee_Tag_ID=Consignee_Tag_ID,
+            Consignee_Name=Consignee_Name,
+        ).exclude(pk=pk)
+
+        if existing_consignee.exists():
+            error_msg = 'Consignee Already Exists'
+            return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string, 'error_msg': error_msg})
+        
+        existing_color = Consignee.objects.filter(Tag_Hex_Color_ID=Tag_Hex_Color_ID).exclude(pk=pk)
+
+        if existing_color.exists():
+            error_msg = 'Consignee Color Already Exists'
+            return render(request, 'inventoryapp/update_consignee.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string, 'error_msg': error_msg})
+
         # Update the consignee object
         consignee.Consignee_Tag_ID = Consignee_Tag_ID
         consignee.Consignee_Name = Consignee_Name
@@ -1298,7 +1324,6 @@ def update_consignee(request, pk):
         consignee.Consignment_Period_End = Consignment_Period_End
         consignee.Emergency_Contact_Number = Emergency_Contact_Number
         consignee.Email_Address = Email_Address
-        print(Tag_Hex_Color_ID,'CHECKIS')
         consignee.Tag_Hex_Color_ID = Tag_Hex_Color_ID
 
         consignee.save()
@@ -1492,11 +1517,17 @@ def add_category(request):
         Notes = request.POST.get('notes')
 
         existing_category = Category.objects.filter(Category_Name=Category_Name)
+
         if existing_category.exists():
             error_msg = 'Category Already Exists'
-            consignees = Consignee.objects.all()
-            categories = Category.objects.all()
-            return render(request, 'inventoryapp/categories_consignee_tags.html', {'consignees': consignees, 'categories': categories, 'error_msg': error_msg})
+            return render(request, 'inventoryapp/add_category.html', {'error_msg': error_msg})
+        
+        existing_color = Category.objects.filter(Category_Hex_Color_ID=Category_Hex_Color_ID)
+
+        if existing_color.exists():
+            error_msg = 'Category Color Already Exists'
+            return render(request, 'inventoryapp/add_category.html', {'error_msg': error_msg})
+        
         else:
             Category.objects.create(
                 Category_Name=Category_Name,
@@ -1666,11 +1697,17 @@ def update_category(request, pk):
 
         # Check if a category with the same name already exists excluding the current one
         existing_category = Category.objects.filter(Category_Name=Category_Name).exclude(pk=pk)
+
         if existing_category.exists():
             error_msg = 'Category Already Exists'
-            consignees = Consignee.objects.all()
-            categories = Category.objects.all()
-            return render(request, 'inventoryapp/categories_consignee_tags.html', {'consignees': consignees, 'categories': categories, 'error_msg': error_msg})
+            return render(request, 'inventoryapp/update_category.html', {'category': category, 'error_msg':error_msg})
+        
+        existing_color = Category.objects.filter(Category_Hex_Color_ID=Category_Hex_Color_ID).exclude(pk=pk)
+
+        if existing_color.exists():
+            error_msg = 'Category Color Already Exists'
+            return render(request, 'inventoryapp/update_category.html', {'category': category, 'error_msg':error_msg})
+        
         else:
             # Update the category fields
             category.Category_Name = Category_Name
@@ -1682,7 +1719,7 @@ def update_category(request, pk):
             messages.success(request, "Category updated successfully.")
             return redirect('categories_consignee_tags')
     else:
-        return render(request, 'inventoryapp/update_category.html', {'category': category, 'category_id': pk})
+        return render(request, 'inventoryapp/update_category.html', {'category': category})
 
 @login_required     
 def update_tags(request, pk):
@@ -1708,6 +1745,22 @@ def update_tags(request, pk):
         Email_Address = request.POST.get('email_address')
         Tag_Hex_Color_ID = request.POST.get('tag_hex_color_id')
 
+        # Check if the consignee already exists
+        existing_consignee = Consignee.objects.filter(
+            Consignee_Tag_ID=Consignee_Tag_ID,
+            Consignee_Name=Consignee_Name,
+        ).exclude(pk=pk)
+
+        if existing_consignee.exists():
+            error_msg = 'Consignee Already Exists'
+            return render(request, 'inventoryapp/update_tags.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string, 'error_msg': error_msg})
+        
+        existing_color = Consignee.objects.filter(Tag_Hex_Color_ID=Tag_Hex_Color_ID).exclude(pk=pk)
+
+        if existing_color.exists():
+            error_msg = 'Consignee Color Already Exists'
+            return render(request, 'inventoryapp/update_tags.html', {'consignee': consignee, 'Start_date_string':Start_date_string, 'End_date_string':End_date_string, 'error_msg': error_msg})
+
         # Update the consignee object
         consignee.Consignee_Tag_ID = Consignee_Tag_ID
         consignee.Consignee_Name = Consignee_Name
@@ -1722,7 +1775,6 @@ def update_tags(request, pk):
         consignee.Consignment_Period_End = Consignment_Period_End
         consignee.Emergency_Contact_Number = Emergency_Contact_Number
         consignee.Email_Address = Email_Address
-        print(Tag_Hex_Color_ID,'CHECKIS')
         consignee.Tag_Hex_Color_ID = Tag_Hex_Color_ID
 
         consignee.save()

@@ -132,7 +132,7 @@ class Consignee(models.Model):
     Notes = models.TextField(null=True, blank=True, validators=[MaxLengthValidator(1024)])
     Consignment_Period_Start = models.DateField()
     Consignment_Period_End = models.DateField()
-    Emergency_Contact_Number = models.CharField(max_length=11)
+    Emergency_Contact_Number = models.CharField(max_length=11,null=True, blank=True)
     Email_Address = models.EmailField(max_length=128)
     Tag_Hex_Color_ID = models.CharField(max_length=7, unique=True)
 
