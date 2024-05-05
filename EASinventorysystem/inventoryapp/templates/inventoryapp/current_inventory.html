@@ -202,12 +202,14 @@ $('#stockStatusFilter').on('change', function() {
                   <td class="iact_inv_cnt" style="text-align: center;">{{ p.Actual_Inventory_Count }}</td>
                 {% endif %}
                 <td class="irsrvd_cnt" style="text-align: center;">{{ p.Reserved_Inventory_Count }}</td>
-                <td class="ito_be_rcvd_cnt" style="text-align: center;">{{ p.To_Be_Received_Inventory_Count }}</td>    
-                <td class="icategories" style="text-align: center;">{{ p.Category }}</td>    
+                <td class="ito_be_rcvd_cnt" style="text-align: center;">{{ p.To_Be_Received_Inventory_Count }}</td> 
+                <td> <span class="badge" style="display: inline-block;" data-color="{{ p.Category.Category_Hex_Color_ID }}" id="badge-tag">{{ p.Category }}</span> </td>
+                <!-- <td class="icategories" style="text-align: center;">{{ p.Category.Category_Hex_Color_ID }}</td>
+                <!-- <td class="icategories" style="text-align: center;">{{ p.Category }}</td> -->
                 <td class="iconsignee" style="text-align: center;">
                   {% for c in consignee_products %}
                     {% if c.Product_ID.Product_ID == p.Product_ID %}
-                      {{ c.Consignee_ID.Consignee_Tag_ID }}
+                      <span class="badge" style="overflow-x: 10px; width: 100px; display: inline-block;" data-color="{{ c.Consignee_ID.Tag_Hex_Color_ID}}" id="badge-tag">{{ c.Consignee_ID.Consignee_Tag_ID }}</span> 
                     {% endif %}
                   {% endfor %}
                 </td>  
@@ -231,6 +233,43 @@ $('#stockStatusFilter').on('change', function() {
   
   <!-- DataTables Initialization -->
   <script>
+    document.addEventListener("DOMContentLoaded", function() {
+            // Get all badge elements for categories
+            var badges = document.querySelectorAll('.badge');
+            
+            // Loop through each badge element
+            badges.forEach(function(badge) {
+                // Get the corresponding hex color from data attribute
+                var hexColor = badge.getAttribute('data-color');
+
+                // Set the background color of the badge
+                badge.style.backgroundColor = hexColor;
+
+                badge.style.border = '1px solid #000000';
+
+                // Check if the background color is light or dark
+                if (isColorLight(hexColor)) {
+                    badge.style.color = '#000000'; // Set text color to black for light background
+                } else {
+                    badge.style.color = '#ffffff'; // Set text color to white for dark background
+                }
+            });
+
+            // Function to check if a color is light
+            function isColorLight(color) {
+                // Convert hex color to RGB
+                var r = parseInt(color.substr(1, 2), 16);
+                var g = parseInt(color.substr(3, 2), 16);
+                var b = parseInt(color.substr(5, 2), 16);
+                
+                // Calculate luminance
+                var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                
+                // Check if luminance is greater than 0.5 (light color)
+                return luminance > 0.5;
+            }
+            
+        });
     $(document).ready(function() {
         var table = $('#currentinventory').DataTable();
 
