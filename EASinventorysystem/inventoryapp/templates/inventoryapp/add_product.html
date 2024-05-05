@@ -171,8 +171,7 @@
         <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="cancelConfirmationModalLabel">Warning</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="cancelConfirmationModalLabel">Warning</h5>
             </div>
             <div class="modal-body">
                 Exit form? Any changes you have made may not be saved.
@@ -188,23 +187,23 @@
     </div>
     <!-- Confirmation modal -->
     <div class="modal fade" id="createConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="createConfirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="createConfirmationModalLabel">Confirmation</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            Are you sure you want to create this product?
-        </div>
-        <div class="modal-footer">
-            <div class="col">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createConfirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <button type="submit" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('createProductForm').submit()">Yes</button>
+            <div class="modal-body">
+                Are you sure you want to create this product?
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </div>
+                <button type="submit" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('createProductForm').submit()">Yes</button>
+            </div>
+            </div>
         </div>
-        </div>
-    </div>
     </div>
 
     <script>
