@@ -1712,17 +1712,40 @@ def edit_my_account(request):
         New_password = request.POST.get('new_password')
         Reenter_new_password = request.POST.get('reenter_new_password')
         New_username = request.POST.get('username')
+        Profile_picture = request.FILES.get('profile_picture')
+        Image_removed = request.POST.get('removed_profile_picture')
 
-        # Check if passwords match
-        if New_password != Reenter_new_password:
-            error_msg = "Passwords do not match"
-            return render(request, 'inventoryapp/edit_my_account.html', {'error_msg': error_msg})
+        if New_password == "no need password" and Reenter_new_password == "no need password":
+            # Skip password update
+            New_password = None
+        else:
+            # Check if passwords match
+            if New_password != Reenter_new_password:
+                error_msg = "Passwords do not match"
+                return render(request, 'inventoryapp/edit_my_account.html', {'error_msg': error_msg})
 
         # Update password if it's provided
         if New_password:
             user.set_password(New_password)
         if New_username:
             user.username = New_username
+
+        if Image_removed == 'removed':
+            previous_picture_filename = user.account.Profile_Picture.name
+            user.account.Profile_Picture = None
+            user.account.save()
+            
+            if previous_picture_filename:
+                default_storage.delete(previous_picture_filename)
+        
+        elif Profile_picture is not None:
+            previous_picture_filename = user.account.Profile_Picture.name
+            user.account.Profile_Picture = Profile_picture
+            user.account.save()
+            
+            if previous_picture_filename:
+                default_storage.delete(previous_picture_filename)
+            
         user.save()
         logout(request)
         return redirect('account_login')
@@ -1770,28 +1793,51 @@ def view_employee(request, pk):
 def update_employee(request, pk):
     Employee = get_object_or_404(Account, Account_ID=pk)
     if request.method == 'POST':
-
-        user =  Employee.user
+        user = Employee.user
         
         New_password = request.POST.get('new_password')
         Reenter_new_password = request.POST.get('reenter_new_password')
         New_username = request.POST.get('username')
+        Profile_picture = request.FILES.get('profile_picture')
+        Image_removed = request.POST.get('removed_profile_picture')
 
-        # Check if passwords match
-        if New_password != Reenter_new_password:
-            error_msg = "Passwords do not match"
-            return render(request, 'inventoryapp/update_employee.html', {'error_msg': error_msg, "Employee":Employee})
+        if New_password == "no need password" and Reenter_new_password == "no need password":
+            # Skip password update
+            New_password = None
+        else:
+            # Check if passwords match
+            if New_password != Reenter_new_password:
+                error_msg = "Passwords do not match"
+                return render(request, 'inventoryapp/update_employee.html', {'error_msg': error_msg, "Employee": Employee})
 
         # Update password if it's provided
         if New_password:
             user.set_password(New_password)
         if New_username:
             user.username = New_username
+
+        if Image_removed == 'removed':
+            previous_picture_filename = user.account.Profile_Picture.name
+            user.account.Profile_Picture = None
+            user.account.save()
+            
+            if previous_picture_filename:
+                default_storage.delete(previous_picture_filename)
+        
+        elif Profile_picture is not None:
+            previous_picture_filename = user.account.Profile_Picture.name
+            user.account.Profile_Picture = Profile_picture
+            user.account.save()
+            
+            if previous_picture_filename:
+                default_storage.delete(previous_picture_filename)
+            
         user.save()
         messages.success(request, "Employee account updated successfully.")
         return redirect('employee_accounts')
     else:
-        return render(request, 'inventoryapp/update_employee.html', {"Employee":Employee})
+        return render(request, 'inventoryapp/update_employee.html', {"Employee": Employee})
+
 
 @login_required 
 def hide_account(request, pk):

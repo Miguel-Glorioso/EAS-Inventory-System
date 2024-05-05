@@ -4,7 +4,7 @@
 {% block content %}
 
 <head>
-  <title>My Account</title>
+  <title>Employee Account</title>
   <style>
     .container {
       display: flex;
@@ -63,17 +63,10 @@
     </div>
     <div class="row p-5"></div>
     <div class="card">
-      <form method="POST" action="{% url 'update_employee' pk=Employee.pk %}">
+      <form method="POST" action="{% url 'update_employee' pk=Employee.pk %}" enctype="multipart/form-data">
         {% csrf_token %}
         <!-- Image, Name, Role -->
         <div class="row mt-2 mb-4">
-          <div class="col image-column"> 
-            {% if Employee.Profile_Picture %}
-                <img src="{{ Employee.Profile_Picture.url }}" alt="User Image" width="400">
-            {% else %}
-                <span>No image available</span>
-            {% endif %}
-          </div> 
             <div class="col"><h5>{{Employee.First_Name}} {{Employee.Last_Name}}</h5></div>
             <div class="col d-flex justify-content-end">
                 <!-- <h6>Role: Employee</h6> -->
@@ -108,7 +101,27 @@
                 <input type="password" id="reenter_new_password" name="reenter_new_password" required>
             </div>
         </div>
-
+        <button type="button" id="toggle-password-btn">Keep old password</button>
+        <div class="mb-3">
+          <div class="row">
+              <div class="col-md-5">
+                  <label for="id_Picture" class="form-label custom-text">Picture:</label>
+          <div id="image-preview">
+              {% if Employee.Profile_Picture %}
+              <div class="profile-image"> 
+                  <img src="{{ Employee.Profile_Picture.url }}" width="50">
+              </div>
+              {% endif %}
+          </div>
+          <div style="display: flex; align-items: center;" >
+              <input type="file" name="profile_picture" accept="image/*" id="id_Picture" class="form-control" style="flex: 1; margin-right: 8px;"> <!-- Added margin-right -->
+              <button type="button" id="remove-image" {% if not Employee.Profile_Picture %}style="display: none;"{% endif %} class="btn btn-outline-danger">Remove Image</button>
+          </div>
+          <input type="hidden" name="removed_profile_picture" id="remove-profile-picture" value='Not'>
+                  <div class="col-md-3"></div> <!-- Invisible column -->
+                  <div class="col-md-3"></div> <!-- Invisible column -->
+              </div>
+          </div>
         <!-- Cancel & Save button row -->
         <div class="row">
           <div class="col">
@@ -162,6 +175,64 @@
           return false;
         }
       }
+      
+      document.addEventListener("DOMContentLoaded", function() {
+          const pictureInput = document.getElementById("id_Picture");
+          const imagePreview = document.getElementById("image-preview");
+          const removeImageButton = document.getElementById("remove-image");
+          const imageRemoved = document.getElementById("remove-profile-picture");
+
+          // Function to update the image preview
+          function updatePreview() {
+              const file = pictureInput.files[0];
+              if (file) {
+                  const reader = new FileReader();
+                  reader.onload = function(event) {
+                      const image = new Image();
+                      image.src = event.target.result;
+                      image.width = 50;
+                      imagePreview.innerHTML = '';
+                      imagePreview.appendChild(image);
+                      imageRemoved.value = "Not";
+                      removeImageButton.style.display = "inline-block"; // Show the "Remove Image" button
+                  };
+                  reader.readAsDataURL(file);
+              } else {
+                  imagePreview.innerHTML = '';
+              }
+          }
+
+          // Event listener for input change
+          pictureInput.addEventListener("change", updatePreview);
+
+          // Event listener for remove image button
+          removeImageButton.addEventListener("click", function() {
+              pictureInput.value = null; // Clear the input field
+              removeImageButton.style.display = "none"; // Hide the "Remove Image" button
+              imageRemoved.value = "removed";
+              updatePreview(); // Update the preview to remove the image
+          });
+      });
+      
+      document.addEventListener("DOMContentLoaded", function() {
+        const newPasswordInput = document.getElementById("new_password");
+        const reenterNewPasswordInput = document.getElementById("reenter_new_password");
+        const togglePasswordBtn = document.getElementById("toggle-password-btn");
+
+        // Function to fill password fields with a static string and make them non-required
+        function togglePasswordFields() {
+            // Fill password fields with a static string
+            newPasswordInput.value = "no need password";
+            reenterNewPasswordInput.value = "no need password";
+
+            // Make password fields non-required
+            newPasswordInput.required = false;
+            reenterNewPasswordInput.required = false;
+        }
+
+        // Event listener for button click
+        togglePasswordBtn.addEventListener("click", togglePasswordFields);
+    });
 
     </script>
 </body>

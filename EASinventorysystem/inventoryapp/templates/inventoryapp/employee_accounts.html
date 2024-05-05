@@ -16,6 +16,13 @@
                 <h4 class="m-0 mr-3">Manage Employee Accounts</h4>
             </div>
         </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
         <!-- Buttons row -->
         <div class="row mt-3">
