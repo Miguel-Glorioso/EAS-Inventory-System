@@ -159,7 +159,23 @@ $('#stockStatusFilter').on('change', function() {
 
   </div>
 </div>
-      
+      <style>
+        #currentinventory .iconsignee {
+          flex: 1;
+          min-width: 30px; /* Adjust this value based on your preference */
+        }
+        /* Badge container to control layout */
+          .badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+
+          /* Style for badges */
+          .badge {
+            margin: 2px; /* Adjust margin as needed */
+          }
+      </style>
     <!-- Table Inventory row -->
     <div class="row mt-3">
       <div class="table-responsive">
@@ -205,14 +221,16 @@ $('#stockStatusFilter').on('change', function() {
                 <td class="ito_be_rcvd_cnt" style="text-align: center;">{{ p.To_Be_Received_Inventory_Count }}</td> 
                 <td> <span class="badge" style="display: inline-block;" data-color="{{ p.Category.Category_Hex_Color_ID }}" id="badge-tag">{{ p.Category }}</span> </td>
                 <!-- <td class="icategories" style="text-align: center;">{{ p.Category.Category_Hex_Color_ID }}</td>
-                <!-- <td class="icategories" style="text-align: center;">{{ p.Category }}</td> -->
+                <td class="icategories" style="text-align: center;">{{ p.Category }}</td> -->
                 <td class="iconsignee" style="text-align: center;">
-                  {% for c in consignee_products %}
-                    {% if c.Product_ID.Product_ID == p.Product_ID %}
-                      <span class="badge" style="overflow-x: 10px; width: 100px; display: inline-block;" data-color="{{ c.Consignee_ID.Tag_Hex_Color_ID}}" id="badge-tag">{{ c.Consignee_ID.Consignee_Tag_ID }}</span> 
-                    {% endif %}
-                  {% endfor %}
-                </td>  
+                    <div class="badge-container">
+                      {% for c in consignee_products %}
+                        {% if c.Product_ID.Product_ID == p.Product_ID %}
+                          <span class="badge" style="display: inline-block;" data-color="{{ c.Consignee_ID.Tag_Hex_Color_ID}}" id="badge-tag">{{ c.Consignee_ID.Consignee_Tag_ID }}</span> 
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </td>  
                 <!-- Updated View button trigger -->
                 <td> 
                   <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#productModal" data-product-pk="{{ p.Product_ID }}">View</button>
@@ -224,7 +242,6 @@ $('#stockStatusFilter').on('change', function() {
         </table>
       </div>
     </div>
-  </div>
 
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
