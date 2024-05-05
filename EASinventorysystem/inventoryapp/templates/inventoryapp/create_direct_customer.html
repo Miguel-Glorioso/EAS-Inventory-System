@@ -132,6 +132,19 @@
         });
 
 
+        // Function to handle form submission
+        function handleSubmit(event) {
+            if (checkRequiredFields() && checkPrimaryContactNumber()) {
+                showConfirmationModal();
+            }
+        }
+
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            myModal.show();
+        }
+
        // Function to check if all required fields are filled
         function checkRequiredFields() {
             let inputs = document.querySelectorAll('input[required]');
@@ -153,30 +166,29 @@
             return isValid;
         }
 
-        // Function to show the confirmation modal
-        function showConfirmationModal() {
-            $('#confirmationModal').modal('show');
-        }
-
-        // Function to handle form submission
-        function handleSubmit(event) {
-            if (checkRequiredFields() && checkPrimaryContactNumber()) {
-                showConfirmationModal();
-            }
-        }
-
 
         // Function to check if the primary contact number starts with 09
         function checkPrimaryContactNumber() {
             let primaryContactInput = document.getElementById('id_primary_contact_number');
             let inputValue = primaryContactInput.value.trim();
-            let isValid = /^09/.test(inputValue); // Check if input starts with 09
+            let isValid = true; // Define isValid variable here
 
-            if (!isValid) {
-                primaryContactInput.classList.add('is-invalid'); // Add red border
-                alert('Please input a number starting with 09.'); // Notify the user
+            var contactNumberPattern = /^09\d{9}$/; // Regex pattern to match "09" followed by 9 digits
+
+            if (inputValue.length !== 11 || !contactNumberPattern.test(inputValue)) {
+                isValid = false;
+                primaryContactInput.classList.add('is-invalid');
             } else {
-                primaryContactInput.classList.remove('is-invalid'); // Remove red border
+                primaryContactInput.classList.remove('is-invalid');
+            }
+
+            // Validate minimum length for zip code
+            var zipCodeInput = document.getElementById('zip_code');
+            if (zipCodeInput.value.trim().length !== 4) {
+                isValid = false;
+                zipCodeInput.classList.add('is-invalid');
+            } else {
+                zipCodeInput.classList.remove('is-invalid');
             }
 
             return isValid;
