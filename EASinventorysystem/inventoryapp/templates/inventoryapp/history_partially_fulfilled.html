@@ -100,17 +100,84 @@
         success: function(response) {
           console.log(response)
             $('#partiallyModal .modal-body').html(`
-              <div class="row">
-                <div class="col">
-                  <h6><strong>Edit ID:</strong> ${response.partially_fulfill_edit_id}</h6>
-                  <h6><strong>Date Updated:</strong> ${response.date_updated}</h6>
-                  <h6><strong>Partially Fulfilled Quantity:</strong> ${response.partially_fulfilled_quantity}</h6>
-                  <h6><strong>Text Report:</strong> ${response.text_report}</h6>
-                  <h6><strong>Product Requisition Order:</strong> ${response.pro}</h6>
-                  <h6><strong>Product:</strong> ${response.product}</h6>
-                  <h6><strong>Account ID:</strong> ${response.account_id}</h6>
+            <div class="row">
+
+                      <!-- Image -->
+                      <div class="col m-0">
+                        ${response.image_report ? `<div class="product-image" style="text-align: center;"><img src="${response.image_report}" width="200"></div>` : ''}
+                      </div>
+                      <!-- 1st row -->
+                      <div class="col mx-2">
+                        <div class="row mb-2">
+                          <div class="card">
+                            <div class="card-body">
+                              <h6 class="card-title"><strong>Edit ID:</strong></h6>
+                              <p class="card-text">${response.partially_fulfill_edit_id}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-2">
+                          <div class="card">
+                            <div class="card-body">
+                              <h6 class="card-title"><strong>Date Updated:</strong></h6>
+                              <p class="card-text">${response.date_updated}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-2">
+                          <div class="card">
+                            <div class="card-body">
+                              <h6 class="card-title"><strong>Account ID:</strong></h6>
+                              <p class="card-text">${response.account_id}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 2nd row -->
+                      <div class="col mx-2">
+                        <div class="row mb-2">
+                          <div class="card">
+                            <div class="card-body">
+                              <h6 class="card-title"><strong>Product Requisition Order:</strong></h6>
+                              <p class="card-text">${response.pro}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-2">
+                          <div class="card">
+                            <div class="card-body">
+                              <h6 class="card-title"><strong>Product:</strong></h6>
+                              <p class="card-text">${response.product}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-2">
+                          <div class="card">
+                            <div class="card-body">
+                              <h6 class="card-title"><strong>Product Requisition Order:</strong></h6>
+                              <p class="card-text">${response.pro}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                      
+                      </div>
+                      <div class="col mx-2">
+                      <div class="row mb-2">
+                          <div class="card">
+                            <div class="card-body">
+                              <h6 class="card-title"><strong>Text Report:</strong></h6>
+                              <p class="card-text">${response.text_report}</p>
+                            </div>
+                        </div>
+                      </div>
+                      </div>
                 </div>
+
               </div>
+              
+                </div>
             `);
             $('#partiallyModal').modal('show');
           },
@@ -128,6 +195,12 @@
   });
 </script>
 
-
+<!-- <h6><strong>Edit ID:</strong> ${response.partially_fulfill_edit_id}</h6>
+                  <h6><strong>Date Updated:</strong> ${response.date_updated}</h6>
+                  <h6><strong>Partially Fulfilled Quantity:</strong> ${response.partially_fulfilled_quantity}</h6>
+                  <h6><strong>Text Report:</strong> ${response.text_report}</h6>
+                  <h6><strong>Product Requisition Order:</strong> ${response.pro}</h6>
+                  <h6><strong>Product:</strong> ${response.product}</h6>
+                  <h6><strong>Account ID:</strong> ${response.account_id}</h6> -->
 </body>
 {% endblock %}

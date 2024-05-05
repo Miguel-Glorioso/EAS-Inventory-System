@@ -1985,6 +1985,7 @@ def inventory_update_history(request):
     Count_Edits = Count_Edit_History.objects.all()
     return render(request, 'inventoryapp/inventory_update_history.html',{'Count_Edits':Count_Edits})
 
+@login_required 
 def view_partially_fulfilled(request, pk):
     try:
         partially_fulfilled = Partially_Fulfilled_History.objects.get(pk=pk)
