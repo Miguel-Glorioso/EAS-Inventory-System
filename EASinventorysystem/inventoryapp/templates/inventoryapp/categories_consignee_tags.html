@@ -112,7 +112,7 @@
   </div>
 </div>
 <div class="modal fade" id="consigneeTagModal" tabindex="-1" role="dialog" aria-labelledby="consigneeTagModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="consigneeTagModalLabel">Consignee Information</h5>
@@ -145,13 +145,51 @@
         method: 'GET',
         success: function(response) {
           $('#categoryModal').find('.modal-body').html(`
-            <ul>
-              <li><strong>Category Name:</strong> ${response.Category_Name}</li>
-              <li><strong>Hex Color ID:</strong> ${response.Category_Hex_Color_ID}</li>
-              <li><strong>Description:</strong> ${response.Description}</li>
-              <li><strong>Low Stock Threshold:</strong> ${response.Category_Product_Low_Stock_Threshold}</li>
-              <li><strong>Notes:</strong> ${response.Notes}</li>
-            </ul>
+            <div class="row">
+              <!-- 1st row -->
+              <div class="col mx-2">
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Category Name:</strong></h6>
+                      <p class="card-text">${response.Category_Name}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Hex Color ID:</strong></h6>
+                      <p class="card-text">${response.Category_Hex_Color_ID}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Description:</strong></h6>
+                      <p class="card-text">${response.Description}/p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Low Stock Threshold:</strong></h6>
+                      <p class="card-text">${response.Category_Product_Low_Stock_Threshold}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Notes:</strong></h6>
+                      <p class="card-text">${response.Notes}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           `);
           $('#categoryModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_category/' + response.Category_ID + '/');
           $('#categoryModal').modal('show');
@@ -168,28 +206,150 @@
     var consigneeId = $(this).data('consignee-id');
     var url = '/view_consignee_details/' + consigneeId + '/';
 
-    $.ajax({
-      url: url,
-      method: 'GET',
-      success: function(response) {
-        $('#consigneeTagModal').find('.modal-body').html(`
-          <ul>
-            <li><strong>Consignee Tag ID:</strong> ${response.Consignee_Tag}</li>
-            <li><strong>Consignee Name:</strong> ${response.Consignee_Name}</li>
-            <li><strong>Customer Type:</strong> ${response.Customer_Type}</li>
-            <li><strong>Address Line 1:</strong> ${response.Address_Line_1}</li>
-            <li><strong>Barangay:</strong> ${response.Barangay}</li>
-            <li><strong>Municipality:</strong> ${response.Municipality}</li>
-            <li><strong>Province:</strong> ${response.Province}</li>
-            <li><strong>Zip Code:</strong> ${response.Zip_Code}</li>
-            <li><strong>Primary Contact Number:</strong> ${response.Primary_Contact_Number}</li>
-            <li><strong>Consignment Period Start:</strong> ${response.Consignment_Period_Start}</li>
-            <li><strong>Consignment Period End:</strong> ${response.Consignment_Period_End}</li>
-            <li><strong>Emergency Contact Number:</strong> ${response.Emergency_Contact_Number}</li>
-            <li><strong>Email Address:</strong> ${response.Email_Address}</li>
-            <li><strong>Tag Hex Color ID:</strong> ${response.Tag_Hex_Color_ID}</li>
-            <li><strong>Notes:</strong> ${response.Notes}</li>
-          </ul>
+      $.ajax({
+        url: url,
+        method: 'GET',
+        success: function (response) {
+          $('#consigneeTagModal').find('.modal-body').html(`
+          <div class="row mb-1">
+
+            <!-- 1st colum -->
+            <div class="col mx-2">
+              <div class="row mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-title"><strong>Consignee Tag ID:</strong></h6>
+                    <p class="card-text">${response.Consignee_Tag}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-title"><strong>Consignee Name:</strong></h6>
+                    <p class="card-text">${response.Consignee_Name}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-title"><strong>Customer Type:</strong></h6>
+                    <p class="card-text">${response.Customer_Type}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-title"><strong>Address Line 1:</strong></h6>
+                    <p class="card-text">${response.Address_Line_1}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-2">
+                <div class="col mx-1">
+                  <div class="row mb-2">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title"><strong>Barangay:</strong></h6>
+                        <p class="card-text">${response.Barangay}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title"><strong>Municipality:</strong></h6>
+                        <p class="card-text">${response.Municipality}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col mx-1">
+                  <div class="row mb-2">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title"><strong>Province:</strong></h6>
+                        <p class="card-text">${response.Province}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title"><strong>Zip Code:</strong></h6>
+                        <p class="card-text">${response.Zip_Code}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-title"><strong>Primary Contact Number:</strong></h6>
+                    <p class="card-text">${response.Primary_Contact_Number}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-title"><strong>Emergency Contact Number:</strong></h6>
+                    <p class="card-text">${response.Emergency_Contact_Number}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-title"><strong>Notes:</strong></h6>
+                    <p class="card-text">${response.Notes}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2nd row -->
+            <div class="col mx-2">
+              <div class="row mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-title"><strong>Email Address:</strong></h6>
+                    <p class="card-text">${response.Email_Address}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Consignment Period Start:</strong></h6>
+                      <p class="card-text">${response.Consignment_Period_Start}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title"><strong>Consignment Period End:</strong></h6>
+                      <p class="card-text">${response.Consignment_Period_End}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-title"><strong>Tag Hex Color ID:</strong></h6>
+                    <p class="card-text">${response.Tag_Hex_Color_ID}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         `);
         $('#consigneeTagModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_tags/' + response.Consignee_ID + '/');
         $('#consigneeTagModal').modal('show');
