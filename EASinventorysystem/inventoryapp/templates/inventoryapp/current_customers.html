@@ -16,7 +16,7 @@
 <body class="customer-screen-bg">
 
   <div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
 
         <div class="modal-header">
@@ -162,23 +162,136 @@
           success: function(response) {
               $('#customerModal').find('.modal-title').text('Customer Information');
               $('#customerModal').find('.modal-body').html(`
-                  <p><strong>Customer Name:</strong> ${response.name}</p>
-                  <p><strong>Address:</strong> ${response.address}</p>
-                  <p><strong>Barangay:</strong> ${response.barangay}</p>
-                  <p><strong>Municipality:</strong> ${response.municipality}</p>
-                  <p><strong>Province:</strong> ${response.province}</p>
-                  <p><strong>Zip Code:</strong> ${response.zip_code}</p>
-                  <p><strong>Contact Number:</strong> ${response.contact_number}</p>
-                  <p><strong>Customer Type:</strong> ${response.customer_type}</p>
-                  <p><strong>Notes:</strong> ${response.notes}</p>
-                  ${isDirectCustomer ? '' : `
-                      <p><strong>Customer TagID:</strong> ${response.tagID}</p>
-                      <p><strong>Consignment Period Start:</strong> ${response.consignment_period_start}</p>
-                      <p><strong>Consignment Period End:</strong> ${response.consignment_period_end}</p>
-                      <p><strong>Emergency Contact Number:</strong> ${response.emergency_contact_number}</p>
-                      <p><strong>Email Address:</strong> ${response.email_address}</p>
-                      <p><strong>Tag Hex Color ID:</strong> ${response.tag_hex_color_id}</p>
-                  `}
+              <div class="row mb-1">
+                <p><strong>Customer Type:</strong> <u>${response.customer_type}</u></p>
+              </div>
+
+              <div class="row">
+                <!-- 1st colum -->
+                <div class="col mx-2">
+                  <div class="row mb-2">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title"><strong>Customer Name:</strong></h6>
+                        <p class="card-text">${response.name}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title"><strong>Address:</strong></h6>
+                        <p class="card-text">${response.address}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col mx-1">
+                      <div class="row mb-2">
+                        <div class="card">
+                          <div class="card-body">
+                            <h6 class="card-title"><strong>Province:</strong></h6>
+                            <p class="card-text">${response.province}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="card">
+                          <div class="card-body">
+                            <h6 class="card-title"><strong>Barangay:</strong></h6>
+                            <p class="card-text">${response.barangay}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col mx-1">
+                      <div class="row mb-2">
+                        <div class="card">
+                          <div class="card-body">
+                            <h6 class="card-title"><strong>Municipality:</strong></h6>
+                            <p class="card-text">${response.municipality}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="card">
+                          <div class="card-body">
+                            <h6 class="card-title"><strong>Zip code:</strong></h6>
+                            <p class="card-text">${response.zip_code}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title"><strong>Contact Number:</strong></h6>
+                        <p class="card-text">${response.contact_number}</p>
+                      </div>
+                    </div>
+                  </div>
+        
+                  <div class="row mb-2">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title"><strong>Notes:</strong></h6>
+                        <p class="card-text">${response.notes}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                ${isDirectCustomer ? '' : `
+                <!-- 2nd row -->
+                <div class="col mx-2">
+                  <div class="row mb-2">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title"><strong>Email Address:</strong></h6>
+                        <p class="card-text">${response.email_address}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 class="card-title"><strong>Consignment Period Start:</strong></h6>
+                          <p class="card-text">${response.consignment_period_start}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 class="card-title"><strong>Consignment Period End:</strong></h6>
+                          <p class="card-text">${response.consignment_period_end}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 class="card-title"><strong>Tag ID:</strong></h6>
+                          <p class="card-text">${response.tagID}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 class="card-title"><strong>Tag Hex Color ID:</strong></h6>
+                          <p class="card-text">${response.tag_hex_color_id}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                `}
               `);
               var url = isDirectCustomer ? '/update_direct_customer/' : '/update_consignee/';
               $('#customerModal').find('.modal-footer').find('a.btn-primary').attr('href', url + response.customer_id + '/');
