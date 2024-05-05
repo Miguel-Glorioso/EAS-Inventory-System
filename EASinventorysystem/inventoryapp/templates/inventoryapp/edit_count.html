@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" id="editCountForm">
             {% csrf_token %}
             <!-- First Tab: Choose products  -->
             <div id="step1">
@@ -105,7 +105,7 @@
                             <a href="#" class="btn btn-danger" onclick="showCancelWarningModal()">Cancel</a>
                         </div>
                         <div class="col text-end">
-                            <button type="button" class="btn btn-success" onclick="nextStep()">Next</button>
+                            <button type="button" class="btn btn-success" onclick="validateQuantityAndNext()">Next</button>
                         </div>
                     </div>
                 </fieldset>
@@ -128,7 +128,7 @@
                                 <a href="#" class="btn btn-primary" onclick="prevStep()">Back</a>
                             </div>
                             <div class="col-md-6 text-end">
-                                <button type="submit" class="btn btn-success" id="submit_po" onclick="return confirm('Are you sure you want to update the quantity of the selected product/s?')">Submit</button>
+                                <button type="submit" class="btn btn-success" id="submit_po" onclick="validateFormInputs()">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -170,6 +170,51 @@
             document.getElementById('step1').style.display = 'none';
             document.getElementById('step2').style.display = 'block';
             populateSelectedProductsCards(); // Populate selected products cards on the second page
+        }
+
+        function validateFormInputs() {
+            var inputs = document.querySelectorAll('#step2 input[required]');
+            var isValid = true;
+
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+            return isValid;
+        }
+
+        function handleSubmit(event) {
+            if (validateFormInputs()) {
+                showConfirmationModal();
+            }
+        }
+
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#confirmationModal').modal('show');
+        }
+
+
+
+        function validateQuantityAndNext() {
+            var quantityInputs = document.querySelectorAll('.quantity-input');
+            var isValid = true;
+
+            // Check if there's at least one product in the left column
+            var productListRows = document.querySelectorAll("#PO_products tbody tr");
+            if (productListRows.length === 0) {
+                isValid = false;
+                // Display alert message
+                alert("There should be at least 1 product chosen.");
+            }
+
+            if (isValid) {
+                nextStep(); // Proceed to the next step if all quantities are valid and at least one product is selected
+            }
         }
 
         function prevStep() {
@@ -343,6 +388,27 @@
     </script>
 </body>
 
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to update this product?
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </div>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('editCountForm').submit()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel modal -->
 <div class="modal fade" id="cancelWarningModal" tabindex="-1" aria-labelledby="cancelWarningModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

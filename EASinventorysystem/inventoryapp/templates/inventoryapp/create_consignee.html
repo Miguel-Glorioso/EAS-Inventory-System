@@ -160,7 +160,7 @@
                     <button type="button" class="btn btn-danger" id="cancelButton">Cancel</button>
                 </div>
                 <div class="col-md-6 text-end">
-                    <button type="submit" class="btn btn-success" id="createBtn" onclick="handleSubmit()">Create</button>
+                    <button type="button" class="btn btn-success" id="createBtn" onclick="handleSubmit()">Create</button>
                 </div>
             </div>
         </form>
@@ -249,7 +249,7 @@
 
         // Function to handle form submission
         function handleSubmit(event) {
-            if (checkRequiredFields() && validateInput() && validateEmergencyContactNumber()) {
+            if (checkRequiredFields() && validateInput()) {
                 showConfirmationModal();
             }
         }
@@ -284,21 +284,6 @@
             }
 
             return isPrimaryContactValid && isEmailValid;
-        }
-
-        function validateEmergencyContactNumber() {
-            let emergency_number = document.getElementById('id_emergency_contact_number');
-            let isEmergencyNumberValid = emergency_number.value.trim();
-            if (text.length == 0) {
-                // If input is blank, clear custom validity
-                input.setCustomValidity('');
-            } else if (text.length < 7 || (text.startsWith('09') && text.length !== 11)) {
-                // If text is less than 7 digits or doesn't start with '09' or not 11 digits long, set custom validity
-                input.setCustomValidity('Please enter a valid 7 or 11-digit phone number starting with 09.');
-            } else {
-                // Otherwise, clear custom validity
-                input.setCustomValidity('');
-            }
         }
     </script>
 
