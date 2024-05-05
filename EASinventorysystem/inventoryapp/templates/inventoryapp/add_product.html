@@ -55,30 +55,27 @@
                         <label style="margin-bottom: 8px;" class="required" for="id_Price" class="form-label custom-text">Price:</label>
                         <div class="input-group">
                             <span class="input-group-text">PHP</span>
-                            <input type="number" name="product_price" step=".1" min="0" max="99999.99" class="form-control" required id="id_Price" placeholder="0.00" oninput="validatePriceInput(event)">
+                            <input type="tel" name="product_price" maxlength="8" class="form-control" required id="id_Price" placeholder="0.00" oninput="formatPriceInput(event)">
                         </div>
                         <script>
-                            function validatePriceInput(event) {
-                                const inputElement = event.target;
-                                const inputValue = inputElement.value;
-                        
-                                // Remove any non-numeric characters except for the decimal point
-                                inputElement.value = inputValue.replace(/[^\d.]/g, '');
-                        
-                                // Ensure that the input value does not contain more than one decimal point
-                                if (inputValue.includes('.') && inputValue.split('.')[1].length > 2) {
-                                    inputElement.value = inputValue.slice(0, -1);
+                            function formatPriceInput(event) {
+                                // Get the input element
+                                var input = event.target;
+
+                                // Remove any non-numeric characters from the input
+                                input.value = input.value.replace(/[^\d.]/g, '');
+
+                                // Split the value into integer and decimal parts
+                                var parts = input.value.split('.');
+
+                                // Ensure there is at most one decimal point and at most two decimal places
+                                parts[0] = parts[0].slice(0, 5); // Maximum 6 digits for the integer part
+                                if (parts.length > 1) {
+                                    parts[1] = parts[1].slice(0, 2); // Maximum 2 digits for the decimal part
                                 }
-                        
-                                // Prevent the 'e' and '-' characters from being entered
-                                if (inputValue.includes('e') || inputValue.includes('-')) {
-                                    inputElement.value = inputValue.replace(/[e-]/g, '');
-                                }
-                        
-                                // Limit the input value to a maximum of 99999.99
-                                if (parseFloat(inputValue) > 99999.99) {
-                                    inputElement.value = 99999.99;
-                                }
+
+                                // Reconstruct the value with the formatted integer and decimal parts
+                                input.value = parts.join('.');
                             }
                         </script>
                     </div>
