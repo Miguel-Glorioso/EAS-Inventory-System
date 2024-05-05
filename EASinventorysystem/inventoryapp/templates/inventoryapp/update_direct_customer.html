@@ -15,7 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>update Direct Customer</title>
+    <title>Update Direct Customer</title>
 </head>
 <body>
     <div class="container-fluid">
@@ -30,40 +30,44 @@
         <form id="updateForm" method="POST" action="{% url 'update_direct_customer' customer.pk %}">
             {% csrf_token %}
             <legend>Direct Customer Information</legend>
-            <div class="mb-3">
-                <label for="id_customer_name" class="form-label custom-text">Customer Name:</label>
-                <input type="text" name="customer_name" class="form-control" maxlength="64" required id="id_customer_name" value="{{ customer.Customer_Name }}" required>
+            <div class="col md-4">
+                <div class="mb-3">
+                    <label for="id_customer_name" class="required">Customer Name:</label>
+                    <input type="text" name="customer_name" class="form-control" maxlength="64" required id="id_customer_name" value="{{ customer.Customer_Name }}" required>
+                </div>
+            </div>
+            <div class="col md-4">
+                <div class="mb-3">
+                    <label for="id_primary_contact_number" class="required">Primary Contact Number:</label>
+                    <input type="text" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" value="{{ customer.Primary_Contact_Number }}" required>
+                </div>
             </div>
             <div class="mb-3">
-                <label for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                <input type="text" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" value="{{ customer.Primary_Contact_Number }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="id_address_line1" class="form-label custom-text">Address Line 1:</label>
+                <label for="id_address_line1" class="required">Address Line 1:</label>
                 <input type="text" name="address_line1" class="form-control" maxlength="255" required id="id_address_line1" value="{{ customer.Address_Line_1 }}" required>
             </div>
             <div class="row">
                 <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="id_province" class="form-label custom-text">Province:</label>
+                        <label for="id_province" class="required">Province:</label>
                         <input type="text" name="province" class="form-control" maxlength="100" required id="id_province" value="{{ customer.Province }}" required>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="id_municipality" class="form-label custom-text">Municipality:</label>
+                        <label for="id_municipality" class="required">Municipality:</label>
                         <input type="text" name="municipality" class="form-control" maxlength="100" required id="id_municipality" value="{{ customer.Municipality }}" required>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="id_barangay" class="form-label custom-text">Barangay:</label>
+                        <label for="id_barangay" class="required">Barangay:</label>
                         <input type="text" name="barangay" class="form-control" maxlength="100" required id="id_barangay" value="{{ customer.Barangay }}" required>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        <label for="id_zip_code" class="form-label custom-text">Zip Code:</label>
+                        <label for="id_zip_code" class="required">Zip Code:</label>
                         <input type="text" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" maxlength="4" pattern="[0-9]{4}" value="{{ customer.Zip_Code }}" required>
                     </div>
                 </div>
@@ -74,11 +78,12 @@
             </div>
             <div class="d-flex justify-content-between w-100">
                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
-                <button type="button" class="btn btn-success" id="submitBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal">Update</button>
+                <button type="button" class="btn btn-success" id="submitBtn" onclick="handleSubmit()">Update</button>
             </div>
         </form>
     </div>
 </body>
+<!-- Cancel Modal -->
 <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -112,28 +117,84 @@
             </div>
             <div class="modal-footer">
                 <div class="col">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
                 </div>
-                <button type="button" class="btn btn-success" id="confirmSubmit">Yes</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('updateForm').submit()">Yes</button>
             </div>
         </div>
     </div>
 </div>
 <script>
-    $(document).ready(function () {
-        // When the "Update" button is clicked
-        $("#submitBtn").click(function () {
-            // Show the confirmation modal
-            $("#confirmationModal").modal('show');
+    
+    document.getElementById("cancelButton").addEventListener("click", function() {
+            // Check if any input field has a value
+            var formIsEmpty = true;
+            var inputs = document.querySelectorAll("#updateForm input[type='text']");
+            inputs.forEach(function(input) {
+                if (input.value.trim() !== '') {
+                    formIsEmpty = false;
+                }
+            });
+
+            // If the form is not empty, open the cancel confirmation modal
+            if (!formIsEmpty) {
+                var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+                myModal.show();
+            } else {
+                // If the form is empty, redirect to the current inventory page
+                window.location.href = "{% url 'current_customers' %}";
+            }
         });
 
-        // When the "Yes" button in the confirmation modal is clicked
-        $("#confirmSubmit").click(function () {
-            // Hide the confirmation modal
-            $("#confirmationModal").modal('hide');
-            // Submit the form
-            $("#updateForm").submit();
-        });
-    });
+
+       // Function to check if all required fields are filled
+        function checkRequiredFields() {
+            let inputs = document.querySelectorAll('input[required]');
+            let isValid = true;
+
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid'); // Add red border
+                } else {
+                    input.classList.remove('is-invalid'); // Remove red border
+                }
+            });
+
+            if (!isValid) {
+                alert('Please fill out all required fields and satisfy the required input.');
+            }
+
+            return isValid;
+        }
+
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#confirmationModal').modal('show');
+        }
+
+        // Function to handle form submission
+        function handleSubmit(event) {
+            if (checkRequiredFields() && checkPrimaryContactNumber()) {
+                showConfirmationModal();
+            }
+        }
+
+
+        // Function to check if the primary contact number starts with 09
+        function checkPrimaryContactNumber() {
+            let primaryContactInput = document.getElementById('id_primary_contact_number');
+            let inputValue = primaryContactInput.value.trim();
+            let isValid = /^09/.test(inputValue); // Check if input starts with 09
+
+            if (!isValid) {
+                primaryContactInput.classList.add('is-invalid'); // Add red border
+                alert('Please input a number starting with 09.'); // Notify the user
+            } else {
+                primaryContactInput.classList.remove('is-invalid'); // Remove red border
+            }
+
+            return isValid;
+        }
 </script>
 {% endblock %}
