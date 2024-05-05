@@ -21,7 +21,7 @@
         <div class="col-md-auto">
           <a href="{% url 'current_pros' %}" class="btn btn-primary">Back</a>
         </div>
-      </div>
+    </div>
     {% if error_msg %}
     <div class="alert alert-danger" role="alert">
         {{ error_msg }}
@@ -69,134 +69,63 @@
         </div>
     </div>
 </div>
+
+<!-- Partially Fulfilled Order Modal -->
+<div class="modal fade" id="partiallyModal" tabindex="-1" aria-labelledby="partiallyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="partiallyModalLabel">Partially Fulfilled Order Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be dynamically loaded here via JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
 <script>
-
+  $(document).ready(function() {
     $('.btn-view').click(function() {
-      var productPk = $(this).data('partially-pk');
-      console.log("Product PK:", productPk);
+      var partiallyPk = $(this).data('partially-pk');
+      console.log("Partially Fulfilled PK:", partiallyPk);
       $.ajax({
-        url: '/view_product/' + productPk + '/',
+        url: '/view_partially_fulfilled/' + partiallyPk + '/',
         method: 'GET',
         success: function(response) {
-          $('#productModal').find('.modal-title').text('Product Information');
-          $('#productModal').find('.modal-body').html(`
-            <div class="row">
-
-              <!-- Image -->
-              <div class="col m-0">
-                ${response.picture ? `<div class="product-image" style="text-align: center;"><img src="${response.picture}" width="200"></div>` : ''}
-              </div>
-
-              <!-- 1st row -->
-              <div class="col mx-2">
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>Product Name:</strong></h6>
-                      <p class="card-text">${response.name}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>Product ID:</strong></h6>
-                      <p class="card-text">${response.id}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>Reserved:</strong></h6>
-                      <p class="card-text">${response.reserved_count}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>Actual Count:</strong></h6>
-                      <p class="card-text">${response.count}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>Category:</strong></h6>
-                      <p class="card-text">${response.category}</p>
-                    </div>
-                  </div>
+            $('#partiallyModal .modal-body').html(`
+              <div class="row">
+                <div class="col">
+                  <h6><strong>Edit ID:</strong> ${response.partially_fulfill_edit_id}</h6>
+                  <h6><strong>Date Updated:</strong> ${response.date_updated}</h6>
+                  <h6><strong>Partially Fulfilled Quantity:</strong> ${response.partially_fulfilled_quantity}</h6>
+                  <h6><strong>Text Report:</strong> ${response.text_report}</h6>
+                  <h6><strong>Stock:</strong> ${response.stock}</h6>
+                  <h6><strong>Account ID:</strong> ${response.account_id}</h6>
                 </div>
               </div>
-
-              <!-- 2nd row -->
-              <div class="col mx-2">
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>Price:</strong></h6>
-                      <p class="card-text">${response.price}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>SKU:</strong></h6>
-                      <p class="card-text">${response.sku}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>To Be Received:</strong></h6>
-                      <p class="card-text">${response.to_be_received_count}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>Stock Level Threshold:</strong></h6>
-                      <p class="card-text">${response.threshold}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h6 class="card-title"><strong>Tags:</strong></h6>                      
-                      ${response.tags ? `<p class="card-text">${response.tags.join(', ')}</p>` : ''}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          `);
-          $('#productModal').find('.modal-footer').find('a.btn-primary').attr('href', '/update_product/' + response.product_id + '/');
-
-          $('#productModal').modal('show');
-        },
+            `);
+            $('#partiallyModal').modal('show');
+          },
         error: function(xhr, status, error) {
           console.error(error);
         }
       });
     });
 
-    $(document).ready(function() {
-        $('#partiallyFulfilledOrders').DataTable({
-            "columnDefs": [
+    $('#partiallyFulfilledOrders').DataTable({
+      "columnDefs": [
         { "targets": -1, "orderable": false, "searchable": false }
-        ]
-        });
+      ]
     });
+  });
 </script>
+
+
 </body>
 {% endblock %}

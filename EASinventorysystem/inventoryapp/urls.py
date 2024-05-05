@@ -94,4 +94,6 @@ urlpatterns = [
     path('inventory_update_history', views.inventory_update_history, name='inventory_update_history'),
     path('partially_fulfill/<int:pk>/', views.partially_fulfill, name='partially_fulfill'),
     path('history_partially_fulfilled/', views.history_partially_fulfilled, name='history_partially_fulfilled'),
+
+    path('view_partially_fulfilled/<int:pk>/', views.view_partially_fulfilled, name='view_partially_fulfilled'),
 ]

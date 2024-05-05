@@ -1879,10 +1879,12 @@ def add_new_employee(request):
     else:
         return render(request, 'inventoryapp/add_new_employee.html')
 
+@login_required 
 def view_employee(request, pk):
     Employee = get_object_or_404(Account, Account_ID=pk)
     return render(request, 'inventoryapp/view_employee.html', {"Employee":Employee})
 
+@login_required 
 def update_employee(request, pk):
     Employee = get_object_or_404(Account, Account_ID=pk)
     if request.method == 'POST':
@@ -1909,6 +1911,7 @@ def update_employee(request, pk):
     else:
         return render(request, 'inventoryapp/update_employee.html', {"Employee":Employee})
 
+@login_required 
 def hide_account(request, pk):
     if request.method == 'POST':
         # Perform account hiding logic
@@ -1919,7 +1922,8 @@ def hide_account(request, pk):
         return redirect('employee_accounts')
     else:
         return redirect('employee_accounts')
-    
+
+@login_required    
 def unhide_account(request, pk):
       if request.method == 'POST':
           # Perform account unhiding logic
@@ -1931,7 +1935,7 @@ def unhide_account(request, pk):
       else:
           return redirect('employee_accounts')
 
-
+@login_required 
 def partially_fulfill(request, pk):
     PRO = get_object_or_404(Product_Requisition_Order, pk=pk)
     stocks_ordered = Stock_Ordered.objects.filter(Product_Requisition_ID=PRO)
@@ -1992,10 +1996,12 @@ def partially_fulfill(request, pk):
 
     return render(request, 'inventoryapp/partially_fulfill.html', {'requisition_order': PRO, 'stock_ordered_items': stocks_ordered, 'previous_parfills':previous_parfills_combined, 'no_parfills':no_parfills})
 
+@login_required 
 def history_partially_fulfilled(request):
     partially_fulfilled_history = Partially_Fulfilled_History.objects.all()
     return render(request, 'inventoryapp/history_partially_fulfilled.html' , {'partially_fulfilled_history':partially_fulfilled_history})
 
+@login_required 
 def edit_count(request):
     products = Product.objects.all()
     if request.method == 'POST':
@@ -2043,12 +2049,26 @@ def edit_count(request):
                     )
             messages.success(request, "Product count succesfully updated")
             return redirect('current_inventory')
-                    
-
-
     else:
         return render(request, 'inventoryapp/edit_count.html', {'products': products})
 
+@login_required 
 def inventory_update_history(request):
     Count_Edits = Count_Edit_History.objects.all()
     return render(request, 'inventoryapp/inventory_update_history.html',{'Count_Edits':Count_Edits})
+
+def view_partially_fulfilled(request, partially_fulfilled_pk):
+    try:
+        partially_fulfilled = Partially_Fulfilled_History.objects.get(pk=partially_fulfilled_pk)
+        response_data = {
+            'partially_fulfill_edit_id': partially_fulfilled.Partially_Fulfill_Edit_ID,
+            'date_updated': partially_fulfilled.Date_Updated.strftime("%Y-%m-%d %H:%M:%S"),
+            'partially_fulfilled_quantity': partially_fulfilled.Partially_Fulfilled_Quantity,
+            'image_report': partially_fulfilled.Image_Report.url if partially_fulfilled.Image_Report else None,
+            'text_report': partially_fulfilled.Text_Report,
+            'stock': partially_fulfilled.Stock,
+            'account_id': partially_fulfilled.Account_ID
+        }
+        return JsonResponse(response_data)
+    except Partially_Fulfilled_History.DoesNotExist:
+        return JsonResponse({'error': 'Partially Fulfilled Record not found'}, status=404)
