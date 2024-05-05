@@ -35,9 +35,10 @@
                             <th scope="col" style="background-color: #C2C1C1; text-align: center;">Date Updated</th>
                             <th scope="col" style="background-color: #C2C1C1; text-align: center;">Initial Count</th>
                             <th scope="col" style="background-color: #C2C1C1; text-align: center;">Updated Count</th>
-                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Image Report</th>
-                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Report</th>
+                            <!-- <th scope="col" style="background-color: #C2C1C1; text-align: center;">Image Report</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;">Report</th> -->
                             <th scope="col" style="background-color: #C2C1C1; text-align: center;">Updated by</th>
+                            <th scope="col" style="background-color: #C2C1C1; text-align: center;"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,13 +49,16 @@
                             <td class="initial_count" style="text-align: center; vertical-align: middle;">{{ edit.Date_Updated }}</td>
                             <td class="initial_count" style="text-align: center; vertical-align: middle;">{{ edit.Initial_Inventory_Count }}</td>
                             <td class="updated_count" style="text-align: center; vertical-align: middle;">{{ edit.Updated_Inventory_Count }}</td>
-                            <td class="image_report" style="text-align: center; vertical-align: middle;">
+                            <!-- <td class="image_report" style="text-align: center; vertical-align: middle;">
                                 {% if edit.Image_Report %}
                                     <img src="{{ edit.Image_Report.url }}" alt="Image Report" style="max-width: 100px; max-height: 100px;">
                                 {% endif %}
                             </td>
-                            <td class="report" style="text-align: center; vertical-align: middle;">{{ edit.Text_Report }}</td>
+                            <td class="report" style="text-align: center; vertical-align: middle;">{{ edit.Text_Report }}</td> -->
                             <td class="updated_by" style="text-align: center; vertical-align: middle;">{{ edit.Account_ID }}</td>
+                            <td> 
+                                <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="" data-partially-pk="">View</button>
+                            </td> 
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -66,5 +70,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#inventory_update_history').DataTable({
+      "columnDefs": [
+        { "targets": -1, "orderable": false, "searchable": false }
+      ]
+    });
+  });
+    </script>
 </body>
 {% endblock %}
