@@ -125,76 +125,74 @@
     </div>
 </div>
 <script>
-    
     document.getElementById("cancelButton").addEventListener("click", function() {
-            // Check if any input field has a value
-            var formIsEmpty = true;
-            var inputs = document.querySelectorAll("#updateForm input[type='text']");
-            inputs.forEach(function(input) {
-                if (input.value.trim() !== '') {
-                    formIsEmpty = false;
-                }
-            });
+            var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+            myModal.show();
+    });
 
-            // If the form is not empty, open the cancel confirmation modal
-            if (!formIsEmpty) {
-                var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
-                myModal.show();
+
+    // Function to handle form submission
+    function handleSubmit(event) {
+        if (checkRequiredFields() && checkPrimaryContactNumber()) {
+            showConfirmationModal();
+        }
+    }
+
+    // Function to show the confirmation modal
+    function showConfirmationModal() {
+        var myModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        myModal.show();
+    }
+
+    // Function to check if all required fields are filled
+    function checkRequiredFields() {
+        let inputs = document.querySelectorAll('input[required]');
+        let isValid = true;
+
+        inputs.forEach(function(input) {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.classList.add('is-invalid'); // Add red border
             } else {
-                // If the form is empty, redirect to the current inventory page
-                window.location.href = "{% url 'current_customers' %}";
+                input.classList.remove('is-invalid'); // Remove red border
             }
         });
 
-
-       // Function to check if all required fields are filled
-        function checkRequiredFields() {
-            let inputs = document.querySelectorAll('input[required]');
-            let isValid = true;
-
-            inputs.forEach(function(input) {
-                if (!input.value.trim()) {
-                    isValid = false;
-                    input.classList.add('is-invalid'); // Add red border
-                } else {
-                    input.classList.remove('is-invalid'); // Remove red border
-                }
-            });
-
-            if (!isValid) {
-                alert('Please fill out all required fields and satisfy the required input.');
-            }
-
-            return isValid;
+        if (!isValid) {
+            alert('Please fill out all required fields and satisfy the required input.');
         }
 
-        // Function to show the confirmation modal
-        function showConfirmationModal() {
-            $('#confirmationModal').modal('show');
+        return isValid;
+    }
+
+
+    // Function to check if the primary contact number starts with 09
+    function checkPrimaryContactNumber() {
+        let primaryContactInput = document.getElementById('id_primary_contact_number');
+        let inputValue = primaryContactInput.value.trim();
+        let isValid = true; // Define isValid variable here
+
+        var contactNumberPattern = /^09\d{9}$/; // Regex pattern to match "09" followed by 9 digits
+
+        if (inputValue.length !== 11 || !contactNumberPattern.test(inputValue)) {
+            isValid = false;
+            primaryContactInput.classList.add('is-invalid');
+            alert('Please input a valid number starting with 09 and exactly 11 digits.'); // Notify the user
+        } else {
+            primaryContactInput.classList.remove('is-invalid');
         }
 
-        // Function to handle form submission
-        function handleSubmit(event) {
-            if (checkRequiredFields() && checkPrimaryContactNumber()) {
-                showConfirmationModal();
-            }
+        // Validate minimum length for zip code
+        var zipCodeInput = document.getElementById('zip_code');
+        if (zipCodeInput.value.trim().length !== 4) {
+            isValid = false;
+            zipCodeInput.classList.add('is-invalid');
+            alert('Please input a valid 4-digit zip code.'); // Notify the user
+        } else {
+            zipCodeInput.classList.remove('is-invalid');
         }
 
-
-        // Function to check if the primary contact number starts with 09
-        function checkPrimaryContactNumber() {
-            let primaryContactInput = document.getElementById('id_primary_contact_number');
-            let inputValue = primaryContactInput.value.trim();
-            let isValid = /^09/.test(inputValue); // Check if input starts with 09
-
-            if (!isValid) {
-                primaryContactInput.classList.add('is-invalid'); // Add red border
-                alert('Please input a number starting with 09.'); // Notify the user
-            } else {
-                primaryContactInput.classList.remove('is-invalid'); // Remove red border
-            }
-
-            return isValid;
-        }
+        return isValid;
+    }
 </script>
 {% endblock %}
