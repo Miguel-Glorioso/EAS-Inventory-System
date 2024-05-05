@@ -54,9 +54,28 @@
                                 <label class="required" for="total_cost">Total Cost:</label><br>
                                 <div class="input-group">
                                     <span class="input-group-text">PHP</span>
-                                    <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" class="form-control rounded-10" oninput="validateInput(event)" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.key === '.'" size="9">
-                                    <!-- <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" oninput="maxLengthCheck(this)" class="form-control rounded-10"><br><br> -->
-                                    <!-- <input type="number" id="total_cost" name="total_cost" step=".01" min="0" max="9999999.99" maxlength="9" class="form-control rounded-10"><br><br> -->
+                                    <input type="tel" name="total_cost" maxlength="8" class="form-control" required id="total_cost" placeholder="0.00" oninput="formatPriceInput(event)">
+                                    <script>
+                                        function formatPriceInput(event) {
+                                            // Get the input element
+                                            var input = event.target;
+
+                                            // Remove any non-numeric characters from the input
+                                            input.value = input.value.replace(/[^\d.]/g, '');
+
+                                            // Split the value into integer and decimal parts
+                                            var parts = input.value.split('.');
+
+                                            // Ensure there is at most one decimal point and at most two decimal places
+                                            parts[0] = parts[0].slice(0, 5); // Maximum 6 digits for the integer part
+                                            if (parts.length > 1) {
+                                                parts[1] = parts[1].slice(0, 2); // Maximum 2 digits for the decimal part
+                                            }
+
+                                            // Reconstruct the value with the formatted integer and decimal parts
+                                            input.value = parts.join('.');
+                                        }
+                                    </script>
                                 </div>
                                 <script>
                                     function validateInput(event) {
