@@ -11,6 +11,12 @@
 </head>
 
 <body class="bg-light">
+    <style>
+        .required:after {
+          content:" *";
+          color: red;
+        }
+    </style>
     <div class="container-fluid">
         <!-- Header -->
         <div class="row p-1" style="background-color: #eee;">
@@ -348,7 +354,7 @@
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <label for="updated_count_${productPK}"><strong>Updated Count:</strong></label>
+                                    <label class="required" for="updated_count_${productPK}"><strong>Updated Count:</strong></label>
                                     <input type="number" class="form-control" id="updated_count_${productPK}" name="updated_count_${productPK}" required>
                                 </div>
                                 <div class="col"></div>
@@ -356,7 +362,7 @@
                                 <div class="col"></div>
                             </div>
                             <div class="mb-3">
-                                <label for="text_report_${productPK}" class="form-label"><strong>Text Report:</strong></label>
+                                <label class="required" for="text_report_${productPK}" class="form-label"><strong>Text Report:</strong></label>
                                 <input type="text" class="form-control" id="text_report_${productPK}" name="text_report_${productPK}" required>
                             </div>
                             <div class="mb-3">
