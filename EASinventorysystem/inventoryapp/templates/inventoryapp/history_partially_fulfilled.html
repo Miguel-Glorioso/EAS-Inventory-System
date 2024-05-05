@@ -98,6 +98,7 @@
         url: '/view_partially_fulfilled/' + partiallyPk + '/',
         method: 'GET',
         success: function(response) {
+          console.log(response)
             $('#partiallyModal .modal-body').html(`
               <div class="row">
                 <div class="col">
@@ -105,7 +106,8 @@
                   <h6><strong>Date Updated:</strong> ${response.date_updated}</h6>
                   <h6><strong>Partially Fulfilled Quantity:</strong> ${response.partially_fulfilled_quantity}</h6>
                   <h6><strong>Text Report:</strong> ${response.text_report}</h6>
-                  <h6><strong>Stock:</strong> ${response.stock}</h6>
+                  <h6><strong>Product Requisition Order:</strong> ${response.pro}</h6>
+                  <h6><strong>Product:</strong> ${response.product}</h6>
                   <h6><strong>Account ID:</strong> ${response.account_id}</h6>
                 </div>
               </div>

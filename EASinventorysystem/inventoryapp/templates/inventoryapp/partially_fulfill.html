@@ -51,7 +51,7 @@
                                                     {% if parfill.Stock == stock.pk %}
                                                     <td class="fulfilled-quantity">{{ parfill.total_quantity }}</td>
                                             
-                                                    <td class="remaining-quantity" data-quantity="{{ stock.Quantity }}" data-fulfilled="{{ parfill.total_quantity }}"></td>
+                                                    <td class="remaining-quantity" data-productID="{{ stock.Product_ID.Product_ID }}" data-quantity="{{ stock.Quantity }}" data-fulfilled="{{ parfill.total_quantity }}"></td>
                                                     {% endif %}
                                                 {% endfor %}
                                             {% endif %}
@@ -63,19 +63,19 @@
                                             {% if stock.pk in no_parfills %}
                                             <td>
                                                 <div class="input-group">
-                                                    <input type="number" min="0" max="{{stock.Quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="1">
+                                                    <input type="number" min="0" max="{{stock.Quantity}}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value=0>
                                                 </div>
                                             </td>
                                             {% else %}
                                             <td>
                                                 <div class="input-group">
-                                                    <input type="number" min="0" max="{{ remaining_quantity }}" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value="1">
+                                                    <input type="number" min="0" class="form-control text-center quantity-input" required name="quantity_{{ stock.Product_ID.Product_ID }}" style="width: 100px;" value=0>
                                                 </div>
                                             </td>
                                             {% endif %}
                                             <td>
                                                 <div class="input-group">
-                                                    <textarea class="form-control text-report-input" rows="3" name="text_report_{{ stock.Product_ID.Product_ID }}" maxlength="1024" required></textarea>
+                                                    <textarea class="form-control text-report-input" rows="3" name="text_report_{{ stock.Product_ID.Product_ID }}" maxlength="1024" disabled></textarea>
                                                 </div>
                                             </td>
                                         </tr>
@@ -143,29 +143,48 @@
 </div>
 
 <script>
+    // Get all elements with class "remaining-quantity"
+    var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
+    
+    remainingQuantityElements.forEach(function(element) {
+        // Get the ordered quantity and fulfilled quantity from data attributes
+        var quantity = parseInt(element.dataset.quantity);
+        var fulfilledQuantity = parseInt(element.dataset.fulfilled);
+
+        // Calculate remaining quantity
+        var remainingQuantity = quantity - fulfilledQuantity ;
+        
+        // Update the max attribute of the corresponding quantity input field
+        var inputFieldName = 'quantity_' + element.dataset.productid;  // Assuming you have a data attribute productId
+        var inputField = document.querySelector('input[name="' + inputFieldName + '"]');
+
+        inputField.setAttribute('max', remainingQuantity);
+    
+        // Update the content of the element with the remaining quantity
+        element.textContent = remainingQuantity;
+    });
+
     // Wait for DOM content to be fully loaded
-    document.getElementById("submit_parfill").addEventListener("click", function() {
+    function checkRequiredFields() {
+        let inputs = document.querySelectorAll('input[required]');
+        let isValid = true;
 
-        // Function to check if all required fields are filled
-        function checkRequiredFields() {
-            let inputs = document.querySelectorAll('input[required]');
-            let isValid = true;
-
-            inputs.forEach(function(input) {
-                if (!input.value.trim()) {
-                    isValid = false;
-                    input.classList.add('is-invalid'); // Add red border
-                } else {
-                    input.classList.remove('is-invalid'); // Remove red border
-                }
-            });
-
-            if (!isValid) {
-                alert('Please fill out all required fields and satisfy the required input.');
+        inputs.forEach(function(input) {
+            // Check if input value is empty or exceeds quantity
+            if (!input.value.trim() || parseInt(input.value) > parseInt(input.getAttribute('max'))) {
+                isValid = false;
+                input.classList.add('is-invalid'); // Add red border
+            } else {
+                input.classList.remove('is-invalid'); // Remove red border
             }
+        });
 
-            return isValid;
+        if (!isValid) {
+            alert('Please fill out all required fields and ensure the input does not exceed the available quantity.');
         }
+
+        return isValid;
+    }
 
         // Function to handle form submission
         function handleSubmit(event) {
@@ -173,22 +192,6 @@
                 showConfirmationModal();
             }
         }
-
-        // Get all elements with class "remaining-quantity"
-        var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
-        
-        remainingQuantityElements.forEach(function(element) {
-            // Get the ordered quantity and fulfilled quantity from data attributes
-            var quantity = parseInt(element.dataset.quantity);
-            var fulfilledQuantity = parseInt(element.dataset.fulfilled);
-            console.log(quantity, fulfilledQuantity);
-            // Calculate remaining quantity
-            var remainingQuantity = quantity - fulfilledQuantity ;
-        
-            // Update the content of the element with the remaining quantity
-            element.textContent = remainingQuantity;
-        });
-
         // Add an event listener to the form submission
         document.getElementById('submit_parfill').addEventListener('click', handleSubmit);
 
@@ -197,34 +200,33 @@
             $('#confirmationModal').modal('show');
         }
 
-        // Function to validate the form
-        function validateForm() {
-            // Get all elements with class "quantity-input" and "remaining-quantity"
-            var quantityInputs = document.querySelectorAll('.quantity-input');
-            var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
-            var isValid = true;
-
-            quantityInputs.forEach(function(input, index) {
-                var maxQuantity = parseInt(input.getAttribute('max'));
-                var quantity = parseInt(input.value);
-                var remainingQuantity = parseInt(remainingQuantityElements[index].textContent);
-
-                // Check if quantity exceeds maxQuantity or remainingQuantity is zero
-                if (quantity > maxQuantity || remainingQuantity === 0) {
-                    isValid = false;
-                    // Optionally, you can display an error message or highlight the input field here
-                }
-            });
-
-            return isValid;
-        }
-    });
     
     // Function to handle cancellation
     document.getElementById("cancelButton").addEventListener("click", function() {
             var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
             myModal.show();
         });
+
+    // Select all quantity input fields
+    var quantityInputs = document.querySelectorAll('.quantity-input');
+
+    // Add event listener to each quantity input
+    // Select all quantity input fields
+    var quantityInputs = document.querySelectorAll('.quantity-input');
+
+    // Add event listener to each quantity input
+    quantityInputs.forEach(function(input) {
+        input.addEventListener('input', function() {
+            var textReport = this.closest('tr').querySelector('.text-report-input');
+            if (parseInt(this.value) !== 0) {
+                textReport.removeAttribute('disabled');
+                textReport.setAttribute('required', 'required');
+            } else {
+                textReport.setAttribute('disabled', 'disabled');
+                textReport.removeAttribute('required');
+            }
+        });
+    });
 </script>
 
 {% endblock %}

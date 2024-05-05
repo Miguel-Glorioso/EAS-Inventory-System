@@ -1985,17 +1985,18 @@ def inventory_update_history(request):
     Count_Edits = Count_Edit_History.objects.all()
     return render(request, 'inventoryapp/inventory_update_history.html',{'Count_Edits':Count_Edits})
 
-def view_partially_fulfilled(request, partially_fulfilled_pk):
+def view_partially_fulfilled(request, pk):
     try:
-        partially_fulfilled = Partially_Fulfilled_History.objects.get(pk=partially_fulfilled_pk)
+        partially_fulfilled = Partially_Fulfilled_History.objects.get(pk=pk)
         response_data = {
             'partially_fulfill_edit_id': partially_fulfilled.Partially_Fulfill_Edit_ID,
             'date_updated': partially_fulfilled.Date_Updated.strftime("%Y-%m-%d %H:%M:%S"),
             'partially_fulfilled_quantity': partially_fulfilled.Partially_Fulfilled_Quantity,
             'image_report': partially_fulfilled.Image_Report.url if partially_fulfilled.Image_Report else None,
             'text_report': partially_fulfilled.Text_Report,
-            'stock': partially_fulfilled.Stock,
-            'account_id': partially_fulfilled.Account_ID
+            'pro': partially_fulfilled.Stock.Product_Requisition_ID.Product_Requisition_ID,
+            'product': partially_fulfilled.Stock.Product_ID.Name,
+            'account_id': partially_fulfilled.Account_ID.user.username
         }
         return JsonResponse(response_data)
     except Partially_Fulfilled_History.DoesNotExist:
