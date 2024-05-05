@@ -8,7 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.min.js"></script>
 </head>
 <body class="bg-light">
-    <form method="post" action="{% url 'partially_fulfill' pk=requisition_order.pk %}" enctype="multipart/form-data">
+    <form method="post" id="partiallyFulfillForm" action="{% url 'partially_fulfill' pk=requisition_order.pk %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="container-fluid">
             <div class="row p-1" style="background-color: #eee;">
@@ -91,62 +91,140 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <a href="{% url 'current_pros' %}" class="btn btn-danger">Cancel</a>
+                    <a class="btn btn-danger" id="cancelButton">Cancel</a>
                 </div>
                 <div class="col-md-6 text-end">
                     <!-- Add data-bs-toggle and data-bs-target attributes to trigger the modal -->
-                    <button type="submit" class="btn btn-success" id="submit_parfill" onclick="return confirm('Are you sure you want to create this partially fulfill order?')">Create</button>
+                    <button type="button" class="btn btn-success" id="submit_parfill" onclick="handleSubmit()">Create</button>
                 </div>
             </div>
         </div>
     </form>
 </body>
-<script>
-    // Get all elements with class "remaining-quantity"
-    var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
-    
-    remainingQuantityElements.forEach(function(element) {
-        // Get the ordered quantity and fulfilled quantity from data attributes
-        var quantity = parseInt(element.dataset.quantity);
-        var fulfilledQuantity = parseInt(element.dataset.fulfilled);
-        console.log(quantity, fulfilledQuantity);
-        // Calculate remaining quantity
-        var remainingQuantity = quantity - fulfilledQuantity ;
-    
-        // Update the content of the element with the remaining quantity
-        element.textContent = remainingQuantity;
-    });
-</script>
-<script>
-    function validateForm() {
-        // Get all elements with class "quantity-input" and "remaining-quantity"
-        var quantityInputs = document.querySelectorAll('.quantity-input');
-        var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
-        var isValid = true;
 
-        quantityInputs.forEach(function(input, index) {
-            var maxQuantity = parseInt(input.getAttribute('max'));
-            var quantity = parseInt(input.value);
-            var remainingQuantity = parseInt(remainingQuantityElements[index].textContent);
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to create this partially fulfill order?
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </div>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('partiallyFulfillForm').submit()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-            // Check if quantity exceeds maxQuantity or remainingQuantity is zero
-            if (quantity > maxQuantity || remainingQuantity === 0) {
-                isValid = false;
-                // Optionally, you can display an error message or highlight the input field here
+<!-- Cancel Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Warning</h5>
+            </div>
+            <div class="modal-body">
+                Exit form? Any changes you have made may not be saved.
+            </div>
+            <div class="modal-footer">
+                <div class="col">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                </div>
+                <a href="{% url 'current_pros' %}" class="btn btn-danger">Exit Anyways</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Wait for DOM content to be fully loaded
+    document.getElementById("submit_parfill").addEventListener("click", function() {
+
+        // Function to check if all required fields are filled
+        function checkRequiredFields() {
+            let inputs = document.querySelectorAll('input[required]');
+            let isValid = true;
+
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid'); // Add red border
+                } else {
+                    input.classList.remove('is-invalid'); // Remove red border
+                }
+            });
+
+            if (!isValid) {
+                alert('Please fill out all required fields and satisfy the required input.');
             }
+
+            return isValid;
+        }
+
+        // Function to handle form submission
+        function handleSubmit(event) {
+            if (checkRequiredFields()) {
+                showConfirmationModal();
+            }
+        }
+
+        // Get all elements with class "remaining-quantity"
+        var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
+        
+        remainingQuantityElements.forEach(function(element) {
+            // Get the ordered quantity and fulfilled quantity from data attributes
+            var quantity = parseInt(element.dataset.quantity);
+            var fulfilledQuantity = parseInt(element.dataset.fulfilled);
+            console.log(quantity, fulfilledQuantity);
+            // Calculate remaining quantity
+            var remainingQuantity = quantity - fulfilledQuantity ;
+        
+            // Update the content of the element with the remaining quantity
+            element.textContent = remainingQuantity;
         });
 
-        return isValid;
-    }
+        // Add an event listener to the form submission
+        document.getElementById('submit_parfill').addEventListener('click', handleSubmit);
 
-    // Add an event listener to the form submission
-    document.querySelector('#submit_parfill').addEventListener('click', function(event) {
-        if (!validateForm()) {
-            // Prevent form submission if validation fails
-            event.preventDefault();
-            alert('Quantity to be partially fulfilled exceeds maximum allowed quantity or remaining quantity is zero!');
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#confirmationModal').modal('show');
+        }
+
+        // Function to validate the form
+        function validateForm() {
+            // Get all elements with class "quantity-input" and "remaining-quantity"
+            var quantityInputs = document.querySelectorAll('.quantity-input');
+            var remainingQuantityElements = document.querySelectorAll('.remaining-quantity');
+            var isValid = true;
+
+            quantityInputs.forEach(function(input, index) {
+                var maxQuantity = parseInt(input.getAttribute('max'));
+                var quantity = parseInt(input.value);
+                var remainingQuantity = parseInt(remainingQuantityElements[index].textContent);
+
+                // Check if quantity exceeds maxQuantity or remainingQuantity is zero
+                if (quantity > maxQuantity || remainingQuantity === 0) {
+                    isValid = false;
+                    // Optionally, you can display an error message or highlight the input field here
+                }
+            });
+
+            return isValid;
         }
     });
+    
+    // Function to handle cancellation
+    document.getElementById("cancelButton").addEventListener("click", function() {
+            var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+            myModal.show();
+        });
 </script>
 
 {% endblock %}
