@@ -178,6 +178,7 @@
             if (inputValue.length !== 11 || !contactNumberPattern.test(inputValue)) {
                 isValid = false;
                 primaryContactInput.classList.add('is-invalid');
+                alert('Please input a valid number starting with 09 and exactly 11 digits.'); // Notify the user
             } else {
                 primaryContactInput.classList.remove('is-invalid');
             }
@@ -187,6 +188,7 @@
             if (zipCodeInput.value.trim().length !== 4) {
                 isValid = false;
                 zipCodeInput.classList.add('is-invalid');
+                alert('Please input a valid 4-digit zip code.'); // Notify the user
             } else {
                 zipCodeInput.classList.remove('is-invalid');
             }

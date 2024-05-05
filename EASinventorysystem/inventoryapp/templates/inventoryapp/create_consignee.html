@@ -264,14 +264,17 @@
         function validateInput() {
             let primaryContactInput = document.getElementById('id_primary_contact_number');
             let emailInput = document.getElementById('id_email_address');
+            let zipCodeInput = document.getElementById('zip_code'); 
             let primaryContactValue = primaryContactInput.value.trim();
             let emailValue = emailInput.value.trim();
-            let isPrimaryContactValid = /^09/.test(primaryContactValue); // Check if input starts with 09
+            let zipCodeValue = zipCodeInput.value.trim(); // Get zip code value
+            let isPrimaryContactValid = /^09\d{9}$/.test(primaryContactValue); // Check if input starts with 09 and is exactly 11 digits
             let isEmailValid = emailValue.includes('@'); // Check if input contains '@'
+            let isZipCodeValid = /^\d{4}$/.test(zipCodeValue); // Check if input is exactly 4 digits
 
             if (!isPrimaryContactValid) {
                 primaryContactInput.classList.add('is-invalid'); // Add red border
-                alert('Please input a number starting with 09.'); // Notify the user
+                alert('Please input a valid number starting with 09 and exactly 11 digits.'); // Notify the user
             } else {
                 primaryContactInput.classList.remove('is-invalid'); // Remove red border
             }
@@ -283,7 +286,14 @@
                 emailInput.classList.remove('is-invalid'); // Remove red border
             }
 
-            return isPrimaryContactValid && isEmailValid;
+            if (!isZipCodeValid) {
+                zipCodeInput.classList.add('is-invalid'); // Add red border
+                alert('Please input a valid 4-digit zip code.'); // Notify the user
+            } else {
+                zipCodeInput.classList.remove('is-invalid'); // Remove red border
+            }
+
+            return isPrimaryContactValid && isEmailValid && isZipCodeValid; // Check all conditions
         }
     </script>
 

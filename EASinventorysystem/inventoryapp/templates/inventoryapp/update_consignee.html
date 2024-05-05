@@ -163,10 +163,10 @@
             </div>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-6">
-                    <button type="button" class="btn btn-danger" id="cancelButton" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="cancelButton">Cancel</button>
                 </div>
                 <div class="col-md-6 text-end">
-                    <button type="submit" class="btn btn-success" id="createBtn">Update</button>
+                    <button type="button" class="btn btn-success" id="createBtn" onclick="handleSubmit()">Update</button>
                 </div>
             </div>
         </form>
@@ -215,19 +215,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Function to handle form submission after confirmation
-        function handleSubmit(event) {
-            event.preventDefault();
-            if (checkRequiredFields()) {
-                showConfirmationModal();
-            }
-        }
-    
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
+                document.getElementById('updateForm').submit();
+            });
+        });
+
+        document.getElementById("cancelButton").addEventListener("click", function() {
+            // If the form is not empty, open the cancel confirmation modal
+            var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+            myModal.show();
+        });
+
         // Function to check if all required fields are filled
         function checkRequiredFields() {
             let inputs = document.querySelectorAll('input[required]');
             let isValid = true;
-    
+
             inputs.forEach(function(input) {
                 if (!input.value.trim()) {
                     isValid = false;
@@ -236,31 +240,67 @@
                     input.classList.remove('is-invalid'); // Remove red border
                 }
             });
-    
+
             if (!isValid) {
                 alert('Please fill out all required fields and satisfy the required input.');
             }
-    
+
             return isValid;
         }
-    
+
         // Function to show the confirmation modal
         function showConfirmationModal() {
             $('#confirmationModal').modal('show');
         }
-    
-        // Add event listener to the form submit button
-        document.getElementById('createBtn').addEventListener('click', handleSubmit);
-    
-        // Add event listener to the Cancel button
-        document.getElementById('cancelButton').addEventListener('click', function () {
-            $('#cancelModal').modal('show');
-        });
-    
+
+        // Function to handle form submission
+        function handleSubmit(event) {
+            if (checkRequiredFields() && validateInput()) {
+                showConfirmationModal();
+            }
+        }
+
         // Function to handle form submission after confirmation
-        document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
-            document.getElementById('updateForm').submit();
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
+                document.getElementById('updateForm').submit();
+            });
         });
+
+        function validateInput() {
+            let primaryContactInput = document.getElementById('id_primary_contact_number');
+            let emailInput = document.getElementById('id_email_address');
+            let zipCodeInput = document.getElementById('zip_code'); 
+            let primaryContactValue = primaryContactInput.value.trim();
+            let emailValue = emailInput.value.trim();
+            let zipCodeValue = zipCodeInput.value.trim(); // Get zip code value
+            let isPrimaryContactValid = /^09\d{9}$/.test(primaryContactValue); // Check if input starts with 09 and is exactly 11 digits
+            let isEmailValid = emailValue.includes('@'); // Check if input contains '@'
+            let isZipCodeValid = /^\d{4}$/.test(zipCodeValue); // Check if input is exactly 4 digits
+
+            if (!isPrimaryContactValid) {
+                primaryContactInput.classList.add('is-invalid'); // Add red border
+                alert('Please input a valid number starting with 09 and exactly 11 digits.'); // Notify the user
+            } else {
+                primaryContactInput.classList.remove('is-invalid'); // Remove red border
+            }
+
+            if (!isEmailValid) {
+                emailInput.classList.add('is-invalid'); // Add red border
+                alert('Please input a valid email address.'); // Notify the user
+            } else {
+                emailInput.classList.remove('is-invalid'); // Remove red border
+            }
+
+            if (!isZipCodeValid) {
+                zipCodeInput.classList.add('is-invalid'); // Add red border
+                alert('Please input a valid 4-digit zip code.'); // Notify the user
+            } else {
+                zipCodeInput.classList.remove('is-invalid'); // Remove red border
+            }
+
+            return isPrimaryContactValid && isEmailValid && isZipCodeValid; // Check all conditions
+        }
     </script>
 
 
