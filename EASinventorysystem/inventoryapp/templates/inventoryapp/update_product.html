@@ -101,7 +101,7 @@
                     <div class="border p-3" style="max-height: 200px; overflow-y: auto;">
                         {% for cp in con_p %}
                         <div class="consignee-item" data-color="{{ cp.Consignee_ID.Tag_Hex_Color_ID }}">
-                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ cp.Consignee_ID.Consignee_ID }}" id="product_consignees">
+                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ cp.Consignee_ID.Consignee_ID }}" id="product_consignees" checked>
                             <label class="form-check-label" for="consignee_product_consignees">
                                 <span class="badge" style="display: inline-block; background-color: {{ cp.Consignee_ID.Tag_Hex_Color_ID }}" id="badge-tag">{{ cp.Consignee_ID.Consignee_Name }}</span>
                             </label>                              
