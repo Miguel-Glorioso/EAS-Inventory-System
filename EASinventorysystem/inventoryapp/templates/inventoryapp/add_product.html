@@ -181,7 +181,9 @@
                 Exit form? Any changes you have made may not be saved.
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                <div class="col">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                </div>
             <a href="{% url 'current_inventory' %}" class="btn btn-danger">Exit Anyways</a>
             </div>
         </div>
@@ -199,7 +201,9 @@
             Are you sure you want to create this product?
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <div class="col">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+            </div>
             <button type="submit" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('createProductForm').submit()">Yes</button>
         </div>
         </div>
