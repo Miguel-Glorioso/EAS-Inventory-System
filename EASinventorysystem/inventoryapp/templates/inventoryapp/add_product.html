@@ -1,442 +1,395 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="static/add_product.css">
-</head>
-<body>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/add_product.css">
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
 {% extends 'inventoryapp/base.html' %}
 {% load static %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row p-1" style="background-color: #eee;">
-        <div class="col-md-auto d-flex align-items-center">
-            <h4 class="m-0 mr-3">Add Product</h4>
+<body>
+    <div class="container-fluid">
+        <div class="row p-1" style="background-color: #eee;">
+            <div class="col-md-auto d-flex align-items-center">
+                <h4 class="m-0 mr-3">Add Product</h4>
+            </div>
+        </div>
+        {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_msg }}
+            </div>
+        {% endif %}
+        <form id="createProductForm" method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <legend>Product Information</legend>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_Name" class="form-label custom-text">Product Name:</label>
+                        <input type="text" name="product_name" class="form-control" maxlength="64" required id="id_Name" placeholder="Product Name">
+                    </div>
+                    <style>
+                        .required:after {
+                        content:" *";
+                        color: red;
+                        }
+                    </style>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_EAS_Product_ID" class="form-label custom-text">EAS Product ID:</label>
+                        <input type="text" name="eas_id" class="form-control" maxlength="32" id="id_EAS_Product_ID" placeholder="Product ID" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="required" for="id_Sku" class="form-label custom-text">SKU:</label>
+                        <input type="text" name="product_sku" class="form-control" maxlength="32" required id="id_Sku" placeholder="SKU">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="mb-2">
+                        <label style="margin-bottom: 8px;" class="required" for="id_Price" class="form-label custom-text">Price:</label>
+                        <div class="input-group">
+                            <span class="input-group-text">PHP</span>
+                            <input type="number" name="product_price" step=".1" min="0" max="99999.99" class="form-control" required id="id_Price" placeholder="0.00" oninput="validatePriceInput(event)">
+                        </div>
+                        <script>
+                            function validatePriceInput(event) {
+                                const inputElement = event.target;
+                                const inputValue = inputElement.value;
+                        
+                                // Remove any non-numeric characters except for the decimal point
+                                inputElement.value = inputValue.replace(/[^\d.]/g, '');
+                        
+                                // Ensure that the input value does not contain more than one decimal point
+                                if (inputValue.includes('.') && inputValue.split('.')[1].length > 2) {
+                                    inputElement.value = inputValue.slice(0, -1);
+                                }
+                        
+                                // Prevent the 'e' and '-' characters from being entered
+                                if (inputValue.includes('e') || inputValue.includes('-')) {
+                                    inputElement.value = inputValue.replace(/[e-]/g, '');
+                                }
+                        
+                                // Limit the input value to a maximum of 99999.99
+                                if (parseFloat(inputValue) > 99999.99) {
+                                    inputElement.value = 99999.99;
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-2">
+                        <label for="id_Actual_Inventory_Count" class="form-label custom-text">Initial Inventory Count:</label>
+                        <div class="input-group">
+                            <input type="number" min="0" maxlength="5" name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 && this.value.length < 5)" value="0">
+                            <!-- <input type="number" min='0' name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" value="0"> -->
+                            <!-- <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" onclick="decrementCount()">-</button>
+                                <button class="btn btn-outline-secondary" type="button" onclick="incrementCount()">+</button>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-2">
+                        <label for="id_Stock_Level_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
+                        <div class="input-group">
+                            <input type="number" min="0" maxlength="5" name="product_stock_level_threshold" class="form-control" id="id_Stock_Level_Threshold" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 && this.value.length < 5)" value="0">
+                            <!-- <input type="number" min='0' name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" value="0"> -->
+                            <!-- <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
+                                <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="required" for="id_Category" class="form-label custom-text">Category:</label>
+                        <select name="product_category" class="form-select" id="id_Category" required>
+                            <option value="" disabled selected>Select category</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.Category_ID }}">{{ cat.Category_Name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+                    
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label custom-text">Consignee:</label>
+                        <input type="text" id="consignee-search" class="form-control mb-2" placeholder="Search consignee..." style="margin-bottom: 10px;">
+                        <div id="consignee-list" style="height: 100px; overflow-y: auto;"> <!-- Adjust height as needed -->
+                            {% for con in consignees %}
+                            <div class="consignee-item" data-color="{{ con.Tag_Hex_Color_ID }}">
+                                <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="product_consignees">
+                                <label class="form-check-label" for="consignee_product_consignees">
+                                    <span class="badge" style="display: inline-block; background-color: {{ con.Tag_Hex_Color_ID }}" id="badge-tag">{{ con.Consignee_Name }}</span>
+                                </label>                              
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-md-10">
+                        <label for="id_Picture" class="form-label custom-text">Picture:</label>
+                        <div id="image-preview" class="mb-3"></div>
+                        <div class="input-group">
+                            <input type="file" name="product_picture" accept="image/*" id="id_Picture" class="form-control">
+                            <button type="button" id="remove-image" style="display: none; margin-left: 10px;" class="btn btn-outline-danger">Remove Image</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-6">
+                    <a class="btn btn-secondary" id="cancelButton">Cancel</a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <!-- Add data-bs-toggle and data-bs-target attributes to trigger the modal -->
+                    <button type="button" class="btn btn-success" onclick="handleSubmit()">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Cancel modal -->
+    <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="cancelConfirmationModalLabel">Warning</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Exit form? Any changes you have made may not be saved.
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+            <a href="{% url 'current_inventory' %}" class="btn btn-danger">Exit Anyways</a>
+            </div>
+        </div>
         </div>
     </div>
-    {% if error_msg %}
-        <div class="alert alert-danger" role="alert">
-            {{ error_msg }}
-        </div>
-    {% endif %}
-    <form id="createProductForm" method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        <legend>Product Information</legend>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label class="required" for="id_Name" class="form-label custom-text">Product Name:</label>
-                    <input type="text" name="product_name" class="form-control" maxlength="64" required id="id_Name" placeholder="Product Name">
-                </div>
-                <style>
-                    .required:after {
-                      content:" *";
-                      color: red;
-                    }
-                </style>
-            </div>
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label class="required" for="id_EAS_Product_ID" class="form-label custom-text">EAS Product ID:</label>
-                    <input type="text" name="eas_id" class="form-control" maxlength="32" id="id_EAS_Product_ID" placeholder="Product ID" required>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label class="required" for="id_Sku" class="form-label custom-text">SKU:</label>
-                    <input type="text" name="product_sku" class="form-control" maxlength="32" required id="id_Sku" placeholder="SKU">
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">
-                <div class="mb-2">
-                    <label style="margin-bottom: 8px;" class="required" for="id_Price" class="form-label custom-text">Price:</label>
-                    <div class="input-group">
-                        <span class="input-group-text">PHP</span>
-                        <input type="number" name="product_price" step=".1" min="0" max="99999.99" class="form-control" required id="id_Price" placeholder="0.00" oninput="validatePriceInput(event)">
-                    </div>
-                    <script>
-                        function validatePriceInput(event) {
-                            const inputElement = event.target;
-                            const inputValue = inputElement.value;
-                    
-                            // Remove any non-numeric characters except for the decimal point
-                            inputElement.value = inputValue.replace(/[^\d.]/g, '');
-                    
-                            // Ensure that the input value does not contain more than one decimal point
-                            if (inputValue.includes('.') && inputValue.split('.')[1].length > 2) {
-                                inputElement.value = inputValue.slice(0, -1);
-                            }
-                    
-                            // Prevent the 'e' and '-' characters from being entered
-                            if (inputValue.includes('e') || inputValue.includes('-')) {
-                                inputElement.value = inputValue.replace(/[e-]/g, '');
-                            }
-                    
-                            // Limit the input value to a maximum of 99999.99
-                            if (parseFloat(inputValue) > 99999.99) {
-                                inputElement.value = 99999.99;
-                            }
-                        }
-                    </script>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="mb-2">
-                    <label for="id_Actual_Inventory_Count" class="form-label custom-text">Initial Inventory Count:</label>
-                    <div class="input-group">
-                        <input type="number" min="0" maxlength="5" name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 && this.value.length < 5)" value="0">
-                        <!-- <input type="number" min='0' name="product_initial_count" class="form-control" required id="id_Actual_Inventory_Count" value="0"> -->
-                        <!-- <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="decrementCount()">-</button>
-                            <button class="btn btn-outline-secondary" type="button" onclick="incrementCount()">+</button>
-                        </div> -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="mb-2">
-                    <label for="id_Stock_Level_Threshold" class="form-label custom-text">Stock Level Threshold:</label>
-                    <div class="input-group">
-                        <input type="number" min="0" maxlength="5" name="product_stock_level_threshold" class="form-control" id="id_Stock_Level_Threshold" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 && this.value.length < 5)" value="0">
-                        <!-- <input type="number" min='0' name="product_stock_level_threshold" class="form-control" required id="id_Stock_Level_Threshold" value="0"> -->
-                        <!-- <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="decrementThreshold()">-</button>
-                            <button class="btn btn-outline-secondary" type="button" onclick="incrementThreshold()">+</button>
-                        </div> -->
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="mb-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <label class="required" for="id_Category" class="form-label custom-text">Category:</label>
-                    <select name="product_category" class="form-select" id="id_Category" required>
-                        <option value="" disabled selected>Select category</option>
-                        {% for cat in categories %}
-                        <option value="{{ cat.Category_ID }}">{{ cat.Category_Name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-        </div>
-                
-        <div class="mb-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <label class="form-label custom-text">Consignee:</label>
-                    <input type="text" id="consignee-search" class="form-control mb-2" placeholder="Search consignee..." style="margin-bottom: 10px;">
-                    <div id="consignee-list" style="height: 100px; overflow-y: auto;"> <!-- Adjust height as needed -->
-                        {% for con in consignees %}
-                        <div class="consignee-item" data-color="{{ con.Tag_Hex_Color_ID }}">
-                            <input class="form-check-input" type="checkbox" name="product_consignees" value="{{ con.Consignee_ID }}" id="product_consignees">
-                            <label class="form-check-label" for="consignee_product_consignees">
-                                <span class="badge" style="display: inline-block; background-color: {{ con.Tag_Hex_Color_ID }}" id="badge-tag">{{ con.Consignee_Name }}</span>
-                            </label>                              
-                        </div>
-                        {% endfor %}
-
-                    </div>
-                </div>
-            </div>
-        </div>
-                
-        <div class="mb-3">
-            <div class="row">
-                <div class="col-md-10">
-                    <label for="id_Picture" class="form-label custom-text">Picture:</label>
-                    <div id="image-preview" class="mb-3"></div>
-                    <div class="input-group">
-                        <input type="file" name="product_picture" accept="image/*" id="id_Picture" class="form-control">
-                        <button type="button" id="remove-image" style="display: none; margin-left: 10px;" class="btn btn-outline-danger">Remove Image</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-                
-        <div class="row" style="margin-top: 20px;">
-            <div class="col-md-6">
-                <a href="current_inventory.html" class="btn btn-secondary" id="cancelButton" data-bs-toggle="modal" data-bs-target="#cancelConfirmationModal">Cancel</a>
-            </div>
-            <div class="col-md-6 text-end">
-                <!-- Add data-bs-toggle and data-bs-target attributes to trigger the modal -->
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createConfirmationModal"  id="createButton">Create</button>
-            </div>
-        </div>
-    </form>
-</div>
-
-<!-- Bootstrap modal component -->
-<div class="modal fade" id="cancelConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+    <!-- Confirmation modal -->
+    <div class="modal fade" id="createConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="createConfirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
+        <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="cancelConfirmationModalLabel">Warning</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title" id="createConfirmationModalLabel">Confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            Exit form? Any changes you have made may not be saved.
+            Are you sure you want to create this product?
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-          <a href="{% url 'current_inventory' %}" class="btn btn-danger">Exit Anyways</a>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('createProductForm').submit()">Yes</button>
         </div>
-      </div>
+        </div>
     </div>
-  </div>
-<div class="modal fade" id="createConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="createConfirmationModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="createConfirmationModalLabel">Confirmation</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to create this product?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-success" name="Add" id="confirmCreateProductBtn">Yes</button>
-      </div>
     </div>
-  </div>
-</div>
 
-<script>
+    <script>
+
         // Validate form fields
         function validateForm() {
-        var requiredFields = document.querySelectorAll('.required');
-        var isValid = true;
+            var requiredFields = document.querySelectorAll('#createProductForm input[required], select[required]');
+            var isValid = true;
 
-        requiredFields.forEach(function(field) {
-            var input = field.querySelector('input, select');
-            if (!input.value.trim()) {
-                isValid = false;
-                input.classList.add('is-invalid');
-            } else {
-                input.classList.remove('is-invalid');
-            }
-        });
-
-        return isValid;
-    }
-
-    // Event listener for "Create" button in modal
-    document.getElementById("confirmCreateProductBtn").addEventListener("click", function() {
-        if (validateForm()) {
-            document.getElementById('createProductForm').submit(); // Submit the form if valid
-        }
-    });
-            // Handle click event on "Yes" button in confirmation modal
-            document.getElementById('confirmCreateProductBtn').addEventListener('click', function() {
-            document.getElementById('createProductForm').submit(); // Submit the form
-        });
-    document.getElementById("cancelButton").addEventListener("click", function() {
-            // Check if any input field has a value
-            var formIsEmpty = true;
-            var inputs = document.querySelectorAll("#createProductForm input[type='text'], #createProductForm input[type='number'], #createProductForm select, #createProductForm input[type='int']");
-            inputs.forEach(function(input) {
-                if (input.value.trim() !== '') {
-                    formIsEmpty = false;
+            requiredFields.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
                 }
             });
 
-            // If the form is not empty, open the cancel confirmation modal
-            if (!formIsEmpty) {
-                var myModal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
-                myModal.show();
-            } else {
-                // If the form is empty, redirect to the current inventory page
-                window.location.href = "{% url 'current_inventory' %}";
+            return isValid;
+        }
+
+        // Function to show the confirmation modal
+        function showConfirmationModal() {
+            $('#createConfirmationModal').modal('show');
+        }
+
+        // Event listener for "Create" button in modal
+        function handleSubmit(event) {
+            if (validateForm()) {
+                showConfirmationModal();
             }
+        }
+            
+        document.getElementById("cancelButton").addEventListener("click", function() {
+                // Check if any input field has a value
+                var formIsEmpty = true;
+                var inputs = document.querySelectorAll("#createProductForm input[type='text'], #createProductForm input[type='number'], #createProductForm select[required]");
+                inputs.forEach(function(input) {
+                    if (input.value.trim() !== '') {
+                        formIsEmpty = false;
+                    }
+                });
+
+                // If the form is not empty, open the cancel confirmation modal
+                if (!formIsEmpty) {
+                    var myModal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
+                    myModal.show();
+                } else {
+                    // If the form is empty, redirect to the current inventory page
+                    window.location.href = "{% url 'current_inventory' %}";
+                }
+            });
+
+
+        // Remove modal backdrop when modal is hidden
+        document.getElementById("cancelConfirmationModal").addEventListener("hidden.bs.modal", function() {
+            document.querySelector('.modal-backdrop').remove();
         });
 
-    document.getElementById("createButton").addEventListener("click", function() {
-        // Open the confirmation modal
-        var myModal = new bootstrap.Modal(document.getElementById('createConfirmationModal'));
-        myModal.show();
-    });
-
-    // Remove modal backdrop when modal is hidden
-    document.getElementById("cancelConfirmationModal").addEventListener("hidden.bs.modal", function() {
-        document.querySelector('.modal-backdrop').remove();
-    });
-
-    document.getElementById("createConfirmationModal").addEventListener("hidden.bs.modal", function() {
-        document.querySelector('.modal-backdrop').remove();
-    });
-    // JavaScript for search functionality
-    document.getElementById('consignee-search').addEventListener('input', function() {
-        const searchText = this.value.toLowerCase();
-        const consignees = document.querySelectorAll('#consignee-list .consignee-item');
-
-        consignees.forEach(function(consignee) {
-            const name = consignee.querySelector('.form-check-label').textContent.toLowerCase();
-            if (name.includes(searchText)) {
-                consignee.style.display = 'inline-block'; // Change display to inline-block
-            } else {
-                consignee.style.display = 'none';
-            }
+        document.getElementById("createConfirmationModal").addEventListener("hidden.bs.modal", function() {
+            document.querySelector('.modal-backdrop').remove();
         });
-    });
+        // JavaScript for search functionality
+        document.getElementById('consignee-search').addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            const consignees = document.querySelectorAll('#consignee-list .consignee-item');
 
-    // JavaScript for toggling pill shape class and moving checked pills to the chosen box
-    document.querySelectorAll('#consignee-list input[type="checkbox"]').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            const label = this.parentNode.querySelector('.form-check-label');
-            const container = this.parentNode.parentNode;
-
-            if (this.checked) {
-                const length = label.textContent.trim().length;
-                label.style.width = (length * 10) + 'px'; // Adjust the multiplier for desired width
-                this.parentNode.classList.add('pill-shape');
-                document.getElementById('chosen-consignees').appendChild(this.parentNode); // Move checked pill to the chosen box
-            } else {
-                label.style.width = ''; // Reset width
-                this.parentNode.classList.remove('pill-shape');
-                document.getElementById('consignee-list').appendChild(this.parentNode); // Move unchecked pill back to its original location
-            }
+            consignees.forEach(function(consignee) {
+                const name = consignee.querySelector('.form-check-label').textContent.toLowerCase();
+                if (name.includes(searchText)) {
+                    consignee.style.display = 'inline-block'; // Change display to inline-block
+                } else {
+                    consignee.style.display = 'none';
+                }
+            });
         });
-    });
 
-    // JavaScript for image preview and remove functionality
-    document.addEventListener("DOMContentLoaded", function() {
-        const pictureInput = document.getElementById("id_Picture");
-        const imagePreview = document.getElementById("image-preview");
-        const removeImageButton = document.getElementById("remove-image");
+        // JavaScript for toggling pill shape class and moving checked pills to the chosen box
+        document.querySelectorAll('#consignee-list input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const label = this.parentNode.querySelector('.form-check-label');
+                const container = this.parentNode.parentNode;
 
-        function updatePreview() {
-            const file = pictureInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const image = new Image();
-                    image.src = event.target.result;
-                    image.width = 200;
+                if (this.checked) {
+                    const length = label.textContent.trim().length;
+                    label.style.width = (length * 10) + 'px'; // Adjust the multiplier for desired width
+                    this.parentNode.classList.add('pill-shape');
+                    document.getElementById('chosen-consignees').appendChild(this.parentNode); // Move checked pill to the chosen box
+                } else {
+                    label.style.width = ''; // Reset width
+                    this.parentNode.classList.remove('pill-shape');
+                    document.getElementById('consignee-list').appendChild(this.parentNode); // Move unchecked pill back to its original location
+                }
+            });
+        });
+
+        // JavaScript for image preview and remove functionality
+        document.addEventListener("DOMContentLoaded", function() {
+            const pictureInput = document.getElementById("id_Picture");
+            const imagePreview = document.getElementById("image-preview");
+            const removeImageButton = document.getElementById("remove-image");
+
+            function updatePreview() {
+                const file = pictureInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const image = new Image();
+                        image.src = event.target.result;
+                        image.width = 200;
+                        imagePreview.innerHTML = '';
+                        imagePreview.appendChild(image);
+                        removeImageButton.style.display = "inline-block";
+                    };
+                    reader.readAsDataURL(file);
+                } else {
                     imagePreview.innerHTML = '';
-                    imagePreview.appendChild(image);
-                    removeImageButton.style.display = "inline-block";
-                };
-                reader.readAsDataURL(file);
-            } else {
+                    removeImageButton.style.display = "none";
+                }
+            }
+
+            pictureInput.addEventListener("change", updatePreview);
+
+            removeImageButton.addEventListener("click", function() {
+                event.preventDefault();
+                pictureInput.value = null;
                 imagePreview.innerHTML = '';
                 removeImageButton.style.display = "none";
-            }
-        }
-
-        pictureInput.addEventListener("change", updatePreview);
-
-        removeImageButton.addEventListener("click", function() {
-            event.preventDefault();
-            pictureInput.value = null;
-            imagePreview.innerHTML = '';
-            removeImageButton.style.display = "none";
+            });
         });
-    });
 
-
-    // // Attach onchange event handlers to each required input field
-    // document.getElementById("id_Name").onchange = checkRequiredFields;
-    // document.getElementById("id_EAS_Product_ID").onchange = checkRequiredFields;
-    // document.getElementById("id_Sku").onchange = checkRequiredFields;
-    // document.getElementById("id_Price").onchange = checkRequiredFields;
-    // document.getElementById("id_Category").onchange = checkRequiredFields;
-
-    // JavaScript functions for incrementing/decrementing count and threshold
-    function incrementCount() {
-        var input = document.getElementById('id_Actual_Inventory_Count');
-        input.stepUp();
-    }
-
-    function decrementCount() {
-        var input = document.getElementById('id_Actual_Inventory_Count');
-        input.stepDown();
-    }
-
-    function incrementThreshold() {
-        var input = document.getElementById('id_Stock_Level_Threshold');
-        input.stepUp();
-    }
-
-    function decrementThreshold() {
-        var input = document.getElementById('id_Stock_Level_Threshold');
-        input.stepDown();
-    }
-    function validateForm() {
-        // Flag to track if there are any errors
-        var hasErrors = false;
-
-        // Validate Product Name
-        var productName = document.getElementById("id_Name").value.trim();
-        if (!productName) {
-            // If Product Name is empty, mark it as invalid
-            hasErrors = true;
-            document.getElementById("id_Name").classList.add("is-invalid");
-        } else {
-            // If Product Name is valid, remove any existing invalid state
-            document.getElementById("id_Name").classList.remove("is-invalid");
+        function incrementCount() {
+            var input = document.getElementById('id_Actual_Inventory_Count');
+            input.stepUp();
         }
 
-        // Validate EAS Product ID
-        var easId = document.getElementById("id_EAS_Product_ID").value.trim();
-        if (!easId) {
-            hasErrors = true;
-            document.getElementById("id_EAS_Product_ID").classList.add("is-invalid");
-        } else {
-            document.getElementById("id_EAS_Product_ID").classList.remove("is-invalid");
+        function decrementCount() {
+            var input = document.getElementById('id_Actual_Inventory_Count');
+            input.stepDown();
         }
 
-        // Add more validations for other fields here...
-
-        // If there are errors, prevent form submission
-        if (hasErrors) {
-            return false;
+        function incrementThreshold() {
+            var input = document.getElementById('id_Stock_Level_Threshold');
+            input.stepUp();
         }
-    }
-    document.addEventListener("DOMContentLoaded", function() {
-        // Get all badge elements for categories
-        var badges = document.querySelectorAll('.badge');
-        
-        // Loop through each badge element
-        badges.forEach(function(badge) {
-            // Get the corresponding hex color from data attribute
-            var hexColor = badge.parentElement.parentElement.dataset.color;
 
-            // Set the background color of the badge
-            badge.style.backgroundColor = hexColor;
+        function decrementThreshold() {
+            var input = document.getElementById('id_Stock_Level_Threshold');
+            input.stepDown();
+        }
 
-            // Check if the background color is light or dark
-            if (isColorLight(hexColor)) {
-                badge.style.color = '#000000'; // Set text color to black for light background
-            } else {
-                badge.style.color = '#ffffff'; // Set text color to white for dark background
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get all badge elements for categories
+            var badges = document.querySelectorAll('.badge');
+            
+            // Loop through each badge element
+            badges.forEach(function(badge) {
+                // Get the corresponding hex color from data attribute
+                var hexColor = badge.parentElement.parentElement.dataset.color;
+
+                // Set the background color of the badge
+                badge.style.backgroundColor = hexColor;
+
+                // Check if the background color is light or dark
+                if (isColorLight(hexColor)) {
+                    badge.style.color = '#000000'; // Set text color to black for light background
+                } else {
+                    badge.style.color = '#ffffff'; // Set text color to white for dark background
+                }
+            });
+
+            // Function to check if a color is light
+            function isColorLight(color) {
+                // Convert hex color to RGB
+                var r = parseInt(color.substr(1, 2), 16);
+                var g = parseInt(color.substr(3, 2), 16);
+                var b = parseInt(color.substr(5, 2), 16);
+                
+                // Calculate luminance
+                var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                
+                // Check if luminance is greater than 0.5 (light color)
+                return luminance > 0.5;
             }
         });
 
-        // Function to check if a color is light
-        function isColorLight(color) {
-            // Convert hex color to RGB
-            var r = parseInt(color.substr(1, 2), 16);
-            var g = parseInt(color.substr(3, 2), 16);
-            var b = parseInt(color.substr(5, 2), 16);
-            
-            // Calculate luminance
-            var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-            
-            // Check if luminance is greater than 0.5 (light color)
-            return luminance > 0.5;
-        }
-    });
-
-</script>
-
+    </script>
 </body>
-</html>
 {% endblock %}

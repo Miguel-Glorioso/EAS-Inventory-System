@@ -24,7 +24,7 @@
                 {{ error_msg }}
             </div>
         {% endif %}
-        <form id="createConsigneeForm" method="POST" action="{% url 'create__consignee' %}">
+        <form id="createConsigneeForm" method="POST" action="{% url 'create_consignee' %}">
             {% csrf_token %}
             <legend>Consignee Information</legend>
             <div class="row">
@@ -84,9 +84,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="required" for="id_primary_contact_number" class="form-label custom-text">Primary Contact Number:</label>
-                        <input type="text" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number: 09xxxxxxxxx" pattern="09[0-9]{9}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 0;">
-                        <!-- <input type="tel" name="primary_contact_number" class="form-control" required id="id_primary_contact_number" placeholder="Primary Contact Number" pattern="[0-9]{11}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11"> -->
-                        <!-- <input type="tel" name="primary_contact_number" class="form-control" maxlength="11" required id="id_primary_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" inputmode="numeric" placeholder="Primary Contact Number"> -->
+                        <input type="text" name="primary_contact_number" class="form-control" id="id_primary_contact_number" placeholder="Primary Contact Number: 09xxxxxxxxx" pattern="09[0-9]{9}" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="11" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 8 || event.charCode == 0;" required>
                     </div>
                 </div>
 
@@ -99,11 +97,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="nonrequired" for="id_emergency_contact_number" class="form-label custom-text">Emergency Contact Number:</label>
-                        <!-- can't make it to not accept less than 7 -->
-                        <input type="text" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" pattern="(?:[0-9]{7}|[0-9]{11})" title="Please enter a valid 7 or 11-digit phone number" oninput="if (this.value.length < 7) { this.setCustomValidity('Please enter at least 7 digits.'); } else { this.setCustomValidity(''); }" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="Emergency Contact Number">
-                        <!-- <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" pattern="(?:[0-9]{7}|[0-9]{11})" title="Please enter a valid 7-11 digit number" oninput="javascript: if (this.value.length < 7 || this.value.length > 11) { this.setCustomValidity('Please enter a valid 7-11 digit number'); } else { this.setCustomValidity(''); }" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="Emergency Contact Number"> -->
-                        <!-- <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" pattern="(?:[0-9]{7}|[0-9]{11})" title="Please enter a valid 7 or 11-digit phone number" oninput="javascript: if (this.value.length > 11 || (this.value.length > 0 && this.value.length < 7)) { this.setCustomValidity('Please enter a valid 7 or 11-digit phone number'); } else { this.setCustomValidity(''); }" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="Emergency Contact Number"> -->
-                        <!-- <input type="tel" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" pattern="[0-9]{11}" title="Please enter a valid 11-digit phone number" placeholder="Emergency Contact Number"> -->
+                        <input type="text" name="emergency_contact_number" class="form-control" maxlength="11" id="id_emergency_contact_number" pattern="(?:[0-9]{7}|[0-9]{11})" title="Please enter a valid 7 or 11-digit phone number" oninput="validateEmergencyContactNumber(this)" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="Emergency Contact Number">
                     </div>
                 </div>
             </div>
@@ -154,28 +148,6 @@
                     });
                 });
             </script>
-
-            <script>
-                document.getElementById("cancelButton").addEventListener("click", function() {
-                    // Check if any input field has a value
-                    var formIsEmpty = true;
-                    var inputs = document.querySelectorAll("#createProductForm input[type='text'], #createProductForm input[type='number'], #createProductForm select, #createProductForm input[type='int']");
-                    inputs.forEach(function(input) {
-                        if (input.value.trim() !== '') {
-                            formIsEmpty = false;
-                        }
-                    });
-
-                    // If the form is not empty, open the cancel confirmation modal
-                    if (!formIsEmpty) {
-                        var myModal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
-                        myModal.show();
-                    } else {
-                        // If the form is empty, redirect to the current inventory page
-                        window.location.href = "{% url 'current_inventory' %}";
-                    }
-                });
-            </script>
             
             
             <div class="mb-3">
@@ -188,7 +160,7 @@
                     <button type="button" class="btn btn-danger" id="cancelButton">Cancel</button>
                 </div>
                 <div class="col-md-6 text-end">
-                    <button type="submit" class="btn btn-success" id="createBtn">Create</button>
+                    <button type="submit" class="btn btn-success" id="createBtn" onclick="handleSubmit()">Create</button>
                 </div>
             </div>
         </form>
@@ -226,7 +198,7 @@
             </div>
             <div class="modal-footer">
                 <div class="col">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
                 </div>
                 <a href="{% url 'categories_consignee_tags' %}" class="btn btn-danger">Exit Anyways</a>
             </div>
@@ -242,12 +214,26 @@
                 document.getElementById('createConsigneeForm').submit();
             });
         });
-                function handleSubmit(event) {
-            event.preventDefault(); // Prevent form submission
-            if (checkRequiredFields()) {
-                showConfirmationModal();
+
+        document.getElementById("cancelButton").addEventListener("click", function() {
+            // Check if any input field has a value
+            var formIsEmpty = true;
+            var inputs = document.querySelectorAll("#createConsigneeForm input[type='text'], #createConsigneeForm input[type='number'], #createConsigneeForm select, #createConsigneeForm input[type='int']");
+            inputs.forEach(function(input) {
+                if (input.value.trim() !== '') {
+                    formIsEmpty = false;
+                }
+            });
+
+            // If the form is not empty, open the cancel confirmation modal
+            if (!formIsEmpty) {
+                var myModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+                myModal.show();
+            } else {
+                // If the form is empty, redirect to the current inventory page
+                window.location.href = "{% url 'current_customers' %}";
             }
-        }
+        });
 
         // Function to check if all required fields are filled
         function checkRequiredFields() {
@@ -277,28 +263,10 @@
 
         // Function to handle form submission
         function handleSubmit(event) {
-            event.preventDefault();
-            if (checkRequiredFields()) {
+            if (checkRequiredFields() && validateInput() && validateEmergencyContactNumber()) {
                 showConfirmationModal();
             }
         }
-
-        // Add event listener to the form submit button
-        document.getElementById('createBtn').addEventListener('click', handleSubmit);
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('submitConfirmationBtn').addEventListener('click', function () {
-                document.getElementById('createConsigneeForm').submit();
-            });
-
-            // Function to show the cancel modal
-            function showCancelModal() {
-                $('#cancelModal').modal('show');
-            }
-
-            // Add event listener to the Cancel button
-            document.getElementById("cancelButton").addEventListener("click", showCancelModal);
-        });
 
         // Function to handle form submission after confirmation
         document.addEventListener('DOMContentLoaded', function() {
@@ -306,10 +274,48 @@
                 document.getElementById('createConsigneeForm').submit();
             });
         });
+
+        function validateInput() {
+            let primaryContactInput = document.getElementById('id_primary_contact_number');
+            let emailInput = document.getElementById('id_email_address');
+            let primaryContactValue = primaryContactInput.value.trim();
+            let emailValue = emailInput.value.trim();
+            let isPrimaryContactValid = /^09/.test(primaryContactValue); // Check if input starts with 09
+            let isEmailValid = emailValue.includes('@'); // Check if input contains '@'
+
+            if (!isPrimaryContactValid) {
+                primaryContactInput.classList.add('is-invalid'); // Add red border
+                alert('Please input a number starting with 09.'); // Notify the user
+            } else {
+                primaryContactInput.classList.remove('is-invalid'); // Remove red border
+            }
+
+            if (!isEmailValid) {
+                emailInput.classList.add('is-invalid'); // Add red border
+                alert('Please input a valid email address.'); // Notify the user
+            } else {
+                emailInput.classList.remove('is-invalid'); // Remove red border
+            }
+
+            return isPrimaryContactValid && isEmailValid;
+        }
+
+        function validateEmergencyContactNumber() {
+            let emergency_number = document.getElementById('id_emergency_contact_number');
+            let isEmergencyNumberValid = emergency_number.value.trim();
+            if (text.length == 0) {
+                // If input is blank, clear custom validity
+                input.setCustomValidity('');
+            } else if (text.length < 7 || (text.startsWith('09') && text.length !== 11)) {
+                // If text is less than 7 digits or doesn't start with '09' or not 11 digits long, set custom validity
+                input.setCustomValidity('Please enter a valid 7 or 11-digit phone number starting with 09.');
+            } else {
+                // Otherwise, clear custom validity
+                input.setCustomValidity('');
+            }
+        }
     </script>
 
 
 </body>
 {% endblock %}
-
-
