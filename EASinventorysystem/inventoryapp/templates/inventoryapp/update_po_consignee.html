@@ -40,8 +40,23 @@
                     <div class="row">
                         <div class="col">
                             <label class="required" for="requested_date">Requested Date:</label><br>
-                            <input type="date" id="requested_date" name="requested_date" class="form-control"  value="{{ PO.Requested_Date|date:'Y-m-d' }}" onkeydown="return false" required><br><br>
+                            <input type="date" id="requested_date" name="requested_date" class="form-control"  value="{{ PO.Requested_Date|date:'Y-m-d' }}" required><br><br>
                         </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var creationDateStr = '{{ PO.Creation_Date|date:"Y-m-d" }}';
+                                var creationDate = new Date(creationDateStr);
+                                var requestedDateInput = document.getElementById('requested_date');
+                                
+                                requestedDateInput.addEventListener('change', function() {
+                                    var requestedDate = new Date(requestedDateInput.value);
+                                    if (requestedDate < creationDate) {
+                                        alert("Requested date must be the same as or after the creation date (" + creationDateStr + ").");
+                                        requestedDateInput.value = '';
+                                    }
+                                });
+                            });
+                        </script>
 
                         <div class="col">
                         </div>
