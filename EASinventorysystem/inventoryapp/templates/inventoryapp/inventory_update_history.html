@@ -57,12 +57,27 @@
                             <td class="report" style="text-align: center; vertical-align: middle;">{{ edit.Text_Report }}</td> -->
                             <td class="updated_by" style="text-align: center; vertical-align: middle;">{{ edit.Account_ID }}</td>
                             <td> 
-                                <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="" data-partially-pk="">View</button>
+                                <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#editCountModal" data-editCount-pk="{{ edit.Count_Edit_ID }}">View</button>
                             </td> 
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+        
+        <!-- Edit Count Modal -->
+        <div class="modal fade" id="editCountModal" tabindex="-1" aria-labelledby="editCountModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCountModalLabel">Edit Count Information</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Content will be dynamically loaded here via JavaScript -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -71,13 +86,106 @@
     <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#inventory_update_history').DataTable({
-      "columnDefs": [
-        { "targets": -1, "orderable": false, "searchable": false }
-      ]
+          $(document).ready(function() {
+            $('.btn-view').click(function() {
+            var editCountPk = $(this).data('editcount-pk');
+            console.log("Edit CountPK:", editCountPk);
+            $.ajax({
+                url: '/view_edit_count/' + editCountPk + '/',
+                method: 'GET',
+                success: function(response) {
+                console.log(response)
+                    $('#editCountModal .modal-body').html(`
+                    <div class="row">
+
+                            <!-- Image -->
+                            <div class="col m-0">
+                                ${response.image_report ? `<div class="product-image" style="text-align: center;"><img src="${response.image_report}" width="200"></div>` : ''}
+                            </div>
+                            <!-- 1st row -->
+                            <div class="col mx-2">
+                                <div class="row mb-2">  
+                                <div class="card">
+                                    <div class="card-body">
+                                    <h6 class="card-title"><strong>Edit ID:</strong></h6>
+                                    <p class="card-text">${response.edit_count_id}</p>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="row mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                    <h6 class="card-title"><strong>Date Updated:</strong></h6>
+                                    <p class="card-text">${response.date_updated}</p>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="row mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                    <h6 class="card-title"><strong>Account ID:</strong></h6>
+                                    <p class="card-text">${response.account_id}</p>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+
+                            <!-- 2nd row -->
+                            <div class="col mx-2">
+                                <div class="row mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                    <h6 class="card-title"><strong>Initial Inventory Count:</strong></h6>
+                                    <p class="card-text">${response.initial_inventory_count}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                    <h6 class="card-title"><strong>Updated Inventory Count:</strong></h6>
+                                    <p class="card-text">${response.updated_inventory_count}</p>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="row mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                    <h6 class="card-title"><strong>Product:</strong></h6>
+                                    <p class="card-text">${response.product}</p>
+                                    </div>
+                                </div>
+                                </div>
+                            
+                            </div>
+                            <div class="col mx-2">
+                            <div class="row mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                    <h6 class="card-title"><strong>Text Report:</strong></h6>
+                                    <p class="card-text">${response.text_report}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                        </div>
+                    `);
+                    $('#editCountModal').modal('show');
+                },
+                error: function(xhr, status, error) {
+                console.error(error);
+                }
+            });
+        });
+                $('#inventory_update_history').DataTable({
+        "columnDefs": [
+            { "targets": -1, "orderable": false, "searchable": false }
+        ]
+        });
     });
-  });
     </script>
 </body>
 {% endblock %}

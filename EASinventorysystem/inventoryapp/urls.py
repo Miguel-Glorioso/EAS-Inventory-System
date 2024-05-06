@@ -96,4 +96,7 @@ urlpatterns = [
     path('history_partially_fulfilled/', views.history_partially_fulfilled, name='history_partially_fulfilled'),
 
     path('view_partially_fulfilled/<int:pk>/', views.view_partially_fulfilled, name='view_partially_fulfilled'),
+    path('view_edit_count/<int:pk>/', views.view_edit_count, name='view_edit_count'),
+
+    
 ]

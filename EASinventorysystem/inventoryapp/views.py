@@ -2002,3 +2002,21 @@ def view_partially_fulfilled(request, pk):
         return JsonResponse(response_data)
     except Partially_Fulfilled_History.DoesNotExist:
         return JsonResponse({'error': 'Partially Fulfilled Record not found'}, status=404)
+
+@login_required 
+def view_edit_count(request, pk):
+    try:
+        edit_count = Count_Edit_History.objects.get(pk=pk)
+        response_data = {
+            'edit_count_id': edit_count.Count_Edit_ID,
+            'date_updated': edit_count.Date_Updated.strftime("%Y-%m-%d %H:%M:%S"),
+            'initial_inventory_count': edit_count.Initial_Inventory_Count,
+            'updated_inventory_count': edit_count.Updated_Inventory_Count,
+            'image_report': edit_count.Image_Report.url if edit_count.Image_Report else None,
+            'text_report': edit_count.Text_Report,
+            'product': edit_count.Product_ID.Name,
+            'account_id': edit_count.Account_ID.user.username
+        }
+        return JsonResponse(response_data)
+    except Partially_Fulfilled_History.DoesNotExist:
+        return JsonResponse({'error': 'Edit Count Record not found'}, status=404)
