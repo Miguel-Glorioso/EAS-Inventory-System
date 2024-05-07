@@ -984,11 +984,17 @@ def create_consignee(request):
 
         # Check if the consignee already exists
         existing_consignee = Consignee.objects.filter(
-            Consignee_Tag_ID=Consignee_Tag_ID,
             Consignee_Name=Consignee_Name,
         )
         if existing_consignee.exists():
             error_msg = 'Consignee Already Exists'
+            return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
+        
+        existing_consigneetag = Consignee.objects.filter(
+            Consignee_Tag_ID=Consignee_Tag_ID,
+        )
+        if existing_consigneetag.exists():
+            error_msg = 'Consignee Tag Already Exists'
             return render(request, 'inventoryapp/create_consignee.html',  {'error_msg': error_msg})
         
         existing_color = Consignee.objects.filter(Tag_Hex_Color_ID=Tag_Hex_Color_ID)
@@ -1933,6 +1939,7 @@ def history_partially_fulfilled(request):
 def edit_count(request):
     products = Product.objects.all()
     if request.method == 'POST':
+        
             cEdit_account = request.POST.get('account')
 
             cEdit_account = get_object_or_404(Account,pk=cEdit_account)
@@ -1978,7 +1985,11 @@ def edit_count(request):
             messages.success(request, "Product count succesfully updated")
             return redirect('current_inventory')
     else:
-        return render(request, 'inventoryapp/edit_count.html', {'products': products})
+        if not request.user.is_superuser:
+            messages.error(request, "You are not authorized to edit inventory counts.")
+            return redirect('current_inventory')
+        else:
+            return render(request, 'inventoryapp/edit_count.html', {'products': products})
 
 @login_required 
 def inventory_update_history(request):
